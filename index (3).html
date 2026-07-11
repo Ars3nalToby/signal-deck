@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Signal Deck v8 — JL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+// Theme must be known BEFORE TradingView widgets parse — read it here
+window.__tvTheme = (function(){
+  try {
+    var saved = localStorage.getItem('sd-theme');
+    if (saved) return saved;
+  } catch(e){}
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+})();
+document.documentElement.setAttribute('data-theme', window.__tvTheme);
+</script>
+<style>
+:root{
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-2: #faf8f3;
+  --ink: #1a1a17;
+  --ink-2: #5f5e58;
+  --ink-3: #96958d;
+  --line: #e6e2d6;
+  --line-2: #d4cfbe;
+  --up: #1d7a52;
+  --down: #b04429;
+  --watch: #9b6b1d;
+  --accent: #1a3d5c;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+html[data-theme="dark"]{
+  --bg: #14140f;
+  --surface: #1c1b16;
+  --surface-2: #201f19;
+  --ink: #f0ede1;
+  --ink-2: #a09e8f;
+  --ink-3: #6b6a5f;
+  --line: #2a2820;
+  --line-2: #3a3728;
+  --up: #6dc998;
+  --down: #e08373;
+  --watch: #d9a44b;
+  --accent: #7fb8e0;
+}
+*{box-sizing: border-box; margin: 0; padding: 0;}
+html, body{background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; transition: background 0.2s;}
+body{max-width: 1180px; margin: 0 auto; padding: 32px 28px 80px;}
+a{color: inherit; text-decoration: none;}
+a:hover{color: var(--accent);}
+
+.masthead{display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 24px; gap: 16px;}
+.masthead .title{font-family: var(--serif); font-size: 44px; font-weight: 400; line-height: 1; letter-spacing: -0.01em; font-style: italic;}
+.masthead .subtitle{font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 6px;}
+.masthead .right{text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;}
+.masthead .datestamp{font-family: var(--mono); font-size: 12px; color: var(--ink-2);}
+.masthead .datestamp .live{display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--up); margin-right: 6px; animation: pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1} 50%{opacity:0.3}}
+
+.theme-toggle{
+  border: 1px solid var(--line-2); background: var(--surface); color: var(--ink);
+  border-radius: 20px; padding: 6px 14px; font-size: 11px; font-family: var(--sans);
+  text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: border-color 0.15s;
+}
+.theme-toggle:hover{border-color: var(--accent); color: var(--accent);}
+
+.clocks{display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 24px;}
+.clock{background: var(--surface); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;}
+.clock .city{font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-3);}
+.clock .city .dot{display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: middle;}
+.clock .dot.open{background: var(--up); box-shadow: 0 0 6px rgba(29,122,82,0.4);}
+.clock .dot.closed{background: var(--ink-3);}
+.clock .time{font-family: var(--mono); font-size: 20px; font-weight: 500; letter-spacing: -0.02em;}
+.clock .status{font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-2); margin-top: 3px;}
+
+.section-head{display: flex; justify-content: space-between; align-items: baseline; margin: 40px 0 14px;}
+.section-head h2{font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 26px; letter-spacing: -0.01em;}
+.section-head .meta{font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.12em;}
+
+.live-badge{display: inline-flex; align-items: center; gap: 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--up); padding: 3px 8px; border: 1px solid var(--up); border-radius: 20px;}
+.live-badge::before{content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--up); animation: pulse 2s infinite;}
+
+.grid{display: grid; gap: 14px;}
+.grid.cols-2{grid-template-columns: 1fr 1fr;}
+.grid.cols-3{grid-template-columns: repeat(3, 1fr);}
+@media (max-width: 800px){.grid.cols-2, .grid.cols-3{grid-template-columns: 1fr;}}
+
+.card{background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px;}
+.card .card-head{display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 14px; gap: 12px;}
+.card .card-title{font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);}
+.card .card-tag{font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.14em; white-space: nowrap;}
+
+.row{display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed var(--line); gap: 12px;}
+.row:last-child{border-bottom: none;}
+.row .label{font-size: 14px; color: var(--ink);}
+.row .label .sub{display: block; font-size: 11px; color: var(--ink-3); margin-top: 2px;}
+.row .value{font-family: var(--mono); font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap;}
+.row .value .change{display: block; font-size: 12px; margin-top: 2px; font-weight: 400;}
+.up{color: var(--up);}
+.down{color: var(--down);}
+.watch{color: var(--watch);}
+
+.headline{padding: 10px 0; border-bottom: 1px dashed var(--line);}
+.headline:last-child{border-bottom: none;}
+.headline .txt{font-size: 14px; line-height: 1.45; color: var(--ink);}
+.headline .txt a{border-bottom: 1px solid var(--line-2);}
+.headline .txt a:hover{border-bottom-color: var(--accent);}
+.headline .meta{font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;}
+.headline .meta .source{color: var(--ink-2);}
+
+.hero{background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 24px 28px; margin-bottom: 32px;}
+.hero .eyebrow{font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-3); margin-bottom: 12px;}
+.hero .story{font-family: var(--serif); font-size: 20px; line-height: 1.4; font-weight: 400; margin-bottom: 10px;}
+.hero .story em{font-style: italic; color: var(--ink-2);}
+.hero .story-meta{font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em;}
+
+.ext::after{content: "↗"; font-size: 11px; margin-left: 3px; color: var(--ink-3);}
+
+.x-grid{display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;}
+@media (max-width: 800px){.x-grid{grid-template-columns: repeat(2, 1fr);}}
+.x-card{background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;}
+.x-card .x-head{display: flex; align-items: center; gap: 8px;}
+.x-card .x-avatar{width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line-2); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: var(--ink);}
+.x-card .x-name{font-size: 13px; font-weight: 500;}
+.x-card .x-handle{font-size: 11px; color: var(--ink-3);}
+.x-card .x-note{font-size: 12px; color: var(--ink-2); line-height: 1.4; min-height: 48px;}
+.x-card .x-links{display: flex; gap: 6px; margin-top: auto;}
+.x-card .x-btn{flex: 1; padding: 6px 8px; border: 1px solid var(--line-2); border-radius: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; color: var(--ink); transition: border-color 0.15s;}
+.x-card .x-btn:hover{border-color: var(--accent); color: var(--accent);}
+.x-card .x-btn.primary{border-color: var(--ink); background: var(--ink); color: var(--surface);}
+.x-card .x-btn.primary:hover{background: var(--accent); border-color: var(--accent); color: var(--surface);}
+
+.feed-item{padding: 10px 0; border-bottom: 1px dashed var(--line);}
+.feed-item:last-child{border-bottom: none;}
+.feed-item .feed-title{font-size: 14px; line-height: 1.4; color: var(--ink); display: block;}
+.feed-item .feed-title:hover{color: var(--accent);}
+.feed-item .feed-meta{font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;}
+.feed-loading{font-size: 12px; color: var(--ink-3); font-style: italic; padding: 20px 0; text-align: center;}
+.feed-error{font-size: 12px; color: var(--down); padding: 10px 0;}
+
+.tv-wrap{background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0; overflow: hidden; margin-bottom: 24px;}
+.tv-inner{padding: 0; height: 400px; position: relative;}
+.tv-ticker{padding: 0; height: 78px;}
+.tv-cal{padding: 0; height: 550px;}
+
+/* Key dates with calendar buttons */
+.date-card{background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px;}
+.date-card .dc-date{font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--watch);}
+.date-card .dc-title{font-size: 14px; font-weight: 500; line-height: 1.35;}
+.date-card .dc-note{font-size: 12px; color: var(--ink-2); line-height: 1.4; flex: 1;}
+.gcal-btn{
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 12px; border: 1px solid var(--line-2); border-radius: 4px;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink); transition: all 0.15s; margin-top: 6px;
+}
+.gcal-btn:hover{border-color: var(--accent); color: var(--accent); background: var(--surface-2);}
+.gcal-btn::before{content: "📅"; font-size: 13px;}
+
+/* Radar table */
+.radar-row{display: grid; grid-template-columns: 90px 1fr auto; gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px dashed var(--line);}
+.radar-row:last-child{border-bottom: none;}
+.radar-row .r-code{font-family: var(--mono); font-size: 15px; font-weight: 500;}
+.radar-row .r-code .r-mcap{display: block; font-size: 11px; color: var(--ink-3); font-weight: 400; margin-top: 2px;}
+.radar-row .r-body .r-name{font-size: 14px; font-weight: 500;}
+.radar-row .r-body .r-thesis{font-size: 12.5px; color: var(--ink-2); line-height: 1.45; margin-top: 3px;}
+.radar-row .r-status{text-align: right; white-space: nowrap;}
+.radar-row .r-status .r-verdict{font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; padding: 3px 10px; border-radius: 20px; border: 1px solid;}
+.radar-row .r-status .r-catalyst{display: block; font-size: 11px; color: var(--ink-3); margin-top: 6px; font-family: var(--mono);}
+.v-buy{color: var(--up); border-color: var(--up);}
+.v-wait{color: var(--watch); border-color: var(--watch);}
+.v-avoid{color: var(--down); border-color: var(--down);}
+
+.sources{margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line);}
+.sources h3{font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 22px; margin-bottom: 16px;}
+.source-grid{display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 24px;}
+.source-item{display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px;}
+.source-item .cat{font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.12em;}
+.source-item a{color: var(--accent); font-weight: 500;}
+
+.deploy{margin-top: 40px; padding: 24px 28px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px;}
+.deploy h3{font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 22px; margin-bottom: 8px;}
+.deploy p.intro{font-size: 13px; color: var(--ink-2); margin-bottom: 20px; max-width: 720px;}
+.deploy ol{padding-left: 24px; font-size: 14px; line-height: 1.7;}
+.deploy ol li{margin-bottom: 10px;}
+.deploy code{font-family: var(--mono); font-size: 12px; background: var(--surface); padding: 2px 6px; border-radius: 3px; border: 1px solid var(--line);}
+.deploy h4{font-size: 14px; font-weight: 600; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.06em;}
+
+.footer-note{margin-top: 40px; font-size: 11px; color: var(--ink-3); text-align: center; line-height: 1.6;}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div>
+    <div class="title">Global Signal Deck</div>
+    <div class="subtitle">v8 · Brisbane 楼市 · Smart money · Arsenal · Live</div>
+  </div>
+  <div class="right">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">◐ Theme</button>
+    <div class="datestamp"><span class="live"></span><span id="live-date">—</span></div>
+  </div>
+</header>
+
+<div class="clocks" id="clocks">
+  <div class="clock">
+    <div>
+      <div class="city"><span class="dot" id="dot-syd"></span>Sydney</div>
+      <div class="status" id="stat-syd">ASX · loading</div>
+    </div>
+    <div class="time" id="time-syd">—</div>
+  </div>
+  <div class="clock">
+    <div>
+      <div class="city"><span class="dot" id="dot-cn"></span>Shanghai</div>
+      <div class="status" id="stat-cn">SSE · loading</div>
+    </div>
+    <div class="time" id="time-cn">—</div>
+  </div>
+  <div class="clock">
+    <div>
+      <div class="city"><span class="dot" id="dot-ny"></span>New York</div>
+      <div class="status" id="stat-ny">NYSE · loading</div>
+    </div>
+    <div class="time" id="time-ny">—</div>
+  </div>
+</div>
+
+<!-- TradingView Ticker Tape (theme-aware, injected by JS) -->
+<div class="tv-wrap tv-ticker">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript">
+    document.write('<scr'+'ipt type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>' + JSON.stringify({
+      "symbols": [
+        {"description": "S&P 500", "proName": "SPREADEX:SPX"},
+        {"description": "Nasdaq", "proName": "SPREADEX:NDX"},
+        {"description": "Dow", "proName": "SPREADEX:DJI"},
+        {"description": "VIX", "proName": "TVC:VIX"},
+        {"description": "Gold", "proName": "TVC:GOLD"},
+        {"description": "AUD/USD", "proName": "FX_IDC:AUDUSD"},
+        {"description": "USD/CNY", "proName": "FX_IDC:USDCNY"},
+        {"description": "ASX 200", "proName": "ASX:XJO"},
+        {"description": "GME", "proName": "NYSE:GME"},
+        {"description": "TSLA", "proName": "NASDAQ:TSLA"},
+        {"description": "NVDA", "proName": "NASDAQ:NVDA"},
+        {"description": "BHP", "proName": "ASX:BHP"},
+        {"description": "FMG", "proName": "ASX:FMG"},
+        {"description": "CBA", "proName": "ASX:CBA"}
+      ],
+      "showSymbolLogo": true,
+      "colorTheme": window.__tvTheme,
+      "isTransparent": true,
+      "displayMode": "adaptive",
+      "locale": "en"
+    }) + '<\/scr'+'ipt>');
+    </script>
+  </div>
+</div>
+
+<div class="section-head">
+  <h2>Live market pulse</h2>
+  <div class="live-badge">Live</div>
+</div>
+<div class="tv-wrap">
+  <div class="tv-inner">
+    <div class="tradingview-widget-container" style="height:100%;">
+      <div class="tradingview-widget-container__widget" style="height:100%;"></div>
+      <script type="text/javascript">
+      document.write('<scr'+'ipt type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>' + JSON.stringify({
+        "colorTheme": window.__tvTheme,
+        "dateRange": "1D",
+        "showChart": true,
+        "locale": "en",
+        "isTransparent": true,
+        "showSymbolLogo": true,
+        "showFloatingTooltip": false,
+        "width": "100%",
+        "height": "100%",
+        "plotLineColorGrowing": "rgba(29, 122, 82, 1)",
+        "plotLineColorFalling": "rgba(176, 68, 41, 1)",
+        "belowLineFillColorGrowing": "rgba(29, 122, 82, 0.12)",
+        "belowLineFillColorFalling": "rgba(176, 68, 41, 0.12)",
+        "tabs": [
+          {"title": "Indices", "symbols": [
+            {"s": "SPREADEX:SPX", "d": "S&P 500"},
+            {"s": "SPREADEX:NDX", "d": "Nasdaq 100"},
+            {"s": "SPREADEX:DJI", "d": "Dow Jones"},
+            {"s": "ASX:XJO", "d": "ASX 200"},
+            {"s": "TVC:VIX", "d": "VIX"}
+          ]},
+          {"title": "Commodities", "symbols": [
+            {"s": "TVC:GOLD", "d": "Gold"},
+            {"s": "TVC:SILVER", "d": "Silver"},
+            {"s": "NYMEX:CL1!", "d": "Crude Oil"},
+            {"s": "SGX:FEF1!", "d": "Iron Ore SGX"},
+            {"s": "COMEX:HG1!", "d": "Copper"}
+          ]},
+          {"title": "FX", "symbols": [
+            {"s": "FX_IDC:AUDUSD", "d": "AUD/USD"},
+            {"s": "FX_IDC:USDCNY", "d": "USD/CNY"},
+            {"s": "FX_IDC:AUDCNY", "d": "AUD/CNY"},
+            {"s": "TVC:DXY", "d": "DXY"}
+          ]},
+          {"title": "Watchlist", "symbols": [
+            {"s": "NYSE:GME", "d": "GameStop"},
+            {"s": "NASDAQ:TSLA", "d": "Tesla"},
+            {"s": "NASDAQ:NVDA", "d": "Nvidia"},
+            {"s": "NASDAQ:MU", "d": "Micron"},
+            {"s": "NYSE:EBAY", "d": "eBay"}
+          ]}
+        ]
+      }) + '<\/scr'+'ipt>');
+      </script>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Overnight US · Last close Thu 2 Jul (Fri closed for Independence Day)</div>
+  <div class="story">
+    Dow to fresh record while Nasdaq extends chip-sector slide. <em>Micron −7%, AMD −4.3%. Tesla −7.5% despite record 480,126 Q2 deliveries. OpenAI reportedly in talks on 5% US-government stake. Jobs 57k vs 113k est — Fed hold case strengthens.</em>
+  </div>
+  <div class="story-meta">Live via widget above · <a href="https://finance.yahoo.com/markets/live/" class="ext" target="_blank">Yahoo Live</a> · <a href="https://www.cnbc.com/markets/" class="ext" target="_blank">CNBC Markets</a></div>
+</div>
+
+<!-- KEY DATES + GOOGLE CALENDAR -->
+<div class="section-head">
+  <h2>Key dates — one tap to your calendar</h2>
+  <div class="meta">Opens Google Calendar pre-filled</div>
+</div>
+
+<div class="grid cols-3">
+  <div class="date-card">
+    <div class="dc-date">Mon 7 Jul 2026</div>
+    <div class="dc-title">GME AGM — authorized share vote</div>
+    <div class="dc-note">1B → 2.5B authorized shares vote. Cohen withdrew $35B award. Watch eBay deal commentary. You hold 572 shares.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=GME%20AGM%20%E2%80%94%20authorized%20share%20vote&dates=20260707/20260708&details=GameStop%20annual%20meeting.%20Authorized%20shares%201B-%3E2.5B%20vote.%20Cohen%20withdrew%20%2435B%20award.%20Watch%20outcome%20%2B%20eBay%20deal%20commentary.%20Holding%3A%20572%20shares.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+
+  <div class="date-card">
+    <div class="dc-date">Tue 7 Jul 2026</div>
+    <div class="dc-title">USTR Section 301 hearings</div>
+    <div class="dc-note">Forced-labour tariff proposal hearings covering 60 economies. Public comments closed 6 Jul. Tariff regime rebuild continues.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=USTR%20Section%20301%20hearings&dates=20260707/20260708&details=Forced-labour%20tariff%20proposal%20hearings%20covering%2060%20economies.%20Trump%20tariff%20regime%20rebuild.%20Watch%20market%20reaction.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+
+  <div class="date-card">
+    <div class="dc-date">Wed 15 Jul 2026</div>
+    <div class="dc-title">CMRG Fortescue delivery deadline</div>
+    <div class="dc-note">China state buyer deadline for mills to take FMG Super Special Fines. After this, blacklisted. FMG + iron ore complex risk.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=CMRG%20Fortescue%20delivery%20deadline&dates=20260715/20260716&details=China%20Mineral%20Resources%20Group%20deadline%20for%20mills%20to%20take%20delivery%20of%20FMG%20Super%20Special%20Fines.%20After%20this%2C%20product%20blacklisted.%20Watch%20FMG%20%2B%20iron%20ore.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+
+  <div class="date-card">
+    <div class="dc-date">Mon 10 Aug 2026</div>
+    <div class="dc-title">USTR Germany pharma comments close</div>
+    <div class="dc-note">Section 301 probe into German drug pricing. Global pharma pricing regime signal — directly relevant to your sector.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=USTR%20Germany%20pharma%20comments%20close&dates=20260810/20260811&details=Section%20301%20investigation%20into%20German%20pharmaceutical%20pricing.%20Comment%20deadline%2011%3A59pm%20EDT.%20Global%20drug%20pricing%20regime%20signal.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+
+  <div class="date-card">
+    <div class="dc-date">Tue 11 Aug 2026</div>
+    <div class="dc-title">RBA rate decision</div>
+    <div class="dc-note">Cash rate 4.35%. CBA/NAB/ANZ expect hold, Westpac forecasts +25bp. Decision 2:30pm AEST.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=RBA%20rate%20decision&dates=20260811/20260812&details=RBA%20Monetary%20Policy%20Board%20meeting.%20Cash%20rate%20currently%204.35%25.%20CBA%2FNAB%2FANZ%20expect%20hold%2C%20Westpac%20forecasts%20%2B25bp.%20Decision%202%3A30pm%20AEST.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+
+  <div class="date-card">
+    <div class="dc-date">Mon 31 Aug 2026</div>
+    <div class="dc-title">Sigma (SIG) escrow lift</div>
+    <div class="dc-note">Chemist Warehouse insider escrow expires. Watch for selling pressure. Directly relevant to CWH partnership structure.</div>
+    <a class="gcal-btn" target="_blank" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Sigma%20(SIG)%20escrow%20lift&dates=20260831/20260901&details=Chemist%20Warehouse%20insider%20escrow%20expires.%20Watch%20SIG%20for%20potential%20selling%20pressure.%20Relevant%20to%20CWH%20partnership%20structure.&ctz=Australia/Brisbane">Add to Google Calendar</a>
+  </div>
+</div>
+
+<!-- ASX SMALL CAP RADAR -->
+<div class="section-head">
+  <h2>ASX small cap radar</h2>
+  <div class="meta">Pre-catalyst positions · updated when we talk</div>
+</div>
+
+<div class="card">
+  <div class="radar-row">
+    <div class="r-code">L1M
+      <span class="r-mcap">$7.3M · $0.03</span>
+    </div>
+    <div class="r-body">
+      <div class="r-name">Lightning Minerals — Mt Turner Gold (QLD)</div>
+      <div class="r-thesis">1,300m diamond drilling below 5 historic pits (mined to ~20m only). Historic hits 16m @ 3.56g/t, 12m @ 6.5g/t. Zenith precedent: same-region +90% day on first assay. Nano-cap liquidity risk — size accordingly.</div>
+    </div>
+    <div class="r-status">
+      <span class="r-verdict v-wait">Drill watch</span>
+      <span class="r-catalyst">Assays: 4–8 wks</span>
+    </div>
+  </div>
+
+  <div class="radar-row">
+    <div class="r-code">VRL
+      <span class="r-mcap">$6.7M · $0.019</span>
+    </div>
+    <div class="r-body">
+      <div class="r-name">Verity Resources — Monument Gold (Laverton WA)</div>
+      <div class="r-thesis">154koz existing resource. Adjacent to Genesis (GMD) 3.3Moz + operating mill — takeout optionality. Phase 2 6,400m in progress. ⚠️ Cash $899k — capital raise near-certain, expect dilution before re-rate.</div>
+    </div>
+    <div class="r-status">
+      <span class="r-verdict v-wait">Raise risk</span>
+      <span class="r-catalyst">P2 assays: Jun–Aug</span>
+    </div>
+  </div>
+
+  <div class="radar-row">
+    <div class="r-code">LTP
+      <span class="r-mcap">$92.7M · post-pop</span>
+    </div>
+    <div class="r-body">
+      <div class="r-name">LTR Pharma — SPONTAN intranasal vardenafil</div>
+      <div class="r-thesis">Tmax 10min vs 60min oral at quarter dose. FDA 505(b)(2) path. $24.1M cash, ~18mo runway. Your pharmacist edge applies. Interim pop done — wait for retrace before Q3 final readout.</div>
+    </div>
+    <div class="r-status">
+      <span class="r-verdict v-wait">Wait retrace</span>
+      <span class="r-catalyst">Final data: Q3 2026</span>
+    </div>
+  </div>
+
+  <div class="radar-row">
+    <div class="r-code">CRS
+      <span class="r-mcap">$107.7M</span>
+    </div>
+    <div class="r-body">
+      <div class="r-name">Caprice Resources — Island Gold (Murchison WA)</div>
+      <div class="r-thesis">Bonanza-grade hits, 50,000m RC campaign, maiden resource coming. But +585% from Aug lows and +66% on latest news — you're not early. Chasing here is buying someone's exit.</div>
+    </div>
+    <div class="r-status">
+      <span class="r-verdict v-avoid">Too late</span>
+      <span class="r-catalyst">MRE: 2026</span>
+    </div>
+  </div>
+
+  <div class="radar-row">
+    <div class="r-code">LEL
+      <span class="r-mcap">$0.37</span>
+    </div>
+    <div class="r-body">
+      <div class="r-name">Lithium Energy — Sandy Creek (Capricorn QLD)</div>
+      <div class="r-thesis">Company cut drill program short after weak alteration in chip logging — insider negative signal. Late-May assays likely disappoint. Asymmetry is against you.</div>
+    </div>
+    <div class="r-status">
+      <span class="r-verdict v-avoid">Avoid</span>
+      <span class="r-catalyst">Assays: late May</span>
+    </div>
+  </div>
+</div>
+
+<!-- SMART MONEY RADAR -->
+<div class="section-head">
+  <h2>Smart money radar</h2>
+  <div class="meta">强制披露的真数据 · 13F 滞后 45 天,看方向不抄底</div>
+</div>
+
+<div class="grid cols-3">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">US 13F 巨鲸</div>
+      <div class="card-tag">季报持仓</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.dataroma.com/m/holdings.php?m=SAM" target="_blank" class="ext">Michael Burry — Scion</a></div>
+      <div class="meta">公开押注 Cohen 成为下一个 Buffett</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.dataroma.com/m/holdings.php?m=BRK" target="_blank" class="ext">Warren Buffett — Berkshire</a></div>
+      <div class="meta">现金仓位 = 市场恐惧指标</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.dataroma.com/m/holdings.php?m=DA" target="_blank" class="ext">Stanley Druckenmiller — Duquesne</a></div>
+      <div class="meta">宏观转向嗅觉最灵的一位</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.dataroma.com/m/home.php" target="_blank" class="ext">Dataroma 全部 80+ 巨鲸</a></div>
+      <div class="meta">免费 · 按买入/卖出聚合</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://whalewisdom.com/" target="_blank" class="ext">WhaleWisdom — 13F 变动对比</a></div>
+      <div class="meta">季度环比加减仓一目了然</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">国会 + 内幕人买入</div>
+      <div class="card-tag">Form 4 · STOCK Act</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.capitoltrades.com/" target="_blank" class="ext">Capitol Trades — 国会议员交易</a></div>
+      <div class="meta">Pelosi 等议员申报 · 45 天内披露</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.quiverquant.com/congresstrading/" target="_blank" class="ext">Quiver — Congress Trading</a></div>
+      <div class="meta">按议员/股票聚合 · 免费层够用</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="http://openinsider.com/latest-cluster-buys" target="_blank" class="ext">OpenInsider — Cluster Buys</a></div>
+      <div class="meta">多名高管同时自掏腰包 = 最强信号</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001326380&type=4&dateb=&owner=include&count=20" target="_blank" class="ext">GME Form 4 — RC 增持监控</a></div>
+      <div class="meta">Cohen 每次买入 24-48h 内必现</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">ASX smart money</div>
+      <div class="card-tag">本土信号</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://smallcaps.com.au/director-transactions/" target="_blank" class="ext">Director Trades — 董事自购</a></div>
+      <div class="meta">每周扫一次 · 小盘股最强领先指标</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://smallcaps.com.au/shorted-stocks/" target="_blank" class="ext">Shorted Stocks — 高空头名单</a></div>
+      <div class="meta">高 short + catalyst 临近 = squeeze 候选</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.marketindex.com.au/short-selling" target="_blank" class="ext">Market Index — Short 变动</a></div>
+      <div class="meta">ASIC 官方数据 · T+4 披露</div>
+    </div>
+    <div class="headline">
+      <div class="txt"><a href="https://www.asx.com.au/asx/v2/statistics/announcements.do" target="_blank" class="ext">Substantial Holder Notices</a></div>
+      <div class="meta">机构建仓 5%+ 强制申报</div>
+    </div>
+  </div>
+</div>
+
+<!-- X RADAR -->
+<div class="section-head">
+  <h2>X radar</h2>
+  <div class="meta">Political + Tesla + Nvidia signal sources</div>
+</div>
+
+<div class="x-grid">
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">EM</div>
+      <div>
+        <div class="x-name">Elon Musk</div>
+        <div class="x-handle">@elonmusk</div>
+      </div>
+    </div>
+    <div class="x-note">~$997B net worth post-SpaceX IPO. Left DOGE role late May. Robotaxi expanding to Miami. Grok 4.5 in internal testing.</div>
+    <div class="x-links">
+      <a href="https://x.com/elonmusk" target="_blank" class="x-btn primary">Open X</a>
+      <a href="https://nitter.privacydev.net/elonmusk" target="_blank" class="x-btn">Nitter</a>
+    </div>
+  </div>
+
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">DT</div>
+      <div>
+        <div class="x-name">Donald Trump</div>
+        <div class="x-handle">@realDonaldTrump</div>
+      </div>
+    </div>
+    <div class="x-note">Truth Social is his real channel. Watch tariff / Fed / Iran ceasefire posts. 100% DST tariff threat live.</div>
+    <div class="x-links">
+      <a href="https://truthsocial.com/@realDonaldTrump" target="_blank" class="x-btn primary">Truth</a>
+      <a href="https://x.com/realDonaldTrump" target="_blank" class="x-btn">X</a>
+    </div>
+  </div>
+
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">45</div>
+      <div>
+        <div class="x-name">Trump Official</div>
+        <div class="x-handle">@POTUS</div>
+      </div>
+    </div>
+    <div class="x-note">Official presidential comms. Confirmed policy only. EU deal live Jul 1. Section 301 rebuild ongoing.</div>
+    <div class="x-links">
+      <a href="https://x.com/POTUS" target="_blank" class="x-btn primary">Open X</a>
+      <a href="https://nitter.privacydev.net/POTUS" target="_blank" class="x-btn">Nitter</a>
+    </div>
+  </div>
+
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">NV</div>
+      <div>
+        <div class="x-name">Nvidia</div>
+        <div class="x-handle">@nvidia</div>
+      </div>
+    </div>
+    <div class="x-note">Jensen has no personal X — track @nvidia + newsroom. Vera Rubin ramping. $1T backlog through 2027.</div>
+    <div class="x-links">
+      <a href="https://x.com/nvidia" target="_blank" class="x-btn primary">Open X</a>
+      <a href="https://blogs.nvidia.com/" target="_blank" class="x-btn">Blog</a>
+    </div>
+  </div>
+
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">SE</div>
+      <div>
+        <div class="x-name">Serenity</div>
+        <div class="x-handle">@aleabitoreddit</div>
+      </div>
+    </div>
+    <div class="x-note">半导体/存储板块情绪风向标,近百万粉。⚠️ 他喊单瞬间 30 万人同时看到 — 看主题方向,不当 entry signal。</div>
+    <div class="x-links">
+      <a href="https://x.com/aleabitoreddit" target="_blank" class="x-btn primary">Open X</a>
+      <a href="https://nitter.privacydev.net/aleabitoreddit" target="_blank" class="x-btn">Nitter</a>
+    </div>
+  </div>
+
+  <div class="x-card">
+    <div class="x-head">
+      <div class="x-avatar">LB</div>
+      <div>
+        <div class="x-name">Leto</div>
+        <div class="x-handle">@Leto_bao</div>
+      </div>
+    </div>
+    <div class="x-note">存储股重仓玩家,自报盈利可观。⚠️ "All in + put 循环"是幸存者策略:put premium 长期成本高,加仓逻辑接近 martingale。看仓位方向,别抄作业。</div>
+    <div class="x-links">
+      <a href="https://x.com/Leto_bao" target="_blank" class="x-btn primary">Open X</a>
+      <a href="https://nitter.privacydev.net/Leto_bao" target="_blank" class="x-btn">Nitter</a>
+    </div>
+  </div>
+</div>
+
+<!-- JENSEN TRACKER -->
+<div class="section-head">
+  <h2>Jensen Huang tracker</h2>
+  <div class="meta">Keynotes · appearances · Nvidia signal</div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Recent activity</div>
+      <div class="card-tag">Last 90 days</div>
+    </div>
+    <div class="row">
+      <div class="label">GTC Taipei / Computex
+        <span class="sub">Vera Rubin full production · agentic AI era</span>
+      </div>
+      <div class="value">1 Jun</div>
+    </div>
+    <div class="row">
+      <div class="label">Carnegie Mellon commencement
+        <span class="sub">"How can we not be romantic about America"</span>
+      </div>
+      <div class="value">11 May</div>
+    </div>
+    <div class="row">
+      <div class="label">GTC San Jose
+        <span class="sub">$1T Blackwell + Vera Rubin backlog to 2027</span>
+      </div>
+      <div class="value">16 Mar</div>
+    </div>
+    <div class="row">
+      <div class="label">CES Las Vegas
+        <span class="sub">Two simultaneous platform shifts thesis</span>
+      </div>
+      <div class="value">7 Jan</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt"><strong>Q1 FY2027 revenue $81.6B</strong>, data center nearly doubled. Q2 guidance in Aug — biggest AI capex read of H2.</div>
+        <div class="meta"><span class="source">Nvidia Newsroom · May 2026</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Upcoming + track sources</div>
+      <div class="card-tag">Schedule</div>
+    </div>
+    <div class="row">
+      <div class="label">Q2 FY2027 earnings
+        <span class="sub">Biggest AI catalyst of H2 2026</span>
+      </div>
+      <div class="value watch">Aug 2026</div>
+    </div>
+    <div class="row">
+      <div class="label">AI Summit tour
+        <span class="sub">Regional events</span>
+      </div>
+      <div class="value">Q4 2026</div>
+    </div>
+    <div class="row">
+      <div class="label">GTC San Jose 2027
+        <span class="sub">Rubin Ultra preview expected</span>
+      </div>
+      <div class="value">Mar 2027</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">Same-day coverage: <a href="https://blogs.nvidia.com/blog/category/newsroom/" target="_blank" class="ext">Nvidia Newsroom</a></div>
+        <div class="meta">Every Jensen appearance</div>
+      </div>
+      <div class="headline">
+        <div class="txt">Earnings dates: <a href="https://investor.nvidia.com/events-and-presentations/events-and-presentations/default.aspx" target="_blank" class="ext">NVDA Investor Relations</a></div>
+        <div class="meta">Official calendar</div>
+      </div>
+      <div class="headline">
+        <div class="txt">Keynote replays: <a href="https://www.nvidia.com/gtc/keynote/" target="_blank" class="ext">NVIDIA GTC</a></div>
+        <div class="meta">Video + transcripts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MACRO -->
+<div class="section-head">
+  <h2>Macro backdrop</h2>
+  <div class="meta">China · rates · commodities</div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">China &amp; Iron Ore</div>
+      <div class="card-tag">Direct ASX read-through</div>
+    </div>
+    <div class="row">
+      <div class="label">Iron Ore 62% Fe (SGX)</div>
+      <div class="value">US$105/t <span class="change up">+5.1% 4-wk</span></div>
+    </div>
+    <div class="row">
+      <div class="label">DCE Iron Ore (CNY)</div>
+      <div class="value">¥740/t <span class="change up">bounced</span></div>
+    </div>
+    <div class="row">
+      <div class="label">Port stockpiles <span class="sub">Record 160Mt</span></div>
+      <div class="value watch">Elevated</div>
+    </div>
+    <div class="row">
+      <div class="label">Steel demand <span class="sub">Mysteel −3.1% w/w</span></div>
+      <div class="value down">Deteriorating</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">CMRG mills deadline for FMG Super Special Fines: <strong>Jul 15</strong>, then blacklisted. Watch FMG.</div>
+        <div class="meta"><span class="source">Trading Economics · 03 Jul</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Rates &amp; Currency</div>
+      <div class="card-tag">RBA · Fed · AUD</div>
+    </div>
+    <div class="row">
+      <div class="label">RBA cash rate <span class="sub">Next: 11 Aug</span></div>
+      <div class="value">4.35% <span class="change watch">Hold likely</span></div>
+    </div>
+    <div class="row">
+      <div class="label">Westpac view</div>
+      <div class="value watch">+25 bp</div>
+    </div>
+    <div class="row">
+      <div class="label">US Fed (Warsh) <span class="sub">Jobs 57k vs 113k est</span></div>
+      <div class="value">Hold</div>
+    </div>
+    <div class="row">
+      <div class="label">Gold spot</div>
+      <div class="value">US$4,187 <span class="change up">+1.49%</span></div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">Trump 100% tariff threat on digital-services-tax countries. Supersedes trade deals, <em>"immediately imposed"</em>.</div>
+        <div class="meta"><span class="source">Truth Social · 26 Jun</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WATCHLIST -->
+<div class="section-head">
+  <h2>Watchlist</h2>
+  <div class="meta">GME · TSLA</div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">GME · Ryan Cohen · eBay</div>
+      <div class="card-tag">Your 572 shares</div>
+    </div>
+    <div class="row">
+      <div class="label">Last <span class="sub">4 Jul</span></div>
+      <div class="value">US$22.88 <span class="change up">+1.2% vs low</span></div>
+    </div>
+    <div class="row">
+      <div class="label">Cash / no debt</div>
+      <div class="value">~US$9.4B</div>
+    </div>
+    <div class="row">
+      <div class="label">eBay economic interest</div>
+      <div class="value">~9.8%</div>
+    </div>
+    <div class="row">
+      <div class="label">FY26 EBITDA guide</div>
+      <div class="value up">&gt;$600M</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt"><strong>AGM Monday Jul 7</strong> — authorized share vote + eBay strategy. Cohen's $35B award withdrawn clears governance objection.</div>
+        <div class="meta"><span class="source">SEC 8-K · 23 Jun</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Tesla · chips</div>
+      <div class="card-tag">Narrative reset</div>
+    </div>
+    <div class="row">
+      <div class="label">TSLA <span class="sub">Post Q2 beat selloff</span></div>
+      <div class="value">US$394.40 <span class="change down">−7.5% Thu</span></div>
+    </div>
+    <div class="row">
+      <div class="label">Q2 deliveries</div>
+      <div class="value">480,126 <span class="change up">+18% vs est</span></div>
+    </div>
+    <div class="row">
+      <div class="label">SMH chip ETF</div>
+      <div class="value down">Rout, −5% wk</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">Robotaxi to <strong>Miami</strong>. Capex $25B FY. US weak, Europe +85%, China Shanghai +39% May.</div>
+        <div class="meta"><span class="source">CNBC · 03 Jul</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BRISBANE -->
+<div class="section-head">
+  <h2>Brisbane 楼市 &amp; 昆州动态</h2>
+  <div class="meta">Cotality Jul 1 数据 · QLD Gov 官方口径</div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Brisbane housing market</div>
+      <div class="card-tag">全澳最强首府</div>
+    </div>
+    <div class="row">
+      <div class="label">Dwelling 中位值
+        <span class="sub">年涨幅碾压全国均值 7.3%</span>
+      </div>
+      <div class="value">$1,118,306 <span class="change up">+17.4% yr</span></div>
+    </div>
+    <div class="row">
+      <div class="label">House 中位
+        <span class="sub">月涨已放缓至 +0.2-0.3%</span>
+      </div>
+      <div class="value">$1,225,350 <span class="change up">+16.8% yr</span></div>
+    </div>
+    <div class="row">
+      <div class="label">Unit 中位 ⭐
+        <span class="sub">跑赢 house · 2004 年以来最快年涨速</span>
+      </div>
+      <div class="value">$885,132 <span class="change up">+20.3% yr</span></div>
+    </div>
+    <div class="row">
+      <div class="label">租房空置率
+        <span class="sub">全国 1.2% · 租金年涨 +6.6%</span>
+      </div>
+      <div class="value watch">0.9%</div>
+    </div>
+    <div class="row">
+      <div class="label">增长最快区域
+        <span class="sub">Beaudesert +24.7% · Loganlea +24.1% · Woodridge units +34.9%</span>
+      </div>
+      <div class="value up">Logan 走廊</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt"><strong>5 月联邦预算变局:</strong>负扣税收紧至仅限新建房 + CGT 折扣 2027 年 7 月起重构 — Cotality 预期投资者需求明显回落,首购族竞争减压。</div>
+        <div class="meta"><span class="source">Hunter Galloway · Jun 2026</span></div>
+      </div>
+      <div class="headline">
+        <div class="txt">ANZ 预测 2026 全年 +9.7%(首府最强),但 <strong>2027 骤降至 +1.4%</strong> — 可负担性天花板到了。周期成熟,选筹比时机更重要。</div>
+        <div class="meta"><span class="source">ANZ Research</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">QLD Premier · Crisafulli</div>
+      <div class="card-tag">政策 → 市场传导</div>
+    </div>
+    <div class="row">
+      <div class="label">Adult Crime Adult Time 扩展
+        <span class="sub">7月5日宣布延伸至 youth bail</span>
+      </div>
+      <div class="value">Jul 5</div>
+    </div>
+    <div class="row">
+      <div class="label">$500M 住房基建基金
+        <span class="sub">申请已开放 · 供给侧提速信号</span>
+      </div>
+      <div class="value up">进行中</div>
+    </div>
+    <div class="row">
+      <div class="label">首购新房免印花税
+        <span class="sub">上任首周执行 · 持续有效</span>
+      </div>
+      <div class="value up">FHB 利好</div>
+    </div>
+    <div class="row">
+      <div class="label">奥运部长 Mander 辞职
+        <span class="sub">5月21日 · AFP 调查选民登记问题 · Powell 接任</span>
+      </div>
+      <div class="value down">政治风险</div>
+    </div>
+    <div class="row">
+      <div class="label">Socceroos 世界杯回国系列赛
+        <span class="sub">对阵巴西两场 · 昆州锁定主办</span>
+      </div>
+      <div class="value">已官宣</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">官方口径直读: <a href="https://statements.qld.gov.au/" target="_blank" class="ext">QLD Ministerial Statements</a> · <a href="https://www.thepremier.qld.gov.au/news-and-updates.aspx" target="_blank" class="ext">Premier News</a></div>
+        <div class="meta">2032 奥运基建 pipeline 是十年主线</div>
+      </div>
+      <div class="headline">
+        <div class="txt">楼市数据源: <a href="https://www.openagent.com.au/suburb-profiles/brisbane-property-market" target="_blank" class="ext">OpenAgent 月度更新</a> · <a href="https://propertyupdate.com.au/whats-ahead-brisbanes-property-market/" target="_blank" class="ext">Property Update</a></div>
+        <div class="meta">Cotality 指数每月 1 号发布</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARSENAL -->
+<div class="section-head">
+  <h2>Arsenal 🔴⚪</h2>
+  <div class="meta">Premier League champions 25/26 · 22 年首冠</div>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">转会窗动态</div>
+      <div class="card-tag">Summer 2026</div>
+    </div>
+    <div class="row">
+      <div class="label">Piero Hincapié
+        <span class="sub">买断条款激活 · 5 年合同 · 夺冠赛季主力</span>
+      </div>
+      <div class="value up">£34.5M 正式</div>
+    </div>
+    <div class="row">
+      <div class="label">Christos Tzolis (Club Brugge)
+        <span class="sub">左翼主要目标 · 108 场 43 球 45 助攻</span>
+      </div>
+      <div class="value watch">~£35M 谈判中</div>
+    </div>
+    <div class="row">
+      <div class="label">Morgan Rogers (Aston Villa)
+        <span class="sub">球员倾向北伦敦红色一方</span>
+      </div>
+      <div class="value watch">要价 ~£100M</div>
+    </div>
+    <div class="row">
+      <div class="label">Jeremy Monga (Leicester, 16岁)
+        <span class="sub">Ornstein: 直接谈判中 · 7月10日 17 岁生日后可签</span>
+      </div>
+      <div class="value">青训补强</div>
+    </div>
+    <div class="row">
+      <div class="label">出售候选
+        <span class="sub">Martinelli / Jesus 合同最后一年</span>
+      </div>
+      <div class="value down">观察</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">赛季节点 + 信源</div>
+      <div class="card-tag">25/26 → 26/27</div>
+    </div>
+    <div class="row">
+      <div class="label">英超冠军 🏆
+        <span class="sub">22 年等待结束 · Arteta 兑现</span>
+      </div>
+      <div class="value up">已达成</div>
+    </div>
+    <div class="row">
+      <div class="label">欧冠决赛
+        <span class="sub">点球憾负 PSG · 下季目标再进一步</span>
+      </div>
+      <div class="value down">亚军</div>
+    </div>
+    <div class="row">
+      <div class="label">转会窗关闭</div>
+      <div class="value">Sep 2026</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="headline">
+        <div class="txt">官方进出名单: <a href="https://www.arsenal.com/news/arsenal-transfers-all-ins-and-outs-202627" target="_blank" class="ext">Arsenal.com transfers</a></div>
+        <div class="meta">最权威 · 只有 done deals</div>
+      </div>
+      <div class="headline">
+        <div class="txt">24/7 聚合流: <a href="https://www.newsnow.com/us/Sports/Soccer/Premier+League/Arsenal/Transfer+News" target="_blank" class="ext">NewsNow Arsenal</a></div>
+        <div class="meta">全网转会新闻实时聚合</div>
+      </div>
+      <div class="headline">
+        <div class="txt">一手信源: <a href="https://x.com/David_Ornstein" target="_blank" class="ext">Ornstein</a> · <a href="https://x.com/FabrizioRomano" target="_blank" class="ext">Romano</a></div>
+        <div class="meta">Here we go 出现前都是噪音</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE FEEDS -->
+<div class="section-head">
+  <h2>Live headline feeds</h2>
+  <div class="live-badge">Auto</div>
+</div>
+
+<div class="grid cols-3">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">CNBC Top News</div>
+      <div class="card-tag">RSS</div>
+    </div>
+    <div id="feed-cnbc"><div class="feed-loading">Loading…</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Reuters Business</div>
+      <div class="card-tag">RSS</div>
+    </div>
+    <div id="feed-reuters"><div class="feed-loading">Loading…</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Small Caps AU</div>
+      <div class="card-tag">RSS</div>
+    </div>
+    <div id="feed-smallcaps"><div class="feed-loading">Loading…</div></div>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top: 14px;">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Yahoo Finance Top Stories</div>
+      <div class="card-tag">RSS</div>
+    </div>
+    <div id="feed-yahoo"><div class="feed-loading">Loading…</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Nvidia Newsroom</div>
+      <div class="card-tag">RSS · Jensen tracker</div>
+    </div>
+    <div id="feed-nvidia"><div class="feed-loading">Loading…</div></div>
+  </div>
+</div>
+
+<!-- ECON CALENDAR -->
+<div class="section-head">
+  <h2>Economic calendar</h2>
+  <div class="live-badge">Live</div>
+</div>
+<div class="tv-wrap tv-cal">
+  <div class="tradingview-widget-container" style="height:100%;">
+    <div class="tradingview-widget-container__widget" style="height:100%;"></div>
+    <script type="text/javascript">
+    document.write('<scr'+'ipt type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>' + JSON.stringify({
+      "colorTheme": window.__tvTheme,
+      "isTransparent": true,
+      "width": "100%",
+      "height": "100%",
+      "locale": "en",
+      "importanceFilter": "0,1",
+      "countryFilter": "us,au,cn,eu,jp,gb"
+    }) + '<\/scr'+'ipt>');
+    </script>
+  </div>
+</div>
+
+<!-- SOURCES -->
+<section class="sources">
+  <h3>Refresh sources</h3>
+  <div class="source-grid">
+    <div class="source-item"><span><span class="cat">US markets</span><br><a href="https://finance.yahoo.com/markets/" target="_blank">Yahoo Finance</a></span></div>
+    <div class="source-item"><span><span class="cat">Live recap</span><br><a href="https://www.cnbc.com/markets/" target="_blank">CNBC Markets</a></span></div>
+    <div class="source-item"><span><span class="cat">Iron ore CNY</span><br><a href="https://tradingeconomics.com/commodity/iron-ore-cny" target="_blank">TE Iron Ore</a></span></div>
+    <div class="source-item"><span><span class="cat">RBA</span><br><a href="https://www.rba.gov.au/" target="_blank">RBA official</a></span></div>
+    <div class="source-item"><span><span class="cat">GME filings</span><br><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001326380&type=&dateb=&owner=include&count=40" target="_blank">SEC EDGAR</a></span></div>
+    <div class="source-item"><span><span class="cat">ASX announcements</span><br><a href="https://www.asx.com.au/asx/statistics/announcements.do" target="_blank">ASX official</a></span></div>
+    <div class="source-item"><span><span class="cat">Small-cap curated</span><br><a href="https://smallcaps.com.au/announcements" target="_blank">smallcaps.com.au</a></span></div>
+    <div class="source-item"><span><span class="cat">Director trades</span><br><a href="https://smallcaps.com.au/director-transactions" target="_blank">Insider signal</a></span></div>
+    <div class="source-item"><span><span class="cat">Nvidia IR</span><br><a href="https://investor.nvidia.com/" target="_blank">NVDA investor</a></span></div>
+    <div class="source-item"><span><span class="cat">FDA</span><br><a href="https://www.fda.gov/drugs/development-approval-process-drugs/drug-approvals-and-databases" target="_blank">Drug approvals</a></span></div>
+    <div class="source-item"><span><span class="cat">TGA</span><br><a href="https://www.tga.gov.au/safety/safety-alerts" target="_blank">Safety alerts</a></span></div>
+    <div class="source-item"><span><span class="cat">Musk</span><br><a href="https://x.com/elonmusk" target="_blank">@elonmusk</a></span></div>
+    <div class="source-item"><span><span class="cat">Trump</span><br><a href="https://truthsocial.com/@realDonaldTrump" target="_blank">Truth Social</a></span></div>
+    <div class="source-item"><span><span class="cat">Reverse indicator</span><br><a href="https://www.reddit.com/r/ASX_Bets/" target="_blank">r/ASX_Bets</a></span></div>
+    <div class="source-item"><span><span class="cat">Selfwealth</span><br><a href="https://secure.selfwealth.com.au/Login" target="_blank">Login</a></span></div>
+  </div>
+</section>
+
+<!-- LAUNCH GUIDE -->
+<section class="deploy">
+  <h3>Launch on Chrome — two options</h3>
+
+  <h4>Option 1 · Local file + bookmark (2 minutes, works today)</h4>
+  <ol>
+    <li>Save this file somewhere permanent, e.g. <code>Documents/signal-deck/index.html</code>. Don't leave it in Downloads where you might delete it.</li>
+    <li>Double-click to open in Chrome, or drag the file onto a Chrome window.</li>
+    <li>Press <code>Ctrl+D</code> (Windows) / <code>⌘+D</code> (Mac) to bookmark. Name it <strong>Signal Deck</strong>.</li>
+    <li>To pin it to your bookmarks bar: <code>Ctrl+Shift+B</code> shows the bar, then drag the bookmark onto it.</li>
+    <li>Optional — open on Chrome startup: Chrome Settings → On startup → <strong>Open a specific page</strong> → paste the file path from your address bar (starts with <code>file:///</code>).</li>
+  </ol>
+
+  <h4>Option 2 · GitHub Pages (10 minutes, gives you a real URL for phone + desktop)</h4>
+  <ol>
+    <li>Create a free account at <a href="https://github.com/signup" target="_blank" class="ext">github.com/signup</a>.</li>
+    <li>Click <strong>New repository</strong> → name it <code>signal-deck</code> → set <strong>Public</strong> → tick <strong>Add a README</strong> → <strong>Create repository</strong>.</li>
+    <li><strong>Add file → Upload files</strong> → drag this file in, renamed to <code>index.html</code> → <strong>Commit changes</strong>.</li>
+    <li><strong>Settings → Pages</strong> → Source: <strong>Deploy from a branch</strong> → Branch: <code>main</code>, folder <code>/ (root)</code> → <strong>Save</strong>.</li>
+    <li>Wait ~60 seconds. Your URL: <code>https://[username].github.io/signal-deck/</code></li>
+    <li>Open that URL in Chrome → <code>Ctrl+D</code> to bookmark on desktop. On your phone: open in Chrome → menu → <strong>Add to Home screen</strong> — it behaves like an app.</li>
+  </ol>
+
+  <h4>Option 3 · 用 Claude Code 维护这个网站(进阶,一劳永逸)</h4>
+  <ol>
+    <li>装 <a href="https://claude.com/product/claude-code" target="_blank" class="ext">Claude Code</a>(桌面 app 或命令行),用你的 Claude 账户登录。</li>
+    <li>第一次:让它 <code>git clone https://github.com/ars3naltoby/signal-deck</code> 把仓库拉到本地。</li>
+    <li>以后每次升级只需说人话:"把 GME 卡片价格更新一下,再加一张 XX 卡" — 它直接改 <code>index.html</code> 并 <code>git push</code>,网站 1 分钟后自动更新。</li>
+    <li>从此不再需要手动下载/删除/上传文件 — 那个流程只是没有工具时的手动挡。</li>
+  </ol>
+
+  <p style="font-size: 13px; color: var(--ink-2); margin-top: 16px;">
+    <strong>Updating later:</strong> when I give you a new version, go to your repo → click <code>index.html</code> → pencil icon → paste new content → Commit. Live in ~1 min. Bookmark never changes.
+  </p>
+</section>
+
+<div class="footer-note">
+  v8 · Theme toggle top-right · Calendar buttons open Google Calendar pre-filled · Radar verdicts are analysis, not advice · Trade like you locum
+</div>
+
+<script>
+// ============= THEME =============
+function getTheme(){
+  return window.__tvTheme || 'light';
+}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+}
+function toggleTheme(){
+  const next = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+  try { localStorage.setItem('sd-theme', next); } catch(e){}
+  applyTheme(next);
+  // TradingView widgets need reload to re-theme
+  location.reload();
+}
+applyTheme(getTheme());
+
+// ============= CLOCKS =============
+function tick(){
+  const now = new Date();
+  function timeIn(tz){ return new Intl.DateTimeFormat('en-AU', {timeZone: tz, hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(now); }
+  function dayIn(tz){ return new Intl.DateTimeFormat('en-AU', {timeZone: tz, weekday: 'short'}).format(now); }
+  function hourIn(tz){ return parseInt(new Intl.DateTimeFormat('en-AU', {timeZone: tz, hour12: false, hour: '2-digit'}).format(now), 10); }
+  function minuteIn(tz){ return parseInt(new Intl.DateTimeFormat('en-AU', {timeZone: tz, minute: '2-digit'}).format(now), 10); }
+
+  document.getElementById('time-syd').textContent = timeIn('Australia/Sydney');
+  document.getElementById('time-cn').textContent = timeIn('Asia/Shanghai');
+  document.getElementById('time-ny').textContent = timeIn('America/New_York');
+
+  document.getElementById('live-date').textContent = new Intl.DateTimeFormat('en-AU', {timeZone: 'Australia/Sydney', day: '2-digit', month: 'short', year: 'numeric', weekday: 'short'}).format(now) + ' AEST';
+
+  const sydDay = dayIn('Australia/Sydney');
+  const sydMinutes = hourIn('Australia/Sydney') * 60 + minuteIn('Australia/Sydney');
+  const asxWeekday = !['Sat','Sun'].includes(sydDay);
+  const asxOpen = asxWeekday && sydMinutes >= 600 && sydMinutes < 960;
+  document.getElementById('dot-syd').className = 'dot ' + (asxOpen ? 'open' : 'closed');
+  document.getElementById('stat-syd').textContent = 'ASX · ' + (asxOpen ? 'Open' : (asxWeekday ? (sydMinutes < 600 ? 'Pre-open' : 'Closed') : 'Weekend'));
+
+  const cnDay = dayIn('Asia/Shanghai');
+  const cnMinutes = hourIn('Asia/Shanghai') * 60 + minuteIn('Asia/Shanghai');
+  const cnWeekday = !['Sat','Sun'].includes(cnDay);
+  const sseOpen = cnWeekday && ((cnMinutes >= 570 && cnMinutes < 690) || (cnMinutes >= 780 && cnMinutes < 900));
+  document.getElementById('dot-cn').className = 'dot ' + (sseOpen ? 'open' : 'closed');
+  document.getElementById('stat-cn').textContent = 'SSE · ' + (sseOpen ? 'Open' : (cnWeekday ? 'Closed' : 'Weekend'));
+
+  const nyDay = dayIn('America/New_York');
+  const nyMinutes = hourIn('America/New_York') * 60 + minuteIn('America/New_York');
+  const nyWeekday = !['Sat','Sun'].includes(nyDay);
+  const nyseOpen = nyWeekday && nyMinutes >= 570 && nyMinutes < 960;
+  document.getElementById('dot-ny').className = 'dot ' + (nyseOpen ? 'open' : 'closed');
+  document.getElementById('stat-ny').textContent = 'NYSE · ' + (nyseOpen ? 'Open' : (nyWeekday ? (nyMinutes < 570 ? 'Pre-market' : 'After-hours') : 'Weekend'));
+}
+tick();
+setInterval(tick, 1000);
+
+// ============= RSS FEEDS =============
+async function loadFeed(url, targetId, count = 5){
+  const target = document.getElementById(targetId);
+  try {
+    const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=${count}`;
+    const res = await fetch(api);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.status !== 'ok' || !data.items || data.items.length === 0){
+      throw new Error(data.message || 'No items');
+    }
+    target.innerHTML = data.items.slice(0, count).map(item => {
+      const d = new Date(item.pubDate);
+      const timeStr = isNaN(d) ? '' : new Intl.DateTimeFormat('en-AU', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false}).format(d);
+      return `<div class="feed-item">
+        <a href="${item.link}" target="_blank" class="feed-title">${item.title}</a>
+        <div class="feed-meta">${timeStr}</div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    target.innerHTML = `<div class="feed-error">Feed unavailable — use footer source links.</div>`;
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    loadFeed('https://www.cnbc.com/id/100003114/device/rss/rss.html', 'feed-cnbc', 6);
+    loadFeed('https://feeds.reuters.com/reuters/businessNews', 'feed-reuters', 6);
+    loadFeed('https://smallcaps.com.au/feed/', 'feed-smallcaps', 6);
+    loadFeed('https://finance.yahoo.com/news/rssindex', 'feed-yahoo', 6);
+    loadFeed('https://blogs.nvidia.com/feed/', 'feed-nvidia', 6);
+  }, 500);
+});
+</script>
+
+</body>
+</html>
