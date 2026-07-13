@@ -161,6 +161,7 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .prod-thumb{height:130px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:52px; position:relative;}
 .prod-flag{position:absolute; top:10px; left:10px; background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:12px; text-transform:uppercase;}
 .prod-flag.rx{background:var(--gold);}
+.prod-flag.hot{background:var(--accent-2); left:auto; right:10px;}
 .prod-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1;}
 .prod-body .p-cat{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:600;}
 .prod-body .p-name{font-size:14.5px; font-weight:700; line-height:1.3; min-height:38px;}
@@ -390,6 +391,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
     </div>
     <div class="tabs" id="tabs">
       <button class="tab-btn active" data-tab="all">All</button>
+      <button class="tab-btn" data-tab="trending">🔥 Trending exports</button>
       <button class="tab-btn" data-tab="medicine">Medicines</button>
       <button class="tab-btn" data-tab="vitamins">Vitamins</button>
       <button class="tab-btn" data-tab="beauty">Beauty</button>
@@ -502,7 +504,7 @@ const PRODUCTS = [
   {id:3, name:"Panadol Rapid 500mg (96s)", cat:"medicine", price:9.99, was:12.99, icon:"💊"},
   {id:4, name:"Nurofen Zavance (48s)", cat:"medicine", price:13.49, icon:"💊"},
   {id:5, name:"Telfast 180mg Antihistamine", cat:"medicine", price:19.95, icon:"🤧"},
-  {id:6, name:"Blackmores Fish Oil 1000mg", cat:"vitamins", price:21.99, was:26.99, icon:"🐟"},
+  {id:6, name:"Blackmores Fish Oil 1000mg", cat:"vitamins", price:21.99, was:26.99, icon:"🐟", hot:true},
   {id:7, name:"Swisse Ultiboost Multivitamin", cat:"vitamins", price:24.50, icon:"🌿"},
   {id:8, name:"Magnesium + Zinc Tablets", cat:"vitamins", price:15.99, icon:"🧪"},
   {id:9, name:"Vitamin D3 1000IU (200s)", cat:"vitamins", price:12.99, icon:"☀️"},
@@ -511,6 +513,11 @@ const PRODUCTS = [
   {id:12, name:"Cetaphil Sensitive Moisturiser", cat:"beauty", price:18.75, was:21.95, icon:"🧴"},
   {id:13, name:"La Roche-Posay SPF50+", cat:"beauty", price:26.99, icon:"🧴"},
   {id:14, name:"Maybelline Superstay Foundation", cat:"beauty", price:19.99, icon:"💄"},
+  {id:23, name:"Blackmores Bio C 1000mg (150s)", cat:"vitamins", price:19.99, icon:"🍊", hot:true},
+  {id:24, name:"Blackmores CoQ10 150mg (30 caps)", cat:"vitamins", price:24.99, icon:"❤️", hot:true},
+  {id:25, name:"Bioceuticals Armaforce (60 tabs)", cat:"vitamins", price:34.95, icon:"🛡️", hot:true},
+  {id:26, name:"Bioceuticals UltraMuscleze Night", cat:"vitamins", price:42.50, icon:"🌙", hot:true},
+  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", cat:"beauty", price:32.95, icon:"🧴", pharm:true, hot:true},
   {id:15, name:"Nurofen for Children (200mL)", cat:"baby", price:11.49, icon:"🍼"},
   {id:16, name:"Huggies Newborn Nappies (56s)", cat:"baby", price:17.99, icon:"🍼"},
   {id:17, name:"Bepanthen Nappy Cream", cat:"baby", price:9.49, icon:"🧴"},
@@ -525,19 +532,28 @@ let activeTab = "all";
 let searchTerm = "";
 let cart = [];
 
+function flagFor(p){
+  let left = '';
+  if(p.rx) left = '<span class="prod-flag rx">Rx</span>';
+  else if(p.pharm) left = '<span class="prod-flag rx">Pharmacist only</span>';
+  else if(p.was) left = '<span class="prod-flag">Sale</span>';
+  const right = p.hot ? '<span class="prod-flag hot">🔥 Trending</span>' : '';
+  return left + right;
+}
+
 /* ---------------- Render product grid ---------------- */
 function renderGrid(){
   const grid = document.getElementById('prodGrid');
   const term = searchTerm.trim().toLowerCase();
   const items = PRODUCTS.filter(p=>{
-    const matchTab = activeTab==="all" || p.cat===activeTab;
+    const matchTab = activeTab==="all" || (activeTab==="trending" ? p.hot : p.cat===activeTab);
     const matchTerm = !term || p.name.toLowerCase().includes(term) || p.cat.includes(term);
     return matchTab && matchTerm;
   });
   grid.innerHTML = items.length ? items.map(p=>`
     <div class="prod-card fade-up visible">
       <div class="prod-thumb">${p.icon}
-        ${p.rx ? '<span class="prod-flag rx">Rx</span>' : (p.was ? '<span class="prod-flag">Sale</span>' : '')}
+        ${flagFor(p)}
       </div>
       <div class="prod-body">
         <div class="p-cat">${p.cat}</div>
