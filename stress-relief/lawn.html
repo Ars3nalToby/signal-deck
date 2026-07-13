@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mow the Lawn — Unwind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; align-items:center;}
+  .stage{height: 62vh; min-height: 420px; max-height: 560px; cursor:none;}
+  .stage .layer{position:absolute; top:0; left:0;}
+  .controls{display:flex; gap:12px; justify-content:center; margin-top:18px;}
+  .btn{
+    background: var(--bg-2); border:1px solid var(--line); color: var(--ink);
+    font-family: var(--sans); font-weight:700; font-size:13px;
+    padding: 10px 20px; border-radius: 30px; cursor:pointer;
+    transition: all .18s ease;
+  }
+  .btn:hover{border-color: #7fe0a0; color:#7fe0a0; transform: translateY(-1px);}
+  .btn.primary{background: linear-gradient(135deg,#7fe0a0,#6ee7d8); color:#0a2016; border:none;}
+  .btn.primary:hover{transform: translateY(-1px) scale(1.03); color:#0a2016;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="index.html">&larr; Back to Unwind</a>
+  <div class="title">Mow the Lawn</div>
+  <div class="progress-wrap">
+    <span id="pct-label">0% mowed</span>
+    <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+  </div>
+</div>
+
+<div class="counter-row">
+  <div class="stat"><div class="num" id="lawns-count">0</div><div class="lbl">Lawns Mowed</div></div>
+</div>
+
+<div class="stage" id="stage">
+  <canvas class="layer" id="mowed-c"></canvas>
+  <canvas class="layer" id="grass-c"></canvas>
+  <canvas class="layer" id="fx-c"></canvas>
+  <div class="celebrate" id="celebrate">
+    <h2>Freshly cut.</h2>
+    <p>Crisp lines, tidy yard. Ready for another patch?</p>
+    <button id="next-lawn-btn">New Lawn</button>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn primary" id="mow-all-btn">Mow It All</button>
+</div>
+<p class="hint">Click and drag the mower through the grass to cut tidy stripes.</p>
+
+<script>
+const stageEl = document.getElementById('stage');
+const mowedCanvas = document.getElementById('mowed-c');
+const grassCanvas = document.getElementById('grass-c');
+const fxCanvas = document.getElementById('fx-c');
+const mowedCtx = mowedCanvas.getContext('2d');
+const grassCtx = grassCanvas.getContext('2d');
+const fxCtx = fxCanvas.getContext('2d');
+let W, H, DPR;
+let lawnsCount = 0;
+let cleanGrid = [], gridCols, gridRows, cellW=16, cellH=16, totalCells=0, mowedCount=0;
+let particles = [];
+let drawing = false, lastPt = null, mouseX=-100, mouseY=-100, moveAngle=0;
+
+function setSize(canvas){
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  canvas.getContext('2d').setTransform(DPR,0,0,DPR,0,0);
+}
+
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = stageEl.clientWidth; H = stageEl.clientHeight;
+  [mowedCanvas, grassCanvas, fxCanvas].forEach(setSize);
+  drawMowedStripes();
+  drawGrass();
+  buildGrid();
+}
+
+function drawMowedStripes(){
+  mowedCtx.clearRect(0,0,W,H);
+  const stripeH = 34;
+  let i = 0;
+  for(let y=0; y<H; y+=stripeH){
+    mowedCtx.fillStyle = i%2===0 ? '#3f8a4a' : '#357a40';
+    mowedCtx.fillRect(0,y,W,stripeH);
+    i++;
+  }
+  // subtle mower-line texture
+  mowedCtx.strokeStyle = 'rgba(255,255,255,0.05)';
+  for(let y=0; y<H; y+=stripeH){
+    mowedCtx.beginPath(); mowedCtx.moveTo(0,y); mowedCtx.lineTo(W,y); mowedCtx.stroke();
+  }
+}
+
+function drawGrass(){
+  grassCtx.clearRect(0,0,W,H);
+  const g = grassCtx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#4fae5c'); g.addColorStop(1,'#2f7a3c');
+  grassCtx.fillStyle = g;
+  grassCtx.fillRect(0,0,W,H);
+  for(let i=0;i<1600;i++){
+    const x = Math.random()*W, y = Math.random()*H;
+    const len = 5+Math.random()*9;
+    const lean = (Math.random()-0.5)*4;
+    grassCtx.strokeStyle = 'rgba('+(40+Math.random()*40)+','+(110+Math.random()*60)+','+(50+Math.random()*30)+',0.55)';
+    grassCtx.lineWidth = 1.2;
+    grassCtx.beginPath();
+    grassCtx.moveTo(x,y);
+    grassCtx.lineTo(x+lean, y-len);
+    grassCtx.stroke();
+  }
+}
+
+function buildGrid(){
+  gridCols = Math.ceil(W/cellW); gridRows = Math.ceil(H/cellH);
+  cleanGrid = []; totalCells = gridCols*gridRows; mowedCount = 0;
+  for(let gy=0; gy<gridRows; gy++){
+    cleanGrid[gy] = new Array(gridCols).fill(0);
+  }
+}
+
+function updatePct(){
+  const pct = totalCells ? Math.round((mowedCount/totalCells)*100) : 0;
+  document.getElementById('pct-label').textContent = pct+'% mowed';
+  document.getElementById('pct-fill').style.width = pct+'%';
+  if(pct >= 96){
+    document.getElementById('celebrate').classList.add('show');
+  }
+}
+
+function mowSwath(x0,y0,x1,y1,width){
+  grassCtx.save();
+  grassCtx.globalCompositeOperation = 'destination-out';
+  grassCtx.lineCap = 'round';
+  grassCtx.lineJoin = 'round';
+  grassCtx.lineWidth = width;
+  grassCtx.beginPath();
+  grassCtx.moveTo(x0,y0);
+  grassCtx.lineTo(x1,y1);
+  grassCtx.stroke();
+  grassCtx.restore();
+
+  const minX = Math.max(0, Math.floor((Math.min(x0,x1)-width)/cellW));
+  const maxX = Math.min(gridCols-1, Math.ceil((Math.max(x0,x1)+width)/cellW));
+  const minY = Math.max(0, Math.floor((Math.min(y0,y1)-width)/cellH));
+  const maxY = Math.min(gridRows-1, Math.ceil((Math.max(y0,y1)+width)/cellH));
+  const r = width/2;
+  for(let gy=minY; gy<=maxY; gy++){
+    for(let gx=minX; gx<=maxX; gx++){
+      if(cleanGrid[gy][gx]===1) continue;
+      const ccx = gx*cellW+cellW/2, ccy = gy*cellH+cellH/2;
+      const d = distToSeg(ccx,ccy,x0,y0,x1,y1);
+      if(d <= r){
+        cleanGrid[gy][gx] = 1;
+        mowedCount++;
+      }
+    }
+  }
+  updatePct();
+}
+
+function distToSeg(px,py,x0,y0,x1,y1){
+  const dx=x1-x0, dy=y1-y0;
+  const len2 = dx*dx+dy*dy;
+  if(len2===0) return Math.hypot(px-x0,py-y0);
+  let t = ((px-x0)*dx+(py-y0)*dy)/len2;
+  t = Math.max(0,Math.min(1,t));
+  const cx = x0+t*dx, cy = y0+t*dy;
+  return Math.hypot(px-cx, py-cy);
+}
+
+function spawnClippings(x,y,angle){
+  for(let i=0;i<3;i++){
+    const a = angle + Math.PI + (Math.random()-0.5)*1.2;
+    const sp = 1+Math.random()*2.5;
+    particles.push({
+      x, y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - 1,
+      r: 1.5+Math.random()*2, life:1, decay:0.02+Math.random()*0.02
+    });
+  }
+}
+
+function pos(e){
+  const rect = fxCanvas.getBoundingClientRect();
+  return {x: e.clientX-rect.left, y: e.clientY-rect.top};
+}
+
+fxCanvas.addEventListener('pointerdown', (e)=>{
+  drawing = true;
+  const p = pos(e);
+  lastPt = p; mouseX=p.x; mouseY=p.y;
+  mowSwath(p.x,p.y,p.x+0.01,p.y+0.01,46);
+  fxCanvas.setPointerCapture(e.pointerId);
+});
+fxCanvas.addEventListener('pointermove', (e)=>{
+  const p = pos(e);
+  mouseX = p.x; mouseY = p.y;
+  if(!drawing) return;
+  if(lastPt){
+    moveAngle = Math.atan2(p.y-lastPt.y, p.x-lastPt.x);
+    mowSwath(lastPt.x, lastPt.y, p.x, p.y, 46);
+    spawnClippings(p.x,p.y,moveAngle);
+  }
+  lastPt = p;
+});
+window.addEventListener('pointerup', ()=>{ drawing=false; lastPt=null; });
+fxCanvas.addEventListener('pointerleave', ()=>{ mouseX=-100; mouseY=-100; });
+
+document.getElementById('mow-all-btn').onclick = ()=>{
+  for(let gy=0; gy<gridRows; gy++) for(let gx=0; gx<gridCols; gx++) cleanGrid[gy][gx]=1;
+  mowedCount = totalCells;
+  grassCtx.clearRect(0,0,W,H);
+  updatePct();
+};
+
+document.getElementById('next-lawn-btn').onclick = ()=>{
+  lawnsCount++;
+  document.getElementById('lawns-count').textContent = lawnsCount;
+  document.getElementById('celebrate').classList.remove('show');
+  drawGrass();
+  buildGrid();
+  updatePct();
+};
+
+function drawMowerCursor(){
+  if(mouseX < -50) return;
+  fxCtx.save();
+  fxCtx.translate(mouseX, mouseY);
+  fxCtx.rotate(moveAngle);
+  fxCtx.fillStyle = '#e8b23c';
+  fxCtx.strokeStyle = 'rgba(0,0,0,0.35)';
+  fxCtx.lineWidth = 1.5;
+  fxCtx.beginPath();
+  fxCtx.roundRect ? fxCtx.roundRect(-16,-11,32,22,6) : fxCtx.rect(-16,-11,32,22);
+  fxCtx.fill(); fxCtx.stroke();
+  fxCtx.fillStyle = '#333';
+  fxCtx.beginPath(); fxCtx.arc(-10,11,5,0,Math.PI*2); fxCtx.fill();
+  fxCtx.beginPath(); fxCtx.arc(10,11,5,0,Math.PI*2); fxCtx.fill();
+  fxCtx.fillStyle = '#c9c9c9';
+  fxCtx.fillRect(-2,-11,4,-14);
+  fxCtx.restore();
+}
+
+function fxLoop(){
+  fxCtx.clearRect(0,0,W,H);
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.vy += 0.15;
+    p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+    if(p.life<=0){ particles.splice(i,1); continue; }
+    fxCtx.beginPath();
+    fxCtx.globalAlpha = p.life;
+    fxCtx.fillStyle = '#dff2b0';
+    fxCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    fxCtx.fill();
+  }
+  fxCtx.globalAlpha = 1;
+  drawMowerCursor();
+  requestAnimationFrame(fxLoop);
+}
+
+resize();
+window.addEventListener('resize', resize);
+updatePct();
+fxLoop();
+</script>
+</body>
+</html>

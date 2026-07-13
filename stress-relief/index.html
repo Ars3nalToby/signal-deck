@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unwind — Stress Relief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; align-items:center; padding: 60px 20px 40px;}
+  #bg-canvas{position:fixed; inset:0; z-index:0; opacity:0.55;}
+  header{position:relative; z-index:2; text-align:center; margin-bottom: 46px;}
+  header .eyebrow{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px;}
+  header h1{font-family: var(--serif); font-style: italic; font-weight:500; font-size: clamp(38px, 7vw, 64px); line-height:1.05; letter-spacing:-0.01em;}
+  header h1 span{background: linear-gradient(120deg, var(--accent), var(--accent-3) 60%, var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  header p{color:var(--ink-2); max-width:520px; margin: 16px auto 0; font-size:15px; line-height:1.6;}
+
+  .cards{
+    position:relative; z-index:2;
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:22px;
+    width: min(1080px, 94vw);
+  }
+  @media (max-width: 860px){.cards{grid-template-columns: 1fr;}}
+
+  .card{
+    position:relative; border-radius:20px; padding: 28px 24px 26px;
+    background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    border:1px solid var(--line); overflow:hidden;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s ease, box-shadow .25s ease;
+    cursor:pointer;
+  }
+  .card:hover{transform: translateY(-6px); border-color: var(--card-glow, var(--accent)); box-shadow: 0 20px 50px -20px var(--card-glow, rgba(110,231,216,0.35));}
+  .card .glow{
+    position:absolute; width:180px; height:180px; border-radius:50%;
+    background: var(--card-glow, var(--accent)); filter: blur(60px); opacity:.28;
+    top:-60px; right:-60px; pointer-events:none;
+  }
+  .card .icon{font-size:40px; margin-bottom:16px; display:block;}
+  .card h3{font-family: var(--serif); font-style:italic; font-weight:500; font-size:23px; margin-bottom:8px;}
+  .card p{color:var(--ink-2); font-size:13.5px; line-height:1.55; margin-bottom:18px;}
+  .card .go{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.08em; color: var(--card-glow, var(--accent));
+  }
+  .card .go .arrow{transition: transform .2s ease;}
+  .card:hover .go .arrow{transform: translateX(4px);}
+
+  .card.plates{--card-glow: #f2a2b0;}
+  .card.car{--card-glow: #7fc4f2;}
+  .card.lawn{--card-glow: #7fe0a0;}
+
+  footer{position:relative; z-index:2; margin-top:50px; color:var(--ink-3); font-size:12px; text-align:center;}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<header>
+  <div class="eyebrow">a quiet corner of the internet</div>
+  <h1>Break things. <span>Feel better.</span></h1>
+  <p>Three tiny, satisfying rituals for when the day gets loud. No score to lose, nothing to win — just smash, scrub, and mow until your shoulders drop.</p>
+</header>
+
+<div class="cards">
+  <a class="card plates" href="plates.html">
+    <div class="glow"></div>
+    <span class="icon">🍽️</span>
+    <h3>Smash the Plates</h3>
+    <p>Fling ceramic and glass at a brick wall and watch it explode into a hundred pieces. Deeply, pettily satisfying.</p>
+    <span class="go">Start smashing <span class="arrow">→</span></span>
+  </a>
+  <a class="card car" href="car.html">
+    <div class="glow"></div>
+    <span class="icon">🚗</span>
+    <h3>Wash the Car</h3>
+    <p>Drag the sponge through the grime and reveal the shine underneath. Slow, rhythmic, and weirdly meditative.</p>
+    <span class="go">Grab the sponge <span class="arrow">→</span></span>
+  </a>
+  <a class="card lawn" href="lawn.html">
+    <div class="glow"></div>
+    <span class="icon">🌱</span>
+    <h3>Mow the Lawn</h3>
+    <p>Push the mower through overgrown grass and leave crisp, tidy stripes behind you. So clean it hurts.</p>
+    <span class="go">Start mowing <span class="arrow">→</span></span>
+  </a>
+</div>
+
+<footer>Unwind &mdash; made for the two-minute breather between tasks.</footer>
+
+<script>
+// gentle ambient floating particles behind the landing page
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const colors = ['#6ee7d8','#b6a4f2','#f2b8a2','#7fc4f2'];
+for(let i=0;i<46;i++){
+  particles.push({
+    x: Math.random()*W, y: Math.random()*H,
+    r: Math.random()*2.4 + 0.6,
+    vy: -(Math.random()*0.25 + 0.05),
+    vx: (Math.random()-0.5)*0.15,
+    a: Math.random()*0.5+0.15,
+    c: colors[Math.floor(Math.random()*colors.length)]
+  });
+}
+function tick(){
+  ctx.clearRect(0,0,W,H);
+  for(const p of particles){
+    p.x += p.vx; p.y += p.vy;
+    if(p.y < -10){ p.y = H+10; p.x = Math.random()*W; }
+    if(p.x < -10) p.x = W+10;
+    if(p.x > W+10) p.x = -10;
+    ctx.beginPath();
+    ctx.globalAlpha = p.a;
+    ctx.fillStyle = p.c;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>

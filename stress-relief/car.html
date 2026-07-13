@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wash the Car — Unwind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{display:flex; flex-direction:column; align-items:center;}
+  .stage{height: 62vh; min-height: 420px; max-height: 560px; cursor: pointer;}
+  .stage .layer{position:absolute; top:0; left:0;}
+  .controls{display:flex; gap:12px; justify-content:center; margin-top:18px;}
+  .btn{
+    background: var(--bg-2); border:1px solid var(--line); color: var(--ink);
+    font-family: var(--sans); font-weight:700; font-size:13px;
+    padding: 10px 20px; border-radius: 30px; cursor:pointer;
+    transition: all .18s ease;
+  }
+  .btn:hover{border-color: #7fc4f2; color:#7fc4f2; transform: translateY(-1px);}
+  .btn.primary{background: linear-gradient(135deg,#7fc4f2,#b6a4f2); color:#0d1b2a; border:none;}
+  .btn.primary:hover{transform: translateY(-1px) scale(1.03); color:#0d1b2a;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="index.html">&larr; Back to Unwind</a>
+  <div class="title">Wash the Car</div>
+  <div class="progress-wrap">
+    <span id="pct-label">0% clean</span>
+    <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+  </div>
+</div>
+
+<div class="counter-row">
+  <div class="stat"><div class="num" id="cars-count">0</div><div class="lbl">Cars Washed</div></div>
+</div>
+
+<div class="stage" id="stage">
+  <canvas class="layer" id="bg-c"></canvas>
+  <canvas class="layer" id="car-c"></canvas>
+  <canvas class="layer" id="dirt-c"></canvas>
+  <canvas class="layer" id="fx-c"></canvas>
+  <div class="celebrate" id="celebrate">
+    <h2>Spotless.</h2>
+    <p>That's one clean car. Bring in the next one?</p>
+    <button id="next-car-btn">Next Car</button>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn primary" id="rinse-btn">Full Rinse</button>
+</div>
+<p class="hint">Click and drag the sponge across the dirt to wipe it clean.</p>
+
+<script>
+const stageEl = document.getElementById('stage');
+const bgCanvas = document.getElementById('bg-c');
+const carCanvas = document.getElementById('car-c');
+const dirtCanvas = document.getElementById('dirt-c');
+const fxCanvas = document.getElementById('fx-c');
+const bgCtx = bgCanvas.getContext('2d');
+const carCtx = carCanvas.getContext('2d');
+const dirtCtx = dirtCanvas.getContext('2d');
+const fxCtx = fxCanvas.getContext('2d');
+let W, H, DPR;
+
+const bodyColors = ['#e0554a','#3f7fd1','#e8b23c','#5cb894','#c76fc9'];
+let carColor = bodyColors[Math.floor(Math.random()*bodyColors.length)];
+let carsWashed = 0;
+let cleanGrid = [];
+let gridCols, gridRows, cellW, cellH, totalInside = 0, cleanedCount = 0;
+let particles = [];
+let drawing = false;
+let lastPt = null;
+
+function setSize(canvas){
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  canvas.getContext('2d').setTransform(DPR,0,0,DPR,0,0);
+}
+
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = stageEl.clientWidth; H = stageEl.clientHeight;
+  [bgCanvas, carCanvas, dirtCanvas, fxCanvas].forEach(setSize);
+  drawBackground();
+  drawCar();
+  buildMaskAndGrid();
+  drawDirt();
+}
+
+function drawBackground(){
+  bgCtx.clearRect(0,0,W,H);
+  const g = bgCtx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#1b2430'); g.addColorStop(1,'#0d1117');
+  bgCtx.fillStyle = g; bgCtx.fillRect(0,0,W,H);
+  bgCtx.fillStyle = 'rgba(255,255,255,0.05)';
+  bgCtx.fillRect(0, H*0.78, W, 4);
+}
+
+function carPath(ctx){
+  const cx = W/2, cy = H*0.55, s = Math.min(W*0.8, H*1.3);
+  ctx.beginPath();
+  ctx.moveTo(cx-s*0.46, cy+s*0.12);
+  ctx.bezierCurveTo(cx-s*0.5, cy-s*0.02, cx-s*0.44, cy-s*0.1, cx-s*0.34, cy-s*0.12);
+  ctx.bezierCurveTo(cx-s*0.28, cy-s*0.26, cx-s*0.12, cy-s*0.3, cx+s*0.02, cy-s*0.3);
+  ctx.bezierCurveTo(cx+s*0.16, cy-s*0.3, cx+s*0.24, cy-s*0.24, cx+s*0.28, cy-s*0.13);
+  ctx.bezierCurveTo(cx+s*0.4, cy-s*0.12, cx+s*0.48, cy-s*0.04, cx+s*0.48, cy+s*0.1);
+  ctx.bezierCurveTo(cx+s*0.5, cy+s*0.14, cx+s*0.5, cy+s*0.2, cx+s*0.46, cy+s*0.22);
+  ctx.lineTo(cx-s*0.42, cy+s*0.22);
+  ctx.bezierCurveTo(cx-s*0.48, cy+s*0.2, cx-s*0.48, cy+s*0.14, cx-s*0.46, cy+s*0.12);
+  ctx.closePath();
+  return {cx, cy, s};
+}
+
+function drawCar(){
+  carCtx.clearRect(0,0,W,H);
+  const {cx, cy, s} = carPath(carCtx);
+  const g = carCtx.createLinearGradient(0, cy-s*0.3, 0, cy+s*0.22);
+  g.addColorStop(0, shade(carColor, 30));
+  g.addColorStop(0.5, carColor);
+  g.addColorStop(1, shade(carColor, -25));
+  carCtx.fillStyle = g;
+  carCtx.fill();
+  carCtx.lineWidth = 3;
+  carCtx.strokeStyle = 'rgba(0,0,0,0.25)';
+  carCtx.stroke();
+
+  // windows
+  carCtx.save();
+  carCtx.beginPath();
+  carCtx.moveTo(cx-s*0.26, cy-s*0.12);
+  carCtx.bezierCurveTo(cx-s*0.22, cy-s*0.24, cx-s*0.1, cy-s*0.27, cx+s*0.02, cy-s*0.27);
+  carCtx.bezierCurveTo(cx+s*0.13, cy-s*0.27, cx+s*0.2, cy-s*0.22, cx+s*0.23, cy-s*0.12);
+  carCtx.closePath();
+  carCtx.fillStyle = 'rgba(180,225,240,0.85)';
+  carCtx.fill();
+  carCtx.moveTo(cx-s*0.02, cy-s*0.26);
+  carCtx.lineTo(cx-s*0.01, cy-s*0.12);
+  carCtx.strokeStyle = 'rgba(20,30,40,0.4)';
+  carCtx.lineWidth = 2;
+  carCtx.stroke();
+  carCtx.restore();
+
+  // wheels
+  [cx-s*0.3, cx+s*0.32].forEach(wx=>{
+    carCtx.beginPath();
+    carCtx.arc(wx, cy+s*0.22, s*0.09, 0, Math.PI*2);
+    carCtx.fillStyle = '#1a1a1a';
+    carCtx.fill();
+    carCtx.beginPath();
+    carCtx.arc(wx, cy+s*0.22, s*0.04, 0, Math.PI*2);
+    carCtx.fillStyle = '#888';
+    carCtx.fill();
+  });
+
+  // headlight + highlight streak
+  carCtx.beginPath();
+  carCtx.ellipse(cx+s*0.45, cy+s*0.02, s*0.03, s*0.02, 0, 0, Math.PI*2);
+  carCtx.fillStyle = 'rgba(255,250,220,0.9)';
+  carCtx.fill();
+}
+
+function shade(hex, amt){
+  const n = parseInt(hex.slice(1),16);
+  let r = (n>>16)+amt, g = ((n>>8)&0xff)+amt, b=(n&0xff)+amt;
+  r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+function buildMaskAndGrid(){
+  cellW = 16; cellH = 16;
+  gridCols = Math.ceil(W/cellW); gridRows = Math.ceil(H/cellH);
+  const img = carCtx.getImageData(0,0,W*DPR,H*DPR).data;
+  cleanGrid = []; totalInside = 0; cleanedCount = 0;
+  for(let gy=0; gy<gridRows; gy++){
+    cleanGrid[gy] = [];
+    for(let gx=0; gx<gridCols; gx++){
+      const px = Math.min(Math.floor((gx*cellW+cellW/2)*DPR), W*DPR-1);
+      const py = Math.min(Math.floor((gy*cellH+cellH/2)*DPR), H*DPR-1);
+      const idx = (py*W*DPR+px)*4+3;
+      const inside = img[idx] > 40;
+      cleanGrid[gy][gx] = inside ? 0 : -1; // -1 = not part of car (ignore), 0 = dirty, 1 = clean
+      if(inside) totalInside++;
+    }
+  }
+}
+
+function drawDirt(){
+  dirtCtx.clearRect(0,0,W,H);
+  dirtCtx.save();
+  carPath(dirtCtx);
+  dirtCtx.clip();
+  dirtCtx.fillStyle = 'rgba(90,72,50,0.82)';
+  dirtCtx.fillRect(0,0,W,H);
+  // grungy blotches
+  for(let i=0;i<140;i++){
+    const x = Math.random()*W, y = Math.random()*H, r = 6+Math.random()*26;
+    dirtCtx.beginPath();
+    dirtCtx.arc(x,y,r,0,Math.PI*2);
+    dirtCtx.fillStyle = 'rgba('+(50+Math.random()*30)+','+(38+Math.random()*24)+','+(20+Math.random()*18)+','+(0.15+Math.random()*0.25)+')';
+    dirtCtx.fill();
+  }
+  dirtCtx.restore();
+}
+
+function updatePct(){
+  const pct = totalInside ? Math.round((cleanedCount/totalInside)*100) : 0;
+  document.getElementById('pct-label').textContent = pct+'% clean';
+  document.getElementById('pct-fill').style.width = pct+'%';
+  if(pct >= 96){
+    document.getElementById('celebrate').classList.add('show');
+  }
+}
+
+function wipeAt(x,y,radius){
+  dirtCtx.save();
+  dirtCtx.globalCompositeOperation = 'destination-out';
+  const g = dirtCtx.createRadialGradient(x,y,0,x,y,radius);
+  g.addColorStop(0,'rgba(0,0,0,1)');
+  g.addColorStop(0.7,'rgba(0,0,0,0.9)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  dirtCtx.fillStyle = g;
+  dirtCtx.beginPath();
+  dirtCtx.arc(x,y,radius,0,Math.PI*2);
+  dirtCtx.fill();
+  dirtCtx.restore();
+
+  const gx0 = Math.max(0, Math.floor((x-radius)/cellW));
+  const gx1 = Math.min(gridCols-1, Math.ceil((x+radius)/cellW));
+  const gy0 = Math.max(0, Math.floor((y-radius)/cellH));
+  const gy1 = Math.min(gridRows-1, Math.ceil((y+radius)/cellH));
+  for(let gy=gy0; gy<=gy1; gy++){
+    for(let gx=gx0; gx<=gx1; gx++){
+      if(cleanGrid[gy] && cleanGrid[gy][gx] === 0){
+        const ccx = gx*cellW+cellW/2, ccy = gy*cellH+cellH/2;
+        const dx = ccx-x, dy = ccy-y;
+        if(dx*dx+dy*dy <= radius*radius){
+          cleanGrid[gy][gx] = 1;
+          cleanedCount++;
+        }
+      }
+    }
+  }
+  updatePct();
+}
+
+function spawnSuds(x,y){
+  for(let i=0;i<3;i++){
+    particles.push({
+      x, y, r: 3+Math.random()*5,
+      vx:(Math.random()-0.5)*1.4, vy:-(Math.random()*1.2+0.3),
+      life:1, decay: 0.02+Math.random()*0.02
+    });
+  }
+}
+
+function pos(e){
+  const rect = fxCanvas.getBoundingClientRect();
+  return {x: e.clientX-rect.left, y: e.clientY-rect.top};
+}
+
+fxCanvas.addEventListener('pointerdown', (e)=>{
+  drawing = true;
+  const p = pos(e);
+  lastPt = p;
+  wipeAt(p.x, p.y, 30);
+  spawnSuds(p.x,p.y);
+  fxCanvas.setPointerCapture(e.pointerId);
+});
+fxCanvas.addEventListener('pointermove', (e)=>{
+  if(!drawing) return;
+  const p = pos(e);
+  if(lastPt){
+    const dist = Math.hypot(p.x-lastPt.x, p.y-lastPt.y);
+    const steps = Math.max(1, Math.floor(dist/8));
+    for(let i=1;i<=steps;i++){
+      const ix = lastPt.x + (p.x-lastPt.x)*(i/steps);
+      const iy = lastPt.y + (p.y-lastPt.y)*(i/steps);
+      wipeAt(ix, iy, 30);
+    }
+  }
+  spawnSuds(p.x,p.y);
+  lastPt = p;
+});
+window.addEventListener('pointerup', ()=>{ drawing=false; lastPt=null; });
+
+document.getElementById('rinse-btn').onclick = ()=>{
+  for(let gy=0; gy<gridRows; gy++){
+    for(let gx=0; gx<gridCols; gx++){
+      if(cleanGrid[gy][gx] === 0){ cleanGrid[gy][gx]=1; cleanedCount++; }
+    }
+  }
+  dirtCtx.clearRect(0,0,W,H);
+  updatePct();
+};
+
+document.getElementById('next-car-btn').onclick = ()=>{
+  carsWashed++;
+  document.getElementById('cars-count').textContent = carsWashed;
+  document.getElementById('celebrate').classList.remove('show');
+  carColor = bodyColors[Math.floor(Math.random()*bodyColors.length)];
+  drawCar();
+  buildMaskAndGrid();
+  drawDirt();
+  updatePct();
+};
+
+function fxLoop(){
+  fxCtx.clearRect(0,0,W,H);
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+    if(p.life<=0){ particles.splice(i,1); continue; }
+    fxCtx.beginPath();
+    fxCtx.globalAlpha = p.life*0.8;
+    fxCtx.fillStyle = '#ffffff';
+    fxCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    fxCtx.fill();
+  }
+  fxCtx.globalAlpha = 1;
+  requestAnimationFrame(fxLoop);
+}
+
+resize();
+window.addEventListener('resize', resize);
+updatePct();
+fxLoop();
+</script>
+</body>
+</html>
