@@ -20,8 +20,8 @@
 
   .cards{
     position:relative; z-index:2;
-    display:grid; grid-template-columns: repeat(3, 1fr); gap:22px;
-    width: min(1080px, 94vw);
+    display:grid; grid-template-columns: repeat(2, 1fr); gap:22px;
+    width: min(900px, 94vw);
   }
   @media (max-width: 860px){.cards{grid-template-columns: 1fr;}}
 
@@ -53,6 +53,7 @@
   .card.plates{--card-glow: #f2a2b0;}
   .card.car{--card-glow: #7fc4f2;}
   .card.lawn{--card-glow: #7fe0a0;}
+  .card.trim{--card-glow: #a8d96a;}
 
   footer{position:relative; z-index:2; margin-top:50px; color:var(--ink-3); font-size:12px; text-align:center;}
 </style>
@@ -87,6 +88,13 @@
     <h3>Mow the Lawn</h3>
     <p>Push the mower through overgrown grass and leave crisp, tidy stripes behind you. So clean it hurts.</p>
     <span class="go">Start mowing <span class="arrow">→</span></span>
+  </a>
+  <a class="card trim" href="trim.html">
+    <div class="glow"></div>
+    <span class="icon">✂️</span>
+    <h3>Trim the Edges</h3>
+    <p>Rev the string trimmer and sweep an overgrown fence line down to a crisp edge, blade by blade. Peak lawn-care satisfaction.</p>
+    <span class="go">Rev it up <span class="arrow">→</span></span>
   </a>
 </div>
 
