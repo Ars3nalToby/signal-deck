@@ -21,6 +21,11 @@ body{
   font-family: var(--sans);
   min-height: 100vh;
   overflow-x: hidden;
+  animation: page-in .5s cubic-bezier(.2,.7,.2,1);
+}
+@keyframes page-in{
+  from{ opacity:0; transform: translateY(6px); }
+  to{ opacity:1; transform: translateY(0); }
 }
 a{color:inherit;text-decoration:none;}
 
@@ -29,6 +34,7 @@ a{color:inherit;text-decoration:none;}
   padding: 18px 28px;
   position: relative; z-index: 5;
 }
+.topbar .left, .topbar .right{display:flex; align-items:center; gap:10px;}
 .topbar .back{
   display:inline-flex; align-items:center; gap:8px;
   font-size:13px; color:var(--ink-2);
@@ -41,6 +47,14 @@ a{color:inherit;text-decoration:none;}
   font-family: var(--serif); font-style: italic; font-size: 20px; letter-spacing: -0.01em;
   color: var(--ink-2);
 }
+.mute-toggle{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line); background: rgba(255,255,255,0.02); color: var(--ink-2);
+  cursor:pointer; font-size:15px; transition: all .18s ease;
+}
+.mute-toggle:hover{border-color:var(--accent); color:var(--ink);}
+.mute-toggle.is-muted{color: var(--ink-3);}
 
 .progress-wrap{
   display:flex; align-items:center; gap:10px;
@@ -96,10 +110,14 @@ a{color:inherit;text-decoration:none;}
   font-family: var(--serif); font-style: italic;
 }
 .counter-row .stat{text-align:center;}
-.counter-row .stat .num{font-size: 30px; color: var(--accent);}
+.counter-row .stat .num{font-size: 30px; color: var(--accent); display:inline-block; transition: transform .18s cubic-bezier(.3,1.6,.5,1);}
+.counter-row .stat .num.pop{transform: scale(1.32);}
 .counter-row .stat .lbl{font-family: var(--sans); font-style:normal; font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-3);}
 
 canvas{display:block; touch-action:none;}
+
+.stage{transition: box-shadow .15s ease;}
+.stage.impact{box-shadow: 0 30px 90px -20px rgba(110,231,216,0.25), inset 0 1px 0 rgba(255,255,255,0.05);}
 
 @media (prefers-reduced-motion: reduce){
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }

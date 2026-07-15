@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wash the Car — Unwind</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
   body{display:flex; flex-direction:column; align-items:center;}
-  .stage{height: 62vh; min-height: 420px; max-height: 560px; cursor: pointer;}
+  .stage{height: 62vh; min-height: 420px; max-height: 560px; cursor:none;}
   .stage .layer{position:absolute; top:0; left:0;}
   .controls{display:flex; gap:12px; justify-content:center; margin-top:18px;}
   .btn{
@@ -28,9 +29,12 @@
 <div class="topbar">
   <a class="back" href="index.html">&larr; Back to Unwind</a>
   <div class="title">Wash the Car</div>
-  <div class="progress-wrap">
-    <span id="pct-label">0% clean</span>
-    <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+  <div class="right">
+    <div class="progress-wrap">
+      <span id="pct-label">0% clean</span>
+      <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+    </div>
+    <button class="mute-toggle" id="mute-btn">🔊</button>
   </div>
 </div>
 
@@ -55,6 +59,7 @@
 </div>
 <p class="hint">Click and drag the sponge across the dirt to wipe it clean.</p>
 
+<script src="shared.js"></script>
 <script>
 const stageEl = document.getElementById('stage');
 const bgCanvas = document.getElementById('bg-c');
@@ -67,14 +72,18 @@ const dirtCtx = dirtCanvas.getContext('2d');
 const fxCtx = fxCanvas.getContext('2d');
 let W, H, DPR;
 
+Unwind.wireMuteButton(document.getElementById('mute-btn'));
+
 const bodyColors = ['#e0554a','#3f7fd1','#e8b23c','#5cb894','#c76fc9'];
 let carColor = bodyColors[Math.floor(Math.random()*bodyColors.length)];
 let carsWashed = 0;
 let cleanGrid = [];
-let gridCols, gridRows, cellW, cellH, totalInside = 0, cleanedCount = 0;
+let gridCols, gridRows, cellW=16, cellH=16, totalInside = 0, cleanedCount = 0;
 let particles = [];
 let drawing = false;
 let lastPt = null;
+let mouseX = -100, mouseY = -100, sponging = false;
+let celebrated = false;
 
 function setSize(canvas){
   canvas.width = W*DPR; canvas.height = H*DPR;
@@ -129,7 +138,6 @@ function drawCar(){
   carCtx.strokeStyle = 'rgba(0,0,0,0.25)';
   carCtx.stroke();
 
-  // windows
   carCtx.save();
   carCtx.beginPath();
   carCtx.moveTo(cx-s*0.26, cy-s*0.12);
@@ -145,7 +153,6 @@ function drawCar(){
   carCtx.stroke();
   carCtx.restore();
 
-  // wheels
   [cx-s*0.3, cx+s*0.32].forEach(wx=>{
     carCtx.beginPath();
     carCtx.arc(wx, cy+s*0.22, s*0.09, 0, Math.PI*2);
@@ -157,7 +164,6 @@ function drawCar(){
     carCtx.fill();
   });
 
-  // headlight + highlight streak
   carCtx.beginPath();
   carCtx.ellipse(cx+s*0.45, cy+s*0.02, s*0.03, s*0.02, 0, 0, Math.PI*2);
   carCtx.fillStyle = 'rgba(255,250,220,0.9)';
@@ -183,7 +189,7 @@ function buildMaskAndGrid(){
       const py = Math.min(Math.floor((gy*cellH+cellH/2)*DPR), H*DPR-1);
       const idx = (py*W*DPR+px)*4+3;
       const inside = img[idx] > 40;
-      cleanGrid[gy][gx] = inside ? 0 : -1; // -1 = not part of car (ignore), 0 = dirty, 1 = clean
+      cleanGrid[gy][gx] = inside ? 0 : -1;
       if(inside) totalInside++;
     }
   }
@@ -196,7 +202,6 @@ function drawDirt(){
   dirtCtx.clip();
   dirtCtx.fillStyle = 'rgba(90,72,50,0.82)';
   dirtCtx.fillRect(0,0,W,H);
-  // grungy blotches
   for(let i=0;i<140;i++){
     const x = Math.random()*W, y = Math.random()*H, r = 6+Math.random()*26;
     dirtCtx.beginPath();
@@ -211,9 +216,52 @@ function updatePct(){
   const pct = totalInside ? Math.round((cleanedCount/totalInside)*100) : 0;
   document.getElementById('pct-label').textContent = pct+'% clean';
   document.getElementById('pct-fill').style.width = pct+'%';
-  if(pct >= 96){
+  if(pct >= 96 && !celebrated){
+    celebrated = true;
     document.getElementById('celebrate').classList.add('show');
+    Unwind.confetti(stageEl, {colors:['#7fc4f2','#b6a4f2','#eef2f6','#6ee7d8']});
+    chime();
   }
+}
+
+// ---------- audio ----------
+let actx;
+function ensureAudio(){
+  if(Unwind.isMuted()) return null;
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+  catch(e){ return null; }
+}
+let lastSqueak = 0;
+function squeak(){
+  const ac = ensureAudio(); if(!ac) return;
+  const now = performance.now();
+  if(now - lastSqueak < 220) return;
+  lastSqueak = now;
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  const freq = 900 + Math.random()*500;
+  osc.frequency.setValueAtTime(freq, ac.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(freq*1.4, ac.currentTime+0.08);
+  const g = ac.createGain();
+  g.gain.value = 0.02;
+  g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.12);
+  osc.connect(g).connect(ac.destination);
+  osc.start(); osc.stop(ac.currentTime+0.14);
+}
+function chime(){
+  const ac = ensureAudio(); if(!ac) return;
+  [0,4,7,12].forEach((semi,i)=>{
+    const osc = ac.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.value = 440*Math.pow(2, semi/12);
+    const g = ac.createGain();
+    g.gain.value = 0.0001;
+    g.gain.setValueAtTime(0.0001, ac.currentTime+i*0.08);
+    g.gain.linearRampToValueAtTime(0.06, ac.currentTime+i*0.08+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+i*0.08+0.5);
+    osc.connect(g).connect(ac.destination);
+    osc.start(ac.currentTime+i*0.08); osc.stop(ac.currentTime+i*0.08+0.5);
+  });
 }
 
 function wipeAt(x,y,radius){
@@ -233,6 +281,7 @@ function wipeAt(x,y,radius){
   const gx1 = Math.min(gridCols-1, Math.ceil((x+radius)/cellW));
   const gy0 = Math.max(0, Math.floor((y-radius)/cellH));
   const gy1 = Math.min(gridRows-1, Math.ceil((y+radius)/cellH));
+  let any = false;
   for(let gy=gy0; gy<=gy1; gy++){
     for(let gx=gx0; gx<=gx1; gx++){
       if(cleanGrid[gy] && cleanGrid[gy][gx] === 0){
@@ -241,19 +290,21 @@ function wipeAt(x,y,radius){
         if(dx*dx+dy*dy <= radius*radius){
           cleanGrid[gy][gx] = 1;
           cleanedCount++;
+          any = true;
         }
       }
     }
   }
+  if(any) squeak();
   updatePct();
 }
 
-function spawnSuds(x,y){
+function spawnSuds(x,y,vx,vy){
   for(let i=0;i<3;i++){
     particles.push({
       x, y, r: 3+Math.random()*5,
-      vx:(Math.random()-0.5)*1.4, vy:-(Math.random()*1.2+0.3),
-      life:1, decay: 0.02+Math.random()*0.02
+      vx:(vx||0)*0.1+(Math.random()-0.5)*1.2, vy:(vy||0)*0.1-(Math.random()*1.2+0.3),
+      life:1, decay: 0.018+Math.random()*0.018
     });
   }
 }
@@ -264,7 +315,7 @@ function pos(e){
 }
 
 fxCanvas.addEventListener('pointerdown', (e)=>{
-  drawing = true;
+  drawing = true; sponging = true;
   const p = pos(e);
   lastPt = p;
   wipeAt(p.x, p.y, 30);
@@ -272,8 +323,9 @@ fxCanvas.addEventListener('pointerdown', (e)=>{
   fxCanvas.setPointerCapture(e.pointerId);
 });
 fxCanvas.addEventListener('pointermove', (e)=>{
-  if(!drawing) return;
   const p = pos(e);
+  mouseX = p.x; mouseY = p.y;
+  if(!drawing) return;
   if(lastPt){
     const dist = Math.hypot(p.x-lastPt.x, p.y-lastPt.y);
     const steps = Math.max(1, Math.floor(dist/8));
@@ -282,11 +334,12 @@ fxCanvas.addEventListener('pointermove', (e)=>{
       const iy = lastPt.y + (p.y-lastPt.y)*(i/steps);
       wipeAt(ix, iy, 30);
     }
+    spawnSuds(p.x,p.y, p.x-lastPt.x, p.y-lastPt.y);
   }
-  spawnSuds(p.x,p.y);
   lastPt = p;
 });
-window.addEventListener('pointerup', ()=>{ drawing=false; lastPt=null; });
+window.addEventListener('pointerup', ()=>{ drawing=false; sponging=false; lastPt=null; });
+fxCanvas.addEventListener('pointerleave', ()=>{ mouseX=-100; mouseY=-100; });
 
 document.getElementById('rinse-btn').onclick = ()=>{
   for(let gy=0; gy<gridRows; gy++){
@@ -300,8 +353,10 @@ document.getElementById('rinse-btn').onclick = ()=>{
 
 document.getElementById('next-car-btn').onclick = ()=>{
   carsWashed++;
-  document.getElementById('cars-count').textContent = carsWashed;
+  const el = document.getElementById('cars-count');
+  el.textContent = carsWashed; Unwind.pop(el);
   document.getElementById('celebrate').classList.remove('show');
+  celebrated = false;
   carColor = bodyColors[Math.floor(Math.random()*bodyColors.length)];
   drawCar();
   buildMaskAndGrid();
@@ -309,11 +364,41 @@ document.getElementById('next-car-btn').onclick = ()=>{
   updatePct();
 };
 
-function fxLoop(){
+function drawSponge(){
+  if(mouseX < -50) return;
+  fxCtx.save();
+  fxCtx.translate(mouseX, mouseY);
+  const scale = sponging ? 1.12 : 1;
+  fxCtx.scale(scale, scale);
+  fxCtx.fillStyle = '#f2d24a';
+  fxCtx.strokeStyle = 'rgba(0,0,0,0.25)';
+  fxCtx.lineWidth = 1.5;
+  fxCtx.beginPath();
+  const r = 16;
+  fxCtx.moveTo(-r,-r*0.6);
+  fxCtx.quadraticCurveTo(-r*1.15,0,-r,r*0.6);
+  fxCtx.quadraticCurveTo(0,r*1.1,r,r*0.6);
+  fxCtx.quadraticCurveTo(r*1.15,0,r,-r*0.6);
+  fxCtx.quadraticCurveTo(0,-r*1.1,-r,-r*0.6);
+  fxCtx.closePath();
+  fxCtx.fill(); fxCtx.stroke();
+  fxCtx.fillStyle = 'rgba(255,255,255,0.35)';
+  for(let i=0;i<4;i++){
+    fxCtx.beginPath();
+    fxCtx.arc((Math.random()-0.5)*r*1.2,(Math.random()-0.5)*r*1.2, 1.6, 0, Math.PI*2);
+    fxCtx.fill();
+  }
+  fxCtx.restore();
+}
+
+let lastTime = performance.now();
+function fxLoop(now){
+  const dt = Unwind.clamp((now-lastTime)/16.67, 0, 3);
+  lastTime = now;
   fxCtx.clearRect(0,0,W,H);
   for(let i=particles.length-1;i>=0;i--){
     const p = particles[i];
-    p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.life-=p.decay*dt;
     if(p.life<=0){ particles.splice(i,1); continue; }
     fxCtx.beginPath();
     fxCtx.globalAlpha = p.life*0.8;
@@ -322,13 +407,14 @@ function fxLoop(){
     fxCtx.fill();
   }
   fxCtx.globalAlpha = 1;
+  drawSponge();
   requestAnimationFrame(fxLoop);
 }
 
 resize();
 window.addEventListener('resize', resize);
 updatePct();
-fxLoop();
+requestAnimationFrame(fxLoop);
 </script>
 </body>
 </html>

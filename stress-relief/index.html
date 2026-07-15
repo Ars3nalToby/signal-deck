@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Unwind — Stress Relief</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -28,10 +29,12 @@
     position:relative; border-radius:20px; padding: 28px 24px 26px;
     background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
     border:1px solid var(--line); overflow:hidden;
-    transition: transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s ease, box-shadow .25s ease;
-    cursor:pointer;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .25s ease, box-shadow .25s ease;
+    transform-style: preserve-3d; perspective: 600px;
+    cursor:pointer; will-change: transform;
   }
-  .card:hover{transform: translateY(-6px); border-color: var(--card-glow, var(--accent)); box-shadow: 0 20px 50px -20px var(--card-glow, rgba(110,231,216,0.35));}
+  .card:hover{border-color: var(--card-glow, var(--accent)); box-shadow: 0 20px 50px -20px var(--card-glow, rgba(110,231,216,0.35));}
+  .card:not(:hover){transform: translateY(0) rotateX(0) rotateY(0) !important; transition: transform .5s cubic-bezier(.2,.8,.2,1), border-color .25s ease, box-shadow .25s ease;}
   .card .glow{
     position:absolute; width:180px; height:180px; border-radius:50%;
     background: var(--card-glow, var(--accent)); filter: blur(60px); opacity:.28;
@@ -129,6 +132,17 @@ function tick(){
   requestAnimationFrame(tick);
 }
 tick();
+
+// subtle 3D tilt on card hover, follows the pointer
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('pointermove', (e) => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transition = 'box-shadow .25s ease, border-color .25s ease';
+    card.style.transform = `translateY(-6px) rotateX(${(-py*8).toFixed(2)}deg) rotateY(${(px*8).toFixed(2)}deg)`;
+  });
+});
 </script>
 </body>
 </html>

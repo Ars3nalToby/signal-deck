@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mow the Lawn — Unwind</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -28,9 +29,12 @@
 <div class="topbar">
   <a class="back" href="index.html">&larr; Back to Unwind</a>
   <div class="title">Mow the Lawn</div>
-  <div class="progress-wrap">
-    <span id="pct-label">0% mowed</span>
-    <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+  <div class="right">
+    <div class="progress-wrap">
+      <span id="pct-label">0% mowed</span>
+      <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
+    </div>
+    <button class="mute-toggle" id="mute-btn">🔊</button>
   </div>
 </div>
 
@@ -54,6 +58,7 @@
 </div>
 <p class="hint">Click and drag the mower through the grass to cut tidy stripes.</p>
 
+<script src="shared.js"></script>
 <script>
 const stageEl = document.getElementById('stage');
 const mowedCanvas = document.getElementById('mowed-c');
@@ -63,10 +68,15 @@ const mowedCtx = mowedCanvas.getContext('2d');
 const grassCtx = grassCanvas.getContext('2d');
 const fxCtx = fxCanvas.getContext('2d');
 let W, H, DPR;
+
+Unwind.wireMuteButton(document.getElementById('mute-btn'));
+
 let lawnsCount = 0;
 let cleanGrid = [], gridCols, gridRows, cellW=16, cellH=16, totalCells=0, mowedCount=0;
-let particles = [];
-let drawing = false, lastPt = null, mouseX=-100, mouseY=-100, moveAngle=0;
+let particles = [], tracks = [];
+let drawing = false, lastPt = null, mouseX=-100, mouseY=-100;
+let displayAngle = 0, targetAngle = 0;
+let celebrated = false;
 
 function setSize(canvas){
   canvas.width = W*DPR; canvas.height = H*DPR;
@@ -92,7 +102,6 @@ function drawMowedStripes(){
     mowedCtx.fillRect(0,y,W,stripeH);
     i++;
   }
-  // subtle mower-line texture
   mowedCtx.strokeStyle = 'rgba(255,255,255,0.05)';
   for(let y=0; y<H; y+=stripeH){
     mowedCtx.beginPath(); mowedCtx.moveTo(0,y); mowedCtx.lineTo(W,y); mowedCtx.stroke();
@@ -130,8 +139,10 @@ function updatePct(){
   const pct = totalCells ? Math.round((mowedCount/totalCells)*100) : 0;
   document.getElementById('pct-label').textContent = pct+'% mowed';
   document.getElementById('pct-fill').style.width = pct+'%';
-  if(pct >= 96){
+  if(pct >= 96 && !celebrated){
+    celebrated = true;
     document.getElementById('celebrate').classList.add('show');
+    Unwind.confetti(stageEl, {colors:['#7fe0a0','#6ee7d8','#dff2b0','#3f8a4a']});
   }
 }
 
@@ -185,6 +196,8 @@ function spawnClippings(x,y,angle){
       r: 1.5+Math.random()*2, life:1, decay:0.02+Math.random()*0.02
     });
   }
+  tracks.push({x, y, life:1});
+  if(tracks.length > 40) tracks.shift();
 }
 
 function pos(e){
@@ -192,11 +205,49 @@ function pos(e){
   return {x: e.clientX-rect.left, y: e.clientY-rect.top};
 }
 
+// ---------- audio: engine hum while mowing ----------
+let actx, engineOsc, engineGain, engineLfo;
+function ensureAudio(){
+  if(Unwind.isMuted()) return null;
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); return actx; }
+  catch(e){ return null; }
+}
+function startEngine(){
+  const ac = ensureAudio(); if(!ac) return;
+  if(engineOsc) return;
+  engineOsc = ac.createOscillator();
+  engineOsc.type = 'sawtooth';
+  engineOsc.frequency.value = 90;
+  const filt = ac.createBiquadFilter();
+  filt.type = 'lowpass'; filt.frequency.value = 400;
+  engineGain = ac.createGain();
+  engineGain.gain.value = 0.0001;
+  engineGain.gain.linearRampToValueAtTime(0.045, ac.currentTime+0.15);
+  engineLfo = ac.createOscillator();
+  engineLfo.frequency.value = 11;
+  const lfoGain = ac.createGain();
+  lfoGain.gain.value = 6;
+  engineLfo.connect(lfoGain).connect(engineOsc.frequency);
+  engineOsc.connect(filt).connect(engineGain).connect(ac.destination);
+  engineOsc.start(); engineLfo.start();
+}
+function stopEngine(){
+  if(!engineOsc) return;
+  const ac = actx;
+  try{
+    engineGain.gain.linearRampToValueAtTime(0.0001, ac.currentTime+0.12);
+    engineOsc.stop(ac.currentTime+0.15);
+    engineLfo.stop(ac.currentTime+0.15);
+  }catch(e){}
+  engineOsc = null; engineGain = null; engineLfo = null;
+}
+
 fxCanvas.addEventListener('pointerdown', (e)=>{
   drawing = true;
   const p = pos(e);
   lastPt = p; mouseX=p.x; mouseY=p.y;
   mowSwath(p.x,p.y,p.x+0.01,p.y+0.01,46);
+  startEngine();
   fxCanvas.setPointerCapture(e.pointerId);
 });
 fxCanvas.addEventListener('pointermove', (e)=>{
@@ -204,13 +255,14 @@ fxCanvas.addEventListener('pointermove', (e)=>{
   mouseX = p.x; mouseY = p.y;
   if(!drawing) return;
   if(lastPt){
-    moveAngle = Math.atan2(p.y-lastPt.y, p.x-lastPt.x);
+    const dx = p.x-lastPt.x, dy = p.y-lastPt.y;
+    if(Math.hypot(dx,dy) > 1.5) targetAngle = Math.atan2(dy, dx);
     mowSwath(lastPt.x, lastPt.y, p.x, p.y, 46);
-    spawnClippings(p.x,p.y,moveAngle);
+    spawnClippings(p.x,p.y,targetAngle);
   }
   lastPt = p;
 });
-window.addEventListener('pointerup', ()=>{ drawing=false; lastPt=null; });
+window.addEventListener('pointerup', ()=>{ drawing=false; lastPt=null; stopEngine(); });
 fxCanvas.addEventListener('pointerleave', ()=>{ mouseX=-100; mouseY=-100; });
 
 document.getElementById('mow-all-btn').onclick = ()=>{
@@ -222,8 +274,10 @@ document.getElementById('mow-all-btn').onclick = ()=>{
 
 document.getElementById('next-lawn-btn').onclick = ()=>{
   lawnsCount++;
-  document.getElementById('lawns-count').textContent = lawnsCount;
+  const el = document.getElementById('lawns-count');
+  el.textContent = lawnsCount; Unwind.pop(el);
   document.getElementById('celebrate').classList.remove('show');
+  celebrated = false;
   drawGrass();
   buildGrid();
   updatePct();
@@ -233,12 +287,12 @@ function drawMowerCursor(){
   if(mouseX < -50) return;
   fxCtx.save();
   fxCtx.translate(mouseX, mouseY);
-  fxCtx.rotate(moveAngle);
+  fxCtx.rotate(displayAngle);
   fxCtx.fillStyle = '#e8b23c';
   fxCtx.strokeStyle = 'rgba(0,0,0,0.35)';
   fxCtx.lineWidth = 1.5;
   fxCtx.beginPath();
-  fxCtx.roundRect ? fxCtx.roundRect(-16,-11,32,22,6) : fxCtx.rect(-16,-11,32,22);
+  if(fxCtx.roundRect) fxCtx.roundRect(-16,-11,32,22,6); else fxCtx.rect(-16,-11,32,22);
   fxCtx.fill(); fxCtx.stroke();
   fxCtx.fillStyle = '#333';
   fxCtx.beginPath(); fxCtx.arc(-10,11,5,0,Math.PI*2); fxCtx.fill();
@@ -248,12 +302,29 @@ function drawMowerCursor(){
   fxCtx.restore();
 }
 
-function fxLoop(){
+let lastTime = performance.now();
+function fxLoop(now){
+  const dt = Unwind.clamp((now-lastTime)/16.67, 0, 3);
+  lastTime = now;
+  displayAngle = Unwind.lerpAngle(displayAngle, targetAngle, Math.min(0.25*dt, 1));
+
   fxCtx.clearRect(0,0,W,H);
+
+  for(let i=tracks.length-1;i>=0;i--){
+    const t = tracks[i];
+    t.life -= 0.02*dt;
+    if(t.life<=0){ tracks.splice(i,1); continue; }
+    fxCtx.beginPath();
+    fxCtx.globalAlpha = t.life*0.18;
+    fxCtx.fillStyle = '#dff2b0';
+    fxCtx.arc(t.x,t.y,3,0,Math.PI*2);
+    fxCtx.fill();
+  }
+
   for(let i=particles.length-1;i>=0;i--){
     const p = particles[i];
-    p.vy += 0.15;
-    p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+    p.vy += 0.15*dt;
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.life-=p.decay*dt;
     if(p.life<=0){ particles.splice(i,1); continue; }
     fxCtx.beginPath();
     fxCtx.globalAlpha = p.life;
@@ -269,7 +340,7 @@ function fxLoop(){
 resize();
 window.addEventListener('resize', resize);
 updatePct();
-fxLoop();
+requestAnimationFrame(fxLoop);
 </script>
 </body>
 </html>
