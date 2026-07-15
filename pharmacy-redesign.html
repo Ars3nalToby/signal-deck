@@ -24,8 +24,8 @@
   --accent-2: #7c5cff;
   --gold: #e0a100;
   --danger: #d64545;
-  --sans: 'Inter', -apple-system, sans-serif;
-  --head: 'Poppins', 'Inter', sans-serif;
+  --sans: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --head: 'Poppins', 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   --radius: 16px;
   --shadow: 0 10px 30px rgba(15,42,40,0.08);
 }
@@ -68,6 +68,8 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .icon-btn{position:relative; width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line-2); background:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; transition:border-color .15s, transform .15s;}
 .icon-btn:hover{border-color:var(--primary); transform:translateY(-1px);}
 .icon-btn .count{position:absolute; top:-4px; right:-4px; background:var(--accent); color:#fff; font-size:10px; font-weight:700; min-width:17px; height:17px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+.lang-toggle{border:1.5px solid var(--line-2); background:#fff; color:var(--ink); border-radius:20px; padding:8px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; transition:border-color .15s, color .15s;}
+.lang-toggle:hover{border-color:var(--primary); color:var(--primary-dark);}
 .cta-btn{background:var(--primary); color:#fff; padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px; border:none; white-space:nowrap; transition:background .15s, transform .15s;}
 .cta-btn:hover{background:var(--primary-dark); transform:translateY(-1px);}
 .cta-ghost{background:#fff; color:var(--primary-dark); border:1.5px solid var(--primary); padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px;}
@@ -84,6 +86,13 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .hero-cta-row .cta-btn, .hero-cta-row .cta-ghost{padding:13px 24px; font-size:14.5px;}
 .trust-strip{display:flex; gap:22px; flex-wrap:wrap;}
 .trust-strip .t-item{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--ink-2);}
+
+.suburb-band{background:var(--ink); color:#eafaf6; padding:22px 0;}
+.suburb-band .wrap{display:flex; align-items:center; gap:22px; flex-wrap:wrap; justify-content:space-between;}
+.suburb-band .sb-copy{font-size:13.5px; line-height:1.5; max-width:560px;}
+.suburb-band .sb-copy .zh{display:block; color:#a9c9c2; font-size:12.5px; margin-top:3px;}
+.suburb-chips{display:flex; gap:10px; flex-wrap:wrap;}
+.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap;}
 .trust-strip .t-item .ic{font-size:16px;}
 
 .hero-visual{position:relative; height:440px;}
@@ -171,6 +180,8 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .add-btn{border:none; background:var(--ink); color:#fff; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:8px; transition:background .15s, transform .12s;}
 .add-btn:hover{background:var(--primary-dark);}
 .add-btn.added{background:var(--primary);}
+.compare-link{font-size:11px; color:var(--ink-3); margin-top:6px; display:inline-flex; align-items:center; gap:3px;}
+.compare-link:hover{color:var(--primary-dark);}
 .stars{color:var(--gold); font-size:12px;}
 
 /* Compare table */
@@ -209,6 +220,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .foot-grid h4{color:#fff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
 .foot-grid a{display:block; font-size:13px; color:#a9c9c2; margin-bottom:9px;}
 .foot-grid a:hover{color:#fff;}
+.foot-social{display:flex; gap:10px; margin-bottom:20px;}
+.foot-social-link{border:1.5px solid rgba(255,255,255,0.18); border-radius:20px; padding:8px 14px; font-size:12.5px; color:#cfe8e2; transition:border-color .15s, color .15s;}
+.foot-social-link:hover{border-color:rgba(255,255,255,0.5); color:#fff;}
 .foot-bottom{border-top:1px solid rgba(255,255,255,0.12); padding-top:18px; font-size:12px; color:#7fa39b; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 @media (max-width:900px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
 
@@ -267,18 +281,19 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <div class="nav-row wrap">
     <div class="logo"><span class="dot"></span>BrightWell</div>
     <nav class="main-links">
-      <a href="#quick-order">Order a Script</a>
-      <a href="#categories">Shop</a>
-      <a href="#bestsellers">Best Sellers</a>
-      <a href="#compare">Why BrightWell</a>
-      <a href="#loyalty">Rewards</a>
+      <a href="#quick-order" data-i18n="nav.order">Order a Script</a>
+      <a href="#categories" data-i18n="nav.shop">Shop</a>
+      <a href="#bestsellers" data-i18n="nav.bestsellers">Best Sellers</a>
+      <a href="#compare" data-i18n="nav.why">Why BrightWell</a>
+      <a href="#loyalty" data-i18n="nav.rewards">Rewards</a>
     </nav>
     <div class="search-wrap">
-      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" autocomplete="off">
+      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" data-i18n-placeholder="search.placeholder" autocomplete="off">
       <span class="icon">🔍</span>
       <div class="suggest" id="suggestBox"></div>
     </div>
     <div class="head-actions">
+      <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
       <button class="icon-btn" title="Account">👤</button>
       <button class="icon-btn" id="cartBtn" title="Cart">🛒<span class="count" id="cartCount">0</span></button>
       <button class="hamburger" id="hamburger">☰</button>
@@ -289,17 +304,17 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="hero">
   <div class="wrap">
     <div class="hero-copy fade-up">
-      <div class="eyebrow">✦ Meds &amp; retail, in one 2-step checkout</div>
-      <h1>Your health, <span>delivered brilliantly.</span></h1>
-      <p class="lead">Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
+      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Meds &amp; retail, in one 2-step checkout</div>
+      <h1><span data-i18n="hero.h1a">Your health, </span><span data-i18n="hero.h1b">delivered brilliantly.</span></h1>
+      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
       <div class="hero-cta-row">
-        <a href="#quick-order" class="cta-btn">Order your prescription →</a>
-        <a href="#bestsellers" class="cta-ghost">Shop best sellers</a>
+        <a href="#quick-order" class="cta-btn" data-i18n="hero.cta1">Order your prescription →</a>
+        <a href="#bestsellers" class="cta-ghost" data-i18n="hero.cta2">Shop best sellers</a>
       </div>
       <div class="trust-strip">
-        <div class="t-item"><span class="ic">🕒</span>Order in under 60 seconds</div>
-        <div class="t-item"><span class="ic">🩺</span>Live pharmacist chat 24/7</div>
-        <div class="t-item"><span class="ic">📍</span>Live stock at your nearest store</div>
+        <div class="t-item"><span class="ic">🕒</span><span data-i18n="hero.trust1">Order in under 60 seconds</span></div>
+        <div class="t-item"><span class="ic">🩺</span><span data-i18n="hero.trust2">Live pharmacist chat 24/7</span></div>
+        <div class="t-item"><span class="ic">📍</span><span data-i18n="hero.trust3">Live stock at your nearest store</span></div>
       </div>
     </div>
     <div class="hero-visual">
@@ -312,47 +327,63 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   </div>
 </section>
 
+<!-- SUBURB FOCUS -->
+<div class="suburb-band">
+  <div class="wrap">
+    <div class="sb-copy">
+      <span data-i18n="suburb.copy">Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.</span>
+      <span class="zh" id="suburbZhNote">我们为布里斯班华人社区提供服务 — 药剂师可用中文或英文为您提供咨询。</span>
+    </div>
+    <div class="suburb-chips">
+      <span class="suburb-chip">Sunnybank</span>
+      <span class="suburb-chip">Underwood</span>
+      <span class="suburb-chip">Calamvale</span>
+      <span class="suburb-chip">Indooroopilly</span>
+    </div>
+  </div>
+</div>
+
 <!-- QUICK ORDER -->
 <section class="section quick-order" id="quick-order">
   <div class="wrap">
     <div class="section-head fade-up">
       <div>
-        <h2>Order in three ways — pick the fastest one</h2>
-        <p>This is the part most pharmacy sites bury under menus. We put it first.</p>
+        <h2 data-i18n="qo.title">Order in three ways — pick the fastest one</h2>
+        <p data-i18n="qo.sub">This is the part most pharmacy sites bury under menus. We put it first.</p>
       </div>
     </div>
     <div class="qo-grid">
       <div class="qo-card fade-up">
         <div class="qo-icon">📷</div>
-        <h3>Upload a script</h3>
-        <p>Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.</p>
+        <h3 data-i18n="qo.card1.title">Upload a script</h3>
+        <p data-i18n="qo.card1.body">Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.</p>
         <label class="dropzone" id="dropzone" for="rxFile">
-          <span id="dzText">Drop image here or click to browse</span>
+          <span id="dzText" data-i18n="qo.dropzone">Drop image here or click to browse</span>
           <input type="file" id="rxFile" accept="image/*">
         </label>
         <div class="progress-track" id="progTrack"><div class="progress-fill" id="progFill"></div></div>
-        <div class="upload-status" id="uploadStatus">✅ Received — a pharmacist will confirm within 15 minutes.</div>
+        <div class="upload-status" id="uploadStatus" data-i18n="qo.uploadStatus">✅ Received — a pharmacist will confirm within 15 minutes.</div>
       </div>
 
       <div class="qo-card fade-up">
         <div class="qo-icon">🔎</div>
-        <h3>Search by medicine or PBS code</h3>
-        <p>Instant results as you type, with generic-brand price comparisons shown up front.</p>
+        <h3 data-i18n="qo.card2.title">Search by medicine or PBS code</h3>
+        <p data-i18n="qo.card2.body">Instant results as you type, with generic-brand price comparisons shown up front.</p>
         <div class="pbs-search">
-          <input type="text" id="pbsInput" placeholder="e.g. Panadol, Ventolin, PBS 2432K…">
-          <button id="pbsBtn">Find</button>
+          <input type="text" id="pbsInput" placeholder="e.g. Panadol, Ventolin, PBS 2432K…" data-i18n-placeholder="qo.pbsPlaceholder">
+          <button id="pbsBtn" data-i18n="qo.pbsBtn">Find</button>
         </div>
         <div class="reorder-list" id="pbsResults"></div>
       </div>
 
       <div class="qo-card fade-up">
         <div class="qo-icon">🔁</div>
-        <h3>Reorder your regulars</h3>
-        <p>One tap re-adds your last order — no re-searching, no re-typing your details.</p>
+        <h3 data-i18n="qo.card3.title">Reorder your regulars</h3>
+        <p data-i18n="qo.card3.body">One tap re-adds your last order — no re-searching, no re-typing your details.</p>
         <div class="reorder-list">
-          <div class="reorder-item"><span>Blood pressure script (monthly)</span><button data-reorder="1">Reorder</button></div>
-          <div class="reorder-item"><span>Vitamin D3 1000IU</span><button data-reorder="9">Reorder</button></div>
-          <div class="reorder-item"><span>Sensitive skin moisturiser</span><button data-reorder="12">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder1">Blood pressure script (monthly)</span><button data-reorder="1" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder3">Sensitive skin moisturiser</span><button data-reorder="12" data-i18n="qo.reorderBtn">Reorder</button></div>
         </div>
       </div>
     </div>
@@ -363,21 +394,21 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="categories">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2>Shop by category</h2><p>Medicines and retail, side by side — not split across separate apps.</p></div>
+      <div><h2 data-i18n="cat.title">Shop by category</h2><p data-i18n="cat.sub">Medicines and retail, side by side — not split across separate apps.</p></div>
     </div>
     <div class="cat-grid">
-      <div class="cat-card fade-up"><div class="ic">💊</div><div class="lbl">Prescriptions</div></div>
-      <div class="cat-card fade-up"><div class="ic">🌿</div><div class="lbl">Vitamins</div></div>
-      <div class="cat-card fade-up"><div class="ic">🧴</div><div class="lbl">Skincare</div></div>
-      <div class="cat-card fade-up"><div class="ic">🍼</div><div class="lbl">Baby &amp; Kids</div></div>
-      <div class="cat-card fade-up"><div class="ic">🩹</div><div class="lbl">First Aid</div></div>
-      <div class="cat-card fade-up"><div class="ic">💇</div><div class="lbl">Hair &amp; Beauty</div></div>
-      <div class="cat-card fade-up"><div class="ic">🏋️</div><div class="lbl">Weight &amp; Fitness</div></div>
-      <div class="cat-card fade-up"><div class="ic">🧻</div><div class="lbl">Everyday Essentials</div></div>
-      <div class="cat-card fade-up"><div class="ic">🩺</div><div class="lbl">Health Devices</div></div>
-      <div class="cat-card fade-up"><div class="ic">🌸</div><div class="lbl">Fragrance</div></div>
-      <div class="cat-card fade-up"><div class="ic">😴</div><div class="lbl">Sleep &amp; Wellness</div></div>
-      <div class="cat-card fade-up"><div class="ic">🐾</div><div class="lbl">Pet Health</div></div>
+      <div class="cat-card fade-up"><div class="ic">💊</div><div class="lbl" data-i18n="cat.1">Prescriptions</div></div>
+      <div class="cat-card fade-up"><div class="ic">🌿</div><div class="lbl" data-i18n="cat.2">Vitamins</div></div>
+      <div class="cat-card fade-up"><div class="ic">🧴</div><div class="lbl" data-i18n="cat.3">Skincare</div></div>
+      <div class="cat-card fade-up"><div class="ic">🍼</div><div class="lbl" data-i18n="cat.4">Baby &amp; Kids</div></div>
+      <div class="cat-card fade-up"><div class="ic">🩹</div><div class="lbl" data-i18n="cat.5">First Aid</div></div>
+      <div class="cat-card fade-up"><div class="ic">💇</div><div class="lbl" data-i18n="cat.6">Hair &amp; Beauty</div></div>
+      <div class="cat-card fade-up"><div class="ic">🏋️</div><div class="lbl" data-i18n="cat.7">Weight &amp; Fitness</div></div>
+      <div class="cat-card fade-up"><div class="ic">🧻</div><div class="lbl" data-i18n="cat.8">Everyday Essentials</div></div>
+      <div class="cat-card fade-up"><div class="ic">🩺</div><div class="lbl" data-i18n="cat.9">Health Devices</div></div>
+      <div class="cat-card fade-up"><div class="ic">🌸</div><div class="lbl" data-i18n="cat.10">Fragrance</div></div>
+      <div class="cat-card fade-up"><div class="ic">😴</div><div class="lbl" data-i18n="cat.11">Sleep &amp; Wellness</div></div>
+      <div class="cat-card fade-up"><div class="ic">🐾</div><div class="lbl" data-i18n="cat.12">Pet Health</div></div>
     </div>
   </div>
 </section>
@@ -386,17 +417,17 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="bestsellers" style="background:var(--surface-2);">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2>Best sellers</h2><p>Tap a tab to filter — search bar above filters this grid too.</p></div>
-      <div class="see-all">1,240+ items in range →</div>
+      <div><h2 data-i18n="best.title">Best sellers</h2><p data-i18n="best.sub">Tap a tab to filter — search bar above filters this grid too.</p></div>
+      <div class="see-all" data-i18n="best.seeAll">1,240+ items in range →</div>
     </div>
     <div class="tabs" id="tabs">
-      <button class="tab-btn active" data-tab="all">All</button>
-      <button class="tab-btn" data-tab="trending">🔥 Trending exports</button>
-      <button class="tab-btn" data-tab="medicine">Medicines</button>
-      <button class="tab-btn" data-tab="vitamins">Vitamins</button>
-      <button class="tab-btn" data-tab="beauty">Beauty</button>
-      <button class="tab-btn" data-tab="baby">Baby</button>
-      <button class="tab-btn" data-tab="everyday">Everyday</button>
+      <button class="tab-btn active" data-tab="all" data-i18n="tab.all">All</button>
+      <button class="tab-btn" data-tab="trending" data-i18n="tab.trending">🔥 Trending exports</button>
+      <button class="tab-btn" data-tab="medicine" data-i18n="tab.medicine">Medicines</button>
+      <button class="tab-btn" data-tab="vitamins" data-i18n="tab.vitamins">Vitamins</button>
+      <button class="tab-btn" data-tab="beauty" data-i18n="tab.beauty">Beauty</button>
+      <button class="tab-btn" data-tab="baby" data-i18n="tab.baby">Baby</button>
+      <button class="tab-btn" data-tab="everyday" data-i18n="tab.everyday">Everyday</button>
     </div>
     <div class="prod-grid" id="prodGrid"></div>
   </div>
@@ -406,18 +437,18 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="compare">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2>Why this beats a typical big-box pharmacy site</h2><p>Same medicines and retail range — a much shorter path to "ordered."</p></div>
+      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">Same medicines and retail range — a much shorter path to "ordered."</p></div>
     </div>
     <div class="compare-wrap fade-up">
       <table class="compare">
-        <tr><th>What matters</th><th>BrightWell</th><th>Typical big chain (e.g. Chemist Warehouse)</th></tr>
-        <tr><td class="row-label">Checkout steps</td><td class="us">2 steps, cart drawer, no reload</td><td class="them">5–7 pages, full reloads</td></tr>
-        <tr><td class="row-label">Prescription upload</td><td class="us">Photo upload, ~2 min, in-page</td><td class="them">Phone/fax or separate portal</td></tr>
-        <tr><td class="row-label">Search</td><td class="us">Instant, filters meds + retail together</td><td class="them">Slow catalogue search, separate sections</td></tr>
-        <tr><td class="row-label">Pharmacist help</td><td class="us">Live chat bubble, always visible</td><td class="them">In-store or phone only</td></tr>
-        <tr><td class="row-label">Loyalty points</td><td class="us">Shown live in cart before you pay</td><td class="them">Applied after purchase, easy to miss</td></tr>
-        <tr><td class="row-label">Visual design</td><td class="us">Clean, 3D hero, uncluttered</td><td class="them">Dense flyer-style layout, banner heavy</td></tr>
-        <tr><td class="row-label">Mobile experience</td><td class="us">Same speed &amp; layout as desktop</td><td class="them">Slower, more taps to reach checkout</td></tr>
+        <tr><th data-i18n="cmp.h1">What matters</th><th data-i18n="cmp.h2">BrightWell</th><th data-i18n="cmp.h3">Typical big chain (e.g. Chemist Warehouse)</th></tr>
+        <tr><td class="row-label" data-i18n="cmp.r1">Checkout steps</td><td class="us" data-i18n="cmp.r1us">2 steps, cart drawer, no reload</td><td class="them" data-i18n="cmp.r1them">5–7 pages, full reloads</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r2">Prescription upload</td><td class="us" data-i18n="cmp.r2us">Photo upload, ~2 min, in-page</td><td class="them" data-i18n="cmp.r2them">Phone/fax or separate portal</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r3">Search</td><td class="us" data-i18n="cmp.r3us">Instant, filters meds + retail together</td><td class="them" data-i18n="cmp.r3them">Slow catalogue search, separate sections</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r4">Pharmacist help</td><td class="us" data-i18n="cmp.r4us">Live chat bubble, always visible</td><td class="them" data-i18n="cmp.r4them">In-store or phone only</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r5">Loyalty points</td><td class="us" data-i18n="cmp.r5us">Shown live in cart before you pay</td><td class="them" data-i18n="cmp.r5them">Applied after purchase, easy to miss</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r6">Visual design</td><td class="us" data-i18n="cmp.r6us">Clean, 3D hero, uncluttered</td><td class="them" data-i18n="cmp.r6them">Dense flyer-style layout, banner heavy</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r7">Mobile experience</td><td class="us" data-i18n="cmp.r7us">Same speed &amp; layout as desktop</td><td class="them" data-i18n="cmp.r7them">Slower, more taps to reach checkout</td></tr>
       </table>
     </div>
   </div>
@@ -426,7 +457,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <!-- TESTIMONIALS -->
 <section class="section" style="background:var(--surface-2);">
   <div class="wrap">
-    <div class="section-head fade-up"><div><h2>What shoppers say</h2></div></div>
+    <div class="section-head fade-up"><div><h2 data-i18n="testi.title">What shoppers say</h2></div></div>
     <div class="testi-grid">
       <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"Uploaded my script on the way to work, picked it up ready by lunch. Didn't have to call anyone."</p><div class="who">Priya N.</div><div class="where">Brisbane, QLD</div></div>
       <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"The reorder button alone is worth it — my monthly vitamins just appear in the cart."</p><div class="who">Marcus T.</div><div class="where">Sydney, NSW</div></div>
@@ -440,15 +471,15 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <div class="wrap">
     <div class="banner fade-up">
       <div>
-        <h2>BrightWell+ Rewards</h2>
-        <p>Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.</p>
-        <a href="#" class="cta-btn">Join free — takes 30 seconds</a>
+        <h2 data-i18n="loy.title">BrightWell+ Rewards</h2>
+        <p data-i18n="loy.body">Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.</p>
+        <a href="#" class="cta-btn" data-i18n="loy.cta">Join free — takes 30 seconds</a>
       </div>
       <div class="phone-mock">
         <div class="screen">
           <div class="pts">2,480</div>
-          <div class="pts-lbl">Points balance</div>
-          <div style="font-size:11px;color:var(--ink-2);margin-top:6px;">≈ $12.40 off your next order</div>
+          <div class="pts-lbl" data-i18n="loy.ptsLabel">Points balance</div>
+          <div style="font-size:11px;color:var(--ink-2);margin-top:6px;" data-i18n="loy.ptsValue">≈ $12.40 off your next order</div>
         </div>
       </div>
     </div>
@@ -460,16 +491,20 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
     <div class="foot-grid">
       <div>
         <div class="logo" style="color:#fff;"><span class="dot"></span>BrightWell</div>
-        <p style="font-size:13px;color:#a9c9c2;margin-top:10px;max-width:260px;">A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.</p>
+        <p style="font-size:13px;color:#a9c9c2;margin-top:10px;max-width:260px;" data-i18n="foot.tagline">A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.</p>
       </div>
-      <div><h4>Shop</h4><a href="#">Prescriptions</a><a href="#">Vitamins</a><a href="#">Beauty</a><a href="#">Baby &amp; Kids</a></div>
-      <div><h4>Help</h4><a href="#">Ask a pharmacist</a><a href="#">Track my order</a><a href="#">Returns</a><a href="#">Delivery info</a></div>
-      <div><h4>Company</h4><a href="#">About</a><a href="#">Store locator</a><a href="#">Careers</a></div>
-      <div><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Accessibility</a></div>
+      <div><h4 data-i18n="foot.shop">Shop</h4><a href="#" data-i18n="cat.1">Prescriptions</a><a href="#" data-i18n="cat.2">Vitamins</a><a href="#" data-i18n="cat.3b">Beauty</a><a href="#" data-i18n="cat.4">Baby &amp; Kids</a></div>
+      <div><h4 data-i18n="foot.help">Help</h4><a href="#" data-i18n="foot.help1">Ask a pharmacist</a><a href="#" data-i18n="foot.help2">Track my order</a><a href="#" data-i18n="foot.help3">Returns</a><a href="#" data-i18n="foot.help4">Delivery info</a></div>
+      <div><h4 data-i18n="foot.company">Company</h4><a href="#" data-i18n="foot.company1">About</a><a href="#" data-i18n="foot.company2">Store locator</a><a href="#" data-i18n="foot.company3">Careers</a></div>
+      <div><h4 data-i18n="foot.legal">Legal</h4><a href="#" data-i18n="foot.legal1">Privacy</a><a href="#" data-i18n="foot.legal2">Terms</a><a href="#" data-i18n="foot.legal3">Accessibility</a></div>
+    </div>
+    <div class="foot-social">
+      <a href="#" class="foot-social-link" title="WeChat — coming soon">💬 WeChat</a>
+      <a href="#" class="foot-social-link" title="Xiaohongshu / RedNote — coming soon">📕 小红书 RedNote</a>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 BrightWell — concept design, no real orders processed.</span>
-      <span>Built as a UX comparison to chemistwarehouse.com.au</span>
+      <span data-i18n="foot.copyright">© 2026 BrightWell — concept design, no real orders processed.</span>
+      <span data-i18n="foot.builtAs">Built as a UX comparison to chemistwarehouse.com.au</span>
     </div>
   </div>
 </footer>
@@ -477,22 +512,22 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <!-- CART DRAWER -->
 <div class="overlay" id="overlay"></div>
 <div class="cart-drawer" id="cartDrawer">
-  <div class="cart-head"><h3>Your cart</h3><button id="closeCart">✕</button></div>
-  <div class="cart-items" id="cartItems"><div class="cart-empty">Your cart is empty — add something from Best Sellers.</div></div>
+  <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
   <div class="cart-foot">
-    <div class="sub-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
-    <div class="sub-row"><span>BrightWell+ points earned</span><span id="cartPoints">+0 pts</span></div>
-    <div class="sub-row total"><span>Total</span><span id="cartTotal">$0.00</span></div>
-    <button class="checkout-btn" id="checkoutBtn">Checkout →</button>
-    <div class="checkout-steps">Step 1 of 2 — delivery details next</div>
+    <div class="sub-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+    <div class="sub-row"><span data-i18n="cart.pointsEarned">BrightWell+ points earned</span><span id="cartPoints">+0 pts</span></div>
+    <div class="sub-row total"><span data-i18n="cart.total">Total</span><span id="cartTotal">$0.00</span></div>
+    <button class="checkout-btn" id="checkoutBtn" data-i18n="cart.checkout">Checkout →</button>
+    <div class="checkout-steps" data-i18n="cart.step">Step 1 of 2 — delivery details next</div>
   </div>
 </div>
 
-<button class="chat-fab" id="chatFab">💬 Ask a pharmacist</button>
+<button class="chat-fab" id="chatFab"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
 <div class="chat-pop" id="chatPop">
-  <div class="cp-head">Pharmacist chat</div>
-  <p>Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
-  <input type="text" placeholder="Type your question…" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
+  <div class="cp-head" data-i18n="chat.head">Pharmacist chat</div>
+  <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
+  <input type="text" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
 </div>
 <div class="toast" id="toast"></div>
 
@@ -532,12 +567,133 @@ let activeTab = "all";
 let searchTerm = "";
 let cart = [];
 
+/* ---------------- i18n (EN / 中文) ---------------- */
+const I18N = {
+  en: {
+    'nav.order':'Order a Script','nav.shop':'Shop','nav.bestsellers':'Best Sellers','nav.why':'Why BrightWell','nav.rewards':'Rewards',
+    'search.placeholder':'Search medicines, vitamins, brands…',
+    'hero.eyebrow':'✦ Meds & retail, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
+    'hero.lead':"Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
+    'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
+    'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
+    'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
+    'qo.title':'Order in three ways — pick the fastest one','qo.sub':'This is the part most pharmacy sites bury under menus. We put it first.',
+    'qo.card1.title':'Upload a script','qo.card1.body':"Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.",
+    'qo.dropzone':'Drop image here or click to browse','qo.uploadStatus':'✅ Received — a pharmacist will confirm within 15 minutes.',
+    'qo.card2.title':'Search by medicine or PBS code','qo.card2.body':'Instant results as you type, with generic-brand price comparisons shown up front.',
+    'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
+    'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
+    'qo.reorder1':'Blood pressure script (monthly)','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Sensitive skin moisturiser','qo.reorderBtn':'Reorder',
+    'cat.title':'Shop by category','cat.sub':'Medicines and retail, side by side — not split across separate apps.',
+    'cat.1':'Prescriptions','cat.2':'Vitamins','cat.3':'Skincare','cat.3b':'Beauty','cat.4':'Baby & Kids','cat.5':'First Aid','cat.6':'Hair & Beauty',
+    'cat.7':'Weight & Fitness','cat.8':'Everyday Essentials','cat.9':'Health Devices','cat.10':'Fragrance','cat.11':'Sleep & Wellness','cat.12':'Pet Health',
+    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'1,240+ items in range →',
+    'tab.all':'All','tab.trending':'🔥 Trending exports','tab.medicine':'Medicines','tab.vitamins':'Vitamins','tab.beauty':'Beauty','tab.baby':'Baby','tab.everyday':'Everyday',
+    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'Same medicines and retail range — a much shorter path to "ordered."',
+    'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
+    'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
+    'cmp.r2':'Prescription upload','cmp.r2us':'Photo upload, ~2 min, in-page','cmp.r2them':'Phone/fax or separate portal',
+    'cmp.r3':'Search','cmp.r3us':'Instant, filters meds + retail together','cmp.r3them':'Slow catalogue search, separate sections',
+    'cmp.r4':'Pharmacist help','cmp.r4us':'Live chat bubble, always visible','cmp.r4them':'In-store or phone only',
+    'cmp.r5':'Loyalty points','cmp.r5us':'Shown live in cart before you pay','cmp.r5them':'Applied after purchase, easy to miss',
+    'cmp.r6':'Visual design','cmp.r6us':'Clean, 3D hero, uncluttered','cmp.r6them':'Dense flyer-style layout, banner heavy',
+    'cmp.r7':'Mobile experience','cmp.r7us':'Same speed & layout as desktop','cmp.r7them':'Slower, more taps to reach checkout',
+    'testi.title':'What shoppers say',
+    'loy.title':'BrightWell+ Rewards','loy.body':'Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.',
+    'loy.cta':'Join free — takes 30 seconds','loy.ptsLabel':'Points balance','loy.ptsValue':'≈ $12.40 off your next order',
+    'foot.tagline':'A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.',
+    'foot.shop':'Shop','foot.help':'Help','foot.help1':'Ask a pharmacist','foot.help2':'Track my order','foot.help3':'Returns','foot.help4':'Delivery info',
+    'foot.company':'Company','foot.company1':'About','foot.company2':'Store locator','foot.company3':'Careers',
+    'foot.legal':'Legal','foot.legal1':'Privacy','foot.legal2':'Terms','foot.legal3':'Accessibility',
+    'foot.copyright':'© 2026 BrightWell — concept design, no real orders processed.','foot.builtAs':'Built as a UX comparison to chemistwarehouse.com.au',
+    'cart.title':'Your cart','cart.empty':'Your cart is empty — add something from Best Sellers.','cart.subtotal':'Subtotal',
+    'cart.pointsEarned':'BrightWell+ points earned','cart.total':'Total','cart.checkout':'Checkout →','cart.step':'Step 1 of 2 — delivery details next',
+    'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
+    'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
+    'chat.placeholder':'Type your question…',
+    'dyn.add':'Add','dyn.addScript':'Add script','dyn.added':'Added ✓','dyn.remove':'Remove',
+    'dyn.noMatches':'No matches — try a different search.','dyn.noMatchPbs':'No match — a pharmacist can help via chat',
+    'dyn.flagRx':'Rx','dyn.flagPharm':'Pharmacist only','dyn.flagSale':'Sale','dyn.flagHot':'🔥 Trending',
+    'dyn.compareAt':'Compare at Chemist Warehouse ↗',
+    'dyn.toastAdded':'Added to cart','dyn.toastReordered':'Reordered — added to cart','dyn.toastCartEmpty':'Your cart is empty',
+    'dyn.toastCheckout':'Demo checkout — step 2 (delivery details) would appear here','dyn.uploading':'Uploading'
+  },
+  zh: {
+    'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
+    'search.placeholder':'搜索药品、维生素、品牌…',
+    'hero.eyebrow':'✦ 药品与日用品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
+    'hero.lead':'上传处方、一键重复购买,或浏览维生素与日常用品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
+    'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
+    'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
+    'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
+    'qo.title':'三种下单方式 —— 选最快的一种','qo.sub':'大多数药房网站把这部分藏在层层菜单里,我们把它放在最前面。',
+    'qo.card1.title':'上传处方','qo.card1.body':'拍下处方照片并拖拽上传,药剂师会为您审核 —— 无需打电话或传真。',
+    'qo.dropzone':'将图片拖到此处,或点击浏览','qo.uploadStatus':'✅ 已收到 —— 药剂师将在15分钟内确认。',
+    'qo.card2.title':'按药品名称或PBS编码搜索','qo.card2.body':'边输入边显示结果,并提前展示同类仿制药的价格对比。',
+    'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
+    'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
+    'qo.reorder1':'降压药处方(每月)','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'敏感肌保湿霜','qo.reorderBtn':'重新购买',
+    'cat.title':'按类别选购','cat.sub':'药品与日用品并列展示 —— 无需在不同应用间切换。',
+    'cat.1':'处方药','cat.2':'维生素','cat.3':'护肤品','cat.3b':'美妆','cat.4':'母婴用品','cat.5':'急救用品','cat.6':'美发美妆',
+    'cat.7':'体重管理与健身','cat.8':'日常用品','cat.9':'健康仪器','cat.10':'香水','cat.11':'睡眠与保健','cat.12':'宠物保健',
+    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'1,240+ 件商品 →',
+    'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.medicine':'药品','tab.vitamins':'维生素','tab.beauty':'美妆','tab.baby':'母婴','tab.everyday':'日常用品',
+    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样的药品与零售范围 —— 更短的下单路径。',
+    'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
+    'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
+    'cmp.r2':'处方上传','cmp.r2us':'拍照上传,约2分钟,页内完成','cmp.r2them':'电话/传真或跳转其他平台',
+    'cmp.r3':'搜索','cmp.r3us':'即时显示,药品与零售商品同时筛选','cmp.r3them':'目录搜索缓慢,分区查找',
+    'cmp.r4':'药剂师咨询','cmp.r4us':'实时聊天气泡,随时可见','cmp.r4them':'仅限店内或电话',
+    'cmp.r5':'积分奖励','cmp.r5us':'结账前购物车内实时显示','cmp.r5them':'购买后才发放,容易被忽略',
+    'cmp.r6':'视觉设计','cmp.r6us':'简洁,3D 主视觉,不杂乱','cmp.r6them':'密集传单式排版,横幅过多',
+    'cmp.r7':'移动端体验','cmp.r7us':'与桌面端同样流畅','cmp.r7them':'较慢,需要更多点击才能结账',
+    'testi.title':'顾客怎么说',
+    'loy.title':'BrightWell+ 会员积分','loy.body':'每笔订单(含药品)均可累积积分,余额实时显示在购物车中,而不是藏在APP的层层菜单里。',
+    'loy.cta':'免费加入 —— 只需30秒','loy.ptsLabel':'积分余额','loy.ptsValue':'≈ 可抵扣下次订单 $12.40',
+    'foot.tagline':'这是一个概念设计,展示更快、更友好的药房结账流程可能的样子。',
+    'foot.shop':'商店','foot.help':'帮助','foot.help1':'咨询药剂师','foot.help2':'追踪订单','foot.help3':'退换货','foot.help4':'配送信息',
+    'foot.company':'公司','foot.company1':'关于我们','foot.company2':'门店查找','foot.company3':'招聘信息',
+    'foot.legal':'法律信息','foot.legal1':'隐私政策','foot.legal2':'条款','foot.legal3':'无障碍声明',
+    'foot.copyright':'© 2026 BrightWell —— 概念设计,暂无真实订单处理。','foot.builtAs':'作为与 chemistwarehouse.com.au 的体验对比而构建',
+    'cart.title':'购物车','cart.empty':'购物车是空的 —— 从热销商品中添加一些吧。','cart.subtotal':'小计',
+    'cart.pointsEarned':'BrightWell+ 可获积分','cart.total':'总计','cart.checkout':'结账 →','cart.step':'第1步(共2步) —— 接下来填写配送信息',
+    'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
+    'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
+    'chat.placeholder':'输入您的问题…',
+    'dyn.add':'加入购物车','dyn.addScript':'上传处方','dyn.added':'已加入 ✓','dyn.remove':'移除',
+    'dyn.noMatches':'没有找到匹配商品 —— 试试其他搜索词。','dyn.noMatchPbs':'未找到匹配项 —— 可通过聊天咨询药剂师',
+    'dyn.flagRx':'处方药','dyn.flagPharm':'药剂师指导','dyn.flagSale':'特价','dyn.flagHot':'🔥 热门',
+    'dyn.compareAt':'前往 Chemist Warehouse 比价 ↗',
+    'dyn.toastAdded':'已加入购物车','dyn.toastReordered':'已重新下单并加入购物车','dyn.toastCartEmpty':'购物车是空的',
+    'dyn.toastCheckout':'演示结账 —— 第2步(配送信息)将在此显示','dyn.uploading':'正在上传'
+  }
+};
+const CAT_LABEL_KEY = {medicine:'tab.medicine', vitamins:'tab.vitamins', beauty:'tab.beauty', baby:'tab.baby', everyday:'tab.everyday'};
+let currentLang = localStorage.getItem('bw-lang') || 'en';
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key] || key); }
+
+function applyLang(lang){
+  currentLang = lang;
+  localStorage.setItem('bw-lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
+  const toggle = document.getElementById('langToggle');
+  if(toggle) toggle.textContent = lang === 'en' ? '中文' : 'EN';
+  const suburbZhNote = document.getElementById('suburbZhNote');
+  if(suburbZhNote) suburbZhNote.style.display = lang === 'zh' ? 'none' : '';
+  renderGrid();
+  renderCart();
+  document.getElementById('pbsResults').innerHTML = '';
+  document.getElementById('suggestBox').classList.remove('open');
+}
+
 function flagFor(p){
   let left = '';
-  if(p.rx) left = '<span class="prod-flag rx">Rx</span>';
-  else if(p.pharm) left = '<span class="prod-flag rx">Pharmacist only</span>';
-  else if(p.was) left = '<span class="prod-flag">Sale</span>';
-  const right = p.hot ? '<span class="prod-flag hot">🔥 Trending</span>' : '';
+  if(p.rx) left = `<span class="prod-flag rx">${t('dyn.flagRx')}</span>`;
+  else if(p.pharm) left = `<span class="prod-flag rx">${t('dyn.flagPharm')}</span>`;
+  else if(p.was) left = `<span class="prod-flag">${t('dyn.flagSale')}</span>`;
+  const right = p.hot ? `<span class="prod-flag hot">${t('dyn.flagHot')}</span>` : '';
   return left + right;
 }
 
@@ -556,23 +712,24 @@ function renderGrid(){
         ${flagFor(p)}
       </div>
       <div class="prod-body">
-        <div class="p-cat">${p.cat}</div>
+        <div class="p-cat">${t(CAT_LABEL_KEY[p.cat] || 'tab.everyday')}</div>
         <div class="p-name">${p.name}</div>
         <div class="stars">★★★★☆</div>
         <div class="p-price-row">
           <div class="p-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
-          <button class="add-btn" data-add="${p.id}">${p.rx ? 'Add script' : 'Add'}</button>
+          <button class="add-btn" data-add="${p.id}">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
         </div>
+        <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
       </div>
     </div>
-  `).join('') : `<div style="grid-column:1/-1;text-align:center;color:var(--ink-3);padding:40px 0;">No matches — try a different search.</div>`;
+  `).join('') : `<div style="grid-column:1/-1;text-align:center;color:var(--ink-3);padding:40px 0;">${t('dyn.noMatches')}</div>`;
 
   grid.querySelectorAll('[data-add]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       addToCart(parseInt(btn.dataset.add));
-      btn.textContent = 'Added ✓';
+      btn.textContent = t('dyn.added');
       btn.classList.add('added');
-      setTimeout(()=>{ btn.textContent = PRODUCTS.find(p=>p.id==btn.dataset.add).rx ? 'Add script' : 'Add'; btn.classList.remove('added'); }, 1200);
+      setTimeout(()=>{ btn.textContent = PRODUCTS.find(p=>p.id==btn.dataset.add).rx ? t('dyn.addScript') : t('dyn.add'); btn.classList.remove('added'); }, 1200);
     });
   });
 }
@@ -620,16 +777,16 @@ document.getElementById('pbsBtn').addEventListener('click', ()=>{
   if(!term){ results.innerHTML = ''; return; }
   const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,3);
   results.innerHTML = matches.length ? matches.map(p=>`
-    <div class="reorder-item"><span>${p.icon} ${p.name} — $${p.price.toFixed(2)}</span><button data-add="${p.id}">Add</button></div>
-  `).join('') : `<div class="reorder-item"><span>No match — a pharmacist can help via chat</span></div>`;
-  results.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click', ()=>{ addToCart(parseInt(btn.dataset.add)); showToast('Added to cart'); }));
+    <div class="reorder-item"><span>${p.icon} ${p.name} — $${p.price.toFixed(2)}</span><button data-add="${p.id}">${t('dyn.add')}</button></div>
+  `).join('') : `<div class="reorder-item"><span>${t('dyn.noMatchPbs')}</span></div>`;
+  results.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click', ()=>{ addToCart(parseInt(btn.dataset.add)); showToast(t('dyn.toastAdded')); }));
 });
 
 /* ---------------- Reorder shortcuts ---------------- */
 document.querySelectorAll('[data-reorder]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     addToCart(parseInt(btn.dataset.reorder));
-    showToast('Reordered — added to cart');
+    showToast(t('dyn.toastReordered'));
   });
 });
 
@@ -654,7 +811,7 @@ function renderCart(){
   const count = cart.reduce((s,l)=>s+l.qty,0);
   document.getElementById('cartCount').textContent = count;
   if(!cart.length){
-    itemsEl.innerHTML = `<div class="cart-empty">Your cart is empty — add something from Best Sellers.</div>`;
+    itemsEl.innerHTML = `<div class="cart-empty">${t('cart.empty')}</div>`;
   } else {
     itemsEl.innerHTML = cart.map(l=>`
       <div class="cart-line">
@@ -666,7 +823,7 @@ function renderCart(){
             <span>${l.qty}</span>
             <button class="qty-btn" data-inc="${l.id}">+</button>
           </div>
-          <div class="rm" data-rm="${l.id}">Remove</div>
+          <div class="rm" data-rm="${l.id}">${t('dyn.remove')}</div>
         </div>
         <div class="price">$${(l.price*l.qty).toFixed(2)}</div>
       </div>
@@ -691,8 +848,8 @@ document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('closeCart').addEventListener('click', closeCart);
 overlay.addEventListener('click', closeCart);
 document.getElementById('checkoutBtn').addEventListener('click', ()=>{
-  if(!cart.length){ showToast('Your cart is empty'); return; }
-  showToast('Demo checkout — step 2 (delivery details) would appear here');
+  if(!cart.length){ showToast(t('dyn.toastCartEmpty')); return; }
+  showToast(t('dyn.toastCheckout'));
 });
 
 /* ---------------- Toast ---------------- */
@@ -714,7 +871,7 @@ const uploadStatus = document.getElementById('uploadStatus');
 const dzText = document.getElementById('dzText');
 
 function simulateUpload(fileName){
-  dzText.textContent = fileName ? `Uploading "${fileName}"…` : 'Uploading…';
+  dzText.textContent = fileName ? `${t('dyn.uploading')} "${fileName}"…` : `${t('dyn.uploading')}…`;
   progTrack.classList.add('show');
   uploadStatus.classList.remove('show');
   let pct = 0;
@@ -723,7 +880,7 @@ function simulateUpload(fileName){
     if(pct>=100){ pct=100; clearInterval(iv);
       progFill.style.width = '100%';
       setTimeout(()=>{
-        dzText.textContent = 'Drop image here or click to browse';
+        dzText.textContent = t('qo.dropzone');
         progTrack.classList.remove('show');
         progFill.style.width = '0%';
         uploadStatus.classList.add('show');
@@ -754,9 +911,13 @@ const observer = new IntersectionObserver((entries)=>{
 },{threshold:0.12});
 document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
 
+/* ---------------- Language toggle ---------------- */
+document.getElementById('langToggle').addEventListener('click', ()=>{
+  applyLang(currentLang === 'en' ? 'zh' : 'en');
+});
+
 /* ---------------- Init ---------------- */
-renderGrid();
-renderCart();
+applyLang(currentLang);
 </script>
 
 <!-- ---------------- 3D hero (Three.js) with CSS fallback ---------------- -->
