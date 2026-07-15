@@ -261,6 +261,70 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .fade-up{opacity:0; transform:translateY(24px); transition:opacity .5s ease, transform .5s ease;}
 .fade-up.visible{opacity:1; transform:translateY(0);}
 
+/* ---------- Product detail & checkout modals ---------- */
+.bw-overlay{position:fixed; inset:0; background:rgba(13,39,38,0.45); opacity:0; pointer-events:none; transition:opacity .2s; z-index:220;}
+.bw-overlay.open{opacity:1; pointer-events:auto;}
+.bw-modal{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.97); width:720px; max-width:94vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:18px; box-shadow:0 30px 80px rgba(0,0,0,0.3); z-index:221; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;}
+.bw-modal.open{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}
+.bw-modal .bwm-head{display:flex; justify-content:space-between; align-items:center; padding:16px 22px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; z-index:2;}
+.bw-modal .bwm-head h3{font-size:17px;}
+.bw-modal .bwm-close{background:none; border:none; font-size:20px; color:var(--ink-2); cursor:pointer;}
+.pd-grid{display:grid; grid-template-columns:280px 1fr; gap:22px; padding:22px;}
+@media (max-width:700px){.pd-grid{grid-template-columns:1fr;}}
+.pd-visual{background:var(--surface-2); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:96px; min-height:230px; position:relative;}
+.pd-img-note{font-size:10.5px; color:var(--ink-3); margin-top:8px; line-height:1.4;}
+.pd-info .pd-brand{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:700;}
+.pd-info h2{font-size:22px; margin:4px 0 2px;}
+.pd-info .pd-size{font-size:12.5px; color:var(--ink-2); margin-bottom:6px;}
+.pd-price{font-size:24px; font-weight:800; margin:8px 0;}
+.pd-price .was{font-size:14px; color:var(--ink-3); text-decoration:line-through; font-weight:500; margin-left:8px;}
+.pd-block{margin-top:12px;}
+.pd-block h4{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); margin-bottom:4px;}
+.pd-block p{font-size:13.5px; color:var(--ink-2); line-height:1.5;}
+.pd-note{margin-top:12px; padding:10px 12px; border-radius:10px; font-size:12.5px; line-height:1.5; background:rgba(224,161,0,0.1); border:1px solid rgba(224,161,0,0.35); color:#7a5a05;}
+.pd-buy{display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap;}
+.pd-qty{display:flex; align-items:center; gap:12px; border:1.5px solid var(--line-2); border-radius:10px; padding:7px 12px;}
+.prod-card{cursor:pointer;}
+
+.co-body{padding:20px 22px;}
+.co-demo{background:rgba(124,92,255,0.08); border:1px solid rgba(124,92,255,0.3); color:#5a3fd4; font-size:12px; border-radius:10px; padding:8px 12px; margin-bottom:14px; font-weight:600;}
+.co-summary{background:var(--surface-2); border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:6px;}
+.co-summary .line{display:flex; justify-content:space-between; gap:12px; padding:3px 0;}
+.co-summary .line.total{font-weight:800; border-top:1px dashed var(--line-2); margin-top:6px; padding-top:8px;}
+.co-section-label{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:700; margin:16px 0 8px;}
+.co-fields{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.co-fields .full{grid-column:1/-1;}
+.co-fields input,.co-fields select{width:100%; padding:10px 12px; border:1.5px solid var(--line-2); border-radius:8px; font-size:13.5px; font-family:var(--sans); background:#fff; color:var(--ink);}
+.co-fields input:focus,.co-fields select:focus{outline:none; border-color:var(--primary);}
+.pay-chips{display:flex; gap:8px; flex-wrap:wrap;}
+.pay-chip{padding:9px 14px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink);}
+.pay-chip.active{border-color:var(--primary); background:rgba(15,157,143,0.08); color:var(--primary-dark);}
+.pay-panel{margin-top:12px; display:none;}
+.pay-panel.active{display:block;}
+.pay-note{font-size:12.5px; color:var(--ink-2); background:var(--surface-2); border-radius:10px; padding:10px 12px; line-height:1.5;}
+.co-place{width:100%; margin-top:18px; padding:14px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:800; font-size:14.5px; cursor:pointer;}
+.co-place:hover{background:var(--primary-dark);}
+.co-success{text-align:center; padding:30px 10px; display:none;}
+.co-success.show{display:block;}
+.co-success .big{font-size:48px;}
+.co-success h3{font-size:20px; margin:10px 0 6px;}
+.co-success p{font-size:13.5px; color:var(--ink-2); margin-top:4px;}
+
+/* Trust / registration panel */
+.trust-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+@media (max-width:960px){.trust-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.trust-grid{grid-template-columns:1fr;}}
+.trust-card{background:#fff; border:1.5px dashed var(--line-2); border-radius:var(--radius); padding:18px;}
+.trust-card .tc-ic{font-size:24px; margin-bottom:8px;}
+.trust-card h4{font-size:14px; margin-bottom:6px;}
+.trust-card p{font-size:12.5px; color:var(--ink-2); line-height:1.5;}
+.status-chip{display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--gold); border:1px solid var(--gold); border-radius:12px; padding:3px 9px;}
+.trust-note{font-size:12px; color:var(--ink-3); margin-top:14px; max-width:720px; line-height:1.5;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+
 .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:11px 20px; border-radius:30px; font-size:13px; font-weight:600; opacity:0; pointer-events:none; transition:all .25s; z-index:300;}
 .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 </style>
@@ -486,6 +550,42 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   </div>
 </section>
 
+<!-- TRUST / REGISTRATION -->
+<section class="section" id="trust" style="background:var(--surface-2);">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="trust.title">Built to be verifiable</h2><p data-i18n="trust.sub">Every registration a real pharmacy must hold, displayed where customers can check it.</p></div>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🏛️</div>
+        <h4 data-i18n="trust.c1t">QLD pharmacy business licence</h4>
+        <p data-i18n="trust.c1b">Issued by the Queensland Pharmacy Business Ownership Council. The licence number will be displayed here for public verification.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🧑‍⚕️</div>
+        <h4 data-i18n="trust.c2t">Registered pharmacist owner</h4>
+        <p data-i18n="trust.c2b">Proprietor &amp; superintendent pharmacist name with AHPRA registration number — checkable on the public register.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">📍</div>
+        <h4 data-i18n="trust.c3t">Licensed premises</h4>
+        <p data-i18n="trust.c3b">Every order is dispensed from our licensed Brisbane pharmacy premises. Street address published here.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🔒</div>
+        <h4 data-i18n="trust.c4t">Payments &amp; privacy</h4>
+        <p data-i18n="trust.c4b">Cards and wallets processed by a PCI-DSS accredited gateway. Health information handled under the Australian Privacy Principles.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+    </div>
+    <p class="trust-note" data-i18n="trust.note">These panels are intentionally blank in this preview — real registration numbers appear here when the licence is granted. No placeholder numbers, ever.</p>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="foot-grid">
@@ -523,6 +623,70 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   </div>
 </div>
 
+<!-- PRODUCT DETAIL MODAL -->
+<div class="bw-overlay" id="bwOverlay"></div>
+<div class="bw-modal" id="pdModal" role="dialog" aria-modal="true">
+  <div class="bwm-head"><h3 data-i18n="pd.title">Product details</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div id="pdBody"></div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="bw-modal" id="coModal" role="dialog" aria-modal="true">
+  <div class="bwm-head"><h3 data-i18n="co.title">Checkout</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div class="co-body">
+    <div id="coForm">
+      <div class="co-demo" data-i18n="co.demoNote">Demo checkout — no real payment is processed.</div>
+      <div class="co-summary" id="coSummary"></div>
+      <div class="co-section-label" data-i18n="co.delivery">Delivery details</div>
+      <div class="co-fields">
+        <input id="coName" class="full" placeholder="Full name" data-i18n-placeholder="co.name" autocomplete="name">
+        <input id="coPhone" placeholder="Mobile" data-i18n-placeholder="co.phone" inputmode="tel" autocomplete="tel">
+        <select id="coSuburb">
+          <option>Sunnybank</option>
+          <option>Sunnybank Hills</option>
+          <option>Underwood</option>
+          <option>Calamvale</option>
+          <option>Indooroopilly</option>
+          <option data-i18n="co.otherSuburb">Other Brisbane</option>
+        </select>
+        <input id="coAddress" class="full" placeholder="Street address" data-i18n-placeholder="co.address" autocomplete="street-address">
+      </div>
+      <div class="co-section-label" data-i18n="co.method">Delivery method</div>
+      <div class="co-fields">
+        <select id="coMethod" class="full">
+          <option data-i18n="co.m1">Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)</option>
+          <option data-i18n="co.m2">Standard post (1–3 days) — $7.95, free over $30</option>
+          <option data-i18n="co.m3">Click &amp; collect — free</option>
+        </select>
+      </div>
+      <div class="co-section-label" data-i18n="co.payment">Payment</div>
+      <div class="pay-chips" id="payChips">
+        <button class="pay-chip active" data-pay="card">💳 <span data-i18n="co.payCard">Card</span> · Visa / Mastercard</button>
+        <button class="pay-chip" data-pay="apple">Apple Pay</button>
+        <button class="pay-chip" data-pay="google">Google Pay</button>
+        <button class="pay-chip" data-pay="bank">🏦 <span data-i18n="co.payBank">Bank transfer</span></button>
+      </div>
+      <div class="pay-panel active" data-panel="card">
+        <div class="co-fields" style="margin-top:10px;">
+          <input class="full" placeholder="Card number" data-i18n-placeholder="co.cardNo" inputmode="numeric">
+          <input placeholder="MM / YY" data-i18n-placeholder="co.cardExp" inputmode="numeric">
+          <input placeholder="CVC" data-i18n-placeholder="co.cardCvc" inputmode="numeric">
+        </div>
+      </div>
+      <div class="pay-panel" data-panel="apple"><div class="pay-note" data-i18n="co.walletNote">One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.</div></div>
+      <div class="pay-panel" data-panel="google"><div class="pay-note" data-i18n="co.walletNote">One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.</div></div>
+      <div class="pay-panel" data-panel="bank"><div class="pay-note" data-i18n="co.bankNote">Pay by PayID / bank transfer — account details appear on your order confirmation. Orders ship as soon as funds clear (instant with most Australian banks via Osko).</div></div>
+      <button class="co-place" id="coPlace" data-i18n="co.place">Place order</button>
+    </div>
+    <div class="co-success" id="coSuccess">
+      <div class="big">✅</div>
+      <h3 data-i18n="co.successTitle">Order received!</h3>
+      <p id="coOrderNo" style="font-weight:700;"></p>
+      <p data-i18n="co.successBody">This is a demo — no payment was taken and nothing will ship. At launch you'd receive an SMS confirmation with tracking within minutes.</p>
+    </div>
+  </div>
+</div>
+
 <button class="chat-fab" id="chatFab"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
 <div class="chat-pop" id="chatPop">
   <div class="cp-head" data-i18n="chat.head">Pharmacist chat</div>
@@ -534,33 +698,151 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <script>
 /* ---------------- Product data ---------------- */
 const PRODUCTS = [
-  {id:1, name:"Amoxicillin 500mg (30 caps)", cat:"medicine", price:14.95, icon:"💊", rx:true},
-  {id:2, name:"Ventolin Inhaler 100mcg", cat:"medicine", price:16.50, icon:"💨", rx:true},
-  {id:3, name:"Panadol Rapid 500mg (96s)", cat:"medicine", price:9.99, was:12.99, icon:"💊"},
-  {id:4, name:"Nurofen Zavance (48s)", cat:"medicine", price:13.49, icon:"💊"},
-  {id:5, name:"Telfast 180mg Antihistamine", cat:"medicine", price:19.95, icon:"🤧"},
-  {id:6, name:"Blackmores Fish Oil 1000mg", cat:"vitamins", price:21.99, was:26.99, icon:"🐟", hot:true},
-  {id:7, name:"Swisse Ultiboost Multivitamin", cat:"vitamins", price:24.50, icon:"🌿"},
-  {id:8, name:"Magnesium + Zinc Tablets", cat:"vitamins", price:15.99, icon:"🧪"},
-  {id:9, name:"Vitamin D3 1000IU (200s)", cat:"vitamins", price:12.99, icon:"☀️"},
-  {id:10, name:"Probiotic Daily Capsules", cat:"vitamins", price:29.95, icon:"🦠"},
-  {id:11, name:"CeraVe Hydrating Cleanser", cat:"beauty", price:22.00, icon:"🧴"},
-  {id:12, name:"Cetaphil Sensitive Moisturiser", cat:"beauty", price:18.75, was:21.95, icon:"🧴"},
-  {id:13, name:"La Roche-Posay SPF50+", cat:"beauty", price:26.99, icon:"🧴"},
-  {id:14, name:"Maybelline Superstay Foundation", cat:"beauty", price:19.99, icon:"💄"},
-  {id:23, name:"Blackmores Bio C 1000mg (150s)", cat:"vitamins", price:19.99, icon:"🍊", hot:true},
-  {id:24, name:"Blackmores CoQ10 150mg (30 caps)", cat:"vitamins", price:24.99, icon:"❤️", hot:true},
-  {id:25, name:"Bioceuticals Armaforce (60 tabs)", cat:"vitamins", price:34.95, icon:"🛡️", hot:true},
-  {id:26, name:"Bioceuticals UltraMuscleze Night", cat:"vitamins", price:42.50, icon:"🌙", hot:true},
-  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", cat:"beauty", price:32.95, icon:"🧴", pharm:true, hot:true},
-  {id:15, name:"Nurofen for Children (200mL)", cat:"baby", price:11.49, icon:"🍼"},
-  {id:16, name:"Huggies Newborn Nappies (56s)", cat:"baby", price:17.99, icon:"🍼"},
-  {id:17, name:"Bepanthen Nappy Cream", cat:"baby", price:9.49, icon:"🧴"},
-  {id:18, name:"Baby Panadol Drops", cat:"baby", price:8.99, icon:"💧"},
-  {id:19, name:"Reusable Ice/Heat Pack", cat:"everyday", price:7.99, icon:"🩹"},
-  {id:20, name:"Digital Thermometer", cat:"everyday", price:12.50, icon:"🌡️"},
-  {id:21, name:"Blood Pressure Monitor", cat:"everyday", price:49.99, icon:"🩺"},
-  {id:22, name:"Reusable Water Bottle 750mL", cat:"everyday", price:14.99, icon:"🧴"},
+  {id:1, name:"Amoxicillin 500mg (30 caps)", brand:"Generic (multiple suppliers)", size:"30 capsules", cat:"medicine", price:14.95, icon:"💊", rx:true,
+   desc:"Broad-spectrum penicillin antibiotic, dispensed only against a valid prescription from your doctor.",
+   descZh:"广谱青霉素类抗生素,仅凭医生开具的有效处方调配。",
+   dose:"Take exactly as prescribed. Always complete the full course, even if you feel better.",
+   doseZh:"严格按医嘱服用,即使症状好转也请完成整个疗程。"},
+  {id:2, name:"Ventolin Inhaler 100mcg", brand:"GSK", size:"200 metered doses", cat:"medicine", price:16.50, icon:"💨", pharm:true,
+   desc:"Salbutamol reliever inhaler for asthma symptoms. Pharmacist-only medicine — our pharmacist will confirm it's appropriate before supply.",
+   descZh:"沙丁胺醇哮喘缓解吸入剂。属药剂师专柜药品 —— 供应前药剂师会确认其适用性。",
+   dose:"1–2 puffs when needed for relief of symptoms, as advised by your doctor or pharmacist.",
+   doseZh:"需要缓解症状时吸入1-2揿,遵医嘱或药剂师建议使用。"},
+  {id:3, name:"Panadol Rapid 500mg (96s)", brand:"Haleon", size:"96 caplets", cat:"medicine", price:9.99, was:12.99, icon:"💊",
+   desc:"Fast-absorbed paracetamol for pain and fever relief, gentle on stomachs.",
+   descZh:"快速吸收的对乙酰氨基酚,缓解疼痛与发烧,对胃部温和。",
+   dose:"Adults: 2 caplets every 4–6 hours as needed (maximum 8 in 24 hours).",
+   doseZh:"成人:每4-6小时2片(24小时内不超过8片)。"},
+  {id:4, name:"Nurofen Zavance (48s)", brand:"Reckitt", size:"48 tablets", cat:"medicine", price:13.49, icon:"💊",
+   desc:"Ibuprofen 200mg with faster absorption for headaches, dental and period pain.",
+   descZh:"布洛芬200mg速释配方,缓解头痛、牙痛及经期疼痛。",
+   dose:"Adults: 1–2 tablets every 4–6 hours with water (maximum 6 in 24 hours). Take with food if sensitive.",
+   doseZh:"成人:每4-6小时1-2片,温水送服(24小时内不超过6片),胃敏感者请随餐服用。"},
+  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"medicine", price:19.95, icon:"🤧",
+   desc:"Non-drowsy fexofenadine for hayfever and allergy relief that lasts 24 hours.",
+   descZh:"非嗜睡型非索非那定,24小时缓解花粉症与过敏症状。",
+   dose:"Adults and children over 12: 1 tablet daily.",
+   doseZh:"成人及12岁以上儿童:每日1片。"},
+  {id:6, name:"Blackmores Fish Oil 1000mg", brand:"Blackmores", size:"200 capsules", cat:"vitamins", price:21.99, was:26.99, icon:"🐟", hot:true,
+   desc:"Odourless omega-3 supporting heart, brain and eye health — Australia's most recognised fish oil.",
+   descZh:"无腥味Omega-3,支持心脏、大脑与眼睛健康 —— 澳洲最知名的鱼油品牌。",
+   dose:"Adults: 1–3 capsules daily with meals.",
+   doseZh:"成人:每日1-3粒,随餐服用。"},
+  {id:7, name:"Swisse Ultiboost Multivitamin", brand:"Swisse", size:"120 tablets", cat:"vitamins", price:24.50, icon:"🌿",
+   desc:"Comprehensive daily multivitamin with 36+ vitamins, minerals and herbs for energy and vitality.",
+   descZh:"每日综合维生素,含36种以上维生素、矿物质与草本精华,支持能量与活力。",
+   dose:"Adults: 1 tablet daily during or immediately after a meal.",
+   doseZh:"成人:每日1片,随餐或餐后立即服用。"},
+  {id:8, name:"Magnesium + Zinc Tablets", brand:"Generic (multiple suppliers)", size:"100 tablets", cat:"vitamins", price:15.99, icon:"🧪",
+   desc:"Supports muscle function, recovery and healthy sleep patterns.",
+   descZh:"支持肌肉功能、恢复与健康睡眠。",
+   dose:"Adults: 1–2 tablets daily with food.",
+   doseZh:"成人:每日1-2片,随餐服用。"},
+  {id:9, name:"Vitamin D3 1000IU (200s)", brand:"Generic (multiple suppliers)", size:"200 capsules", cat:"vitamins", price:12.99, icon:"☀️",
+   desc:"Supports bone strength, immunity and calcium absorption — commonly low in indoor lifestyles.",
+   descZh:"支持骨骼强度、免疫力与钙吸收 —— 室内生活方式人群普遍缺乏。",
+   dose:"Adults: 1 capsule daily with food.",
+   doseZh:"成人:每日1粒,随餐服用。"},
+  {id:10, name:"Probiotic Daily Capsules", brand:"Generic (multiple suppliers)", size:"60 capsules", cat:"vitamins", price:29.95, icon:"🦠",
+   desc:"Multi-strain daily probiotic supporting digestive balance and gut health.",
+   descZh:"多菌株每日益生菌,支持消化平衡与肠道健康。",
+   dose:"Adults: 1 capsule daily, with or without food.",
+   doseZh:"成人:每日1粒,可空腹或随餐服用。"},
+  {id:11, name:"CeraVe Hydrating Cleanser", brand:"CeraVe", size:"236mL", cat:"beauty", price:22.00, icon:"🧴",
+   desc:"Gentle, non-foaming cleanser with ceramides and hyaluronic acid for normal-to-dry skin.",
+   descZh:"温和无泡洁面乳,含神经酰胺与透明质酸,适合中性至干性肌肤。",
+   dose:"Use morning and night. Massage onto damp skin, rinse thoroughly.",
+   doseZh:"早晚使用。取适量于湿润肌肤按摩后彻底冲洗。"},
+  {id:12, name:"Cetaphil Sensitive Moisturiser", brand:"Cetaphil", size:"550mL", cat:"beauty", price:18.75, was:21.95, icon:"🧴",
+   desc:"Fragrance-free daily moisturising lotion for sensitive and dry skin — dermatologist recommended.",
+   descZh:"无香型每日保湿乳,适合敏感与干性肌肤 —— 皮肤科医生推荐。",
+   dose:"Apply liberally as often as needed.",
+   doseZh:"需要时随时取适量涂抹。"},
+  {id:13, name:"La Roche-Posay Anthelios SPF50+", brand:"La Roche-Posay", size:"50mL", cat:"beauty", price:26.99, icon:"🧴",
+   desc:"Ultra-light facial sunscreen with very high broad-spectrum protection — a daigou favourite.",
+   descZh:"轻盈面部防晒霜,超高倍广谱防护 —— 代购热门单品。",
+   dose:"Apply generously 20 minutes before sun exposure. Reapply every 2 hours.",
+   doseZh:"日晒前20分钟充分涂抹,每2小时补涂一次。"},
+  {id:14, name:"Maybelline Superstay Foundation", brand:"Maybelline", size:"30mL", cat:"beauty", price:19.99, icon:"💄",
+   desc:"Long-wear liquid foundation with up to 30-hour coverage.",
+   descZh:"持久型粉底液,妆效最长可达30小时。",
+   dose:"Apply to clean, moisturised skin and blend outward.",
+   doseZh:"用于洁净保湿后的肌肤,由内向外均匀推开。"},
+  {id:23, name:"Blackmores Bio C 1000mg (150s)", brand:"Blackmores", size:"150 tablets", cat:"vitamins", price:19.99, icon:"🍊", hot:true,
+   desc:"Buffered vitamin C that's gentle on the stomach, supporting immune health.",
+   descZh:"缓冲型维生素C,对胃温和,支持免疫健康。",
+   dose:"Adults: 1 tablet 1–3 times daily with food.",
+   doseZh:"成人:每日1-3次,每次1片,随餐服用。"},
+  {id:24, name:"Blackmores CoQ10 150mg (30 caps)", brand:"Blackmores", size:"30 capsules", cat:"vitamins", price:24.99, icon:"❤️", hot:true,
+   desc:"High-strength coenzyme Q10 supporting heart health and cellular energy production.",
+   descZh:"高浓度辅酶Q10,支持心脏健康与细胞能量生成。",
+   dose:"Adults: 1 capsule daily with a meal.",
+   doseZh:"成人:每日1粒,随餐服用。"},
+  {id:25, name:"BioCeuticals ArmaForce (60 tabs)", brand:"BioCeuticals", size:"60 tablets", cat:"vitamins", price:34.95, icon:"🛡️", hot:true, pract:true,
+   desc:"Practitioner-strength immune formula with andrographis, echinacea, zinc and vitamin C — the cult-favourite of the BioCeuticals range.",
+   descZh:"专业级免疫配方,含穿心莲、紫锥菊、锌与维生素C —— BioCeuticals系列中的口碑明星产品。",
+   dose:"Adults: 1 tablet 1–2 times daily, or as directed by your healthcare practitioner.",
+   doseZh:"成人:每日1-2次,每次1片,或遵医嘱/药剂师建议。"},
+  {id:26, name:"BioCeuticals UltraMuscleze Night", brand:"BioCeuticals", size:"240g oral powder", cat:"vitamins", price:42.50, icon:"🌙", hot:true, pract:true,
+   desc:"Night-time magnesium powder with glycine and passionflower to support muscle relaxation and restful sleep.",
+   descZh:"夜间镁粉,含甘氨酸与西番莲,支持肌肉放松与安稳睡眠。",
+   dose:"Adults: 1 scoop in water in the evening, or as directed by your practitioner.",
+   doseZh:"成人:每晚1勺溶于水中服用,或遵专业人士建议。"},
+  {id:28, name:"BioCeuticals UltraBiotic 45 (30 caps)", brand:"BioCeuticals", size:"30 capsules", cat:"vitamins", price:52.95, icon:"🦠", hot:true, pract:true,
+   desc:"High-potency multi-strain probiotic (45 billion CFU) for gut flora restoration — popular after antibiotics.",
+   descZh:"高效多菌株益生菌(450亿CFU),用于恢复肠道菌群 —— 抗生素疗程后的热门选择。",
+   dose:"Adults: 1 capsule daily, or as directed. Refrigerate after opening.",
+   doseZh:"成人:每日1粒,或遵建议服用。开封后请冷藏。"},
+  {id:29, name:"BioCeuticals Liposomal Vitamin C", brand:"BioCeuticals", size:"200mL liquid", cat:"vitamins", price:43.95, icon:"🍋", hot:true, pract:true,
+   desc:"Liposomal delivery for enhanced vitamin C absorption — a standout of the practitioner range.",
+   descZh:"脂质体技术提升维生素C吸收率 —— 专业系列中的明星单品。",
+   dose:"Adults: 5mL daily, or as directed by your practitioner.",
+   doseZh:"成人:每日5毫升,或遵专业人士建议。"},
+  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", brand:"LEO Pharma", size:"30g gel", cat:"beauty", price:32.95, icon:"🧴", pharm:true, hot:true,
+   desc:"Azelaic acid 15% gel. Ask our pharmacist whether it suits your skin and how to introduce it gradually.",
+   descZh:"壬二酸15%凝胶。请咨询我们的药剂师是否适合您的肌肤,以及如何循序渐进地使用。",
+   dose:"Apply a thin layer to affected areas twice daily, or as advised by your pharmacist.",
+   doseZh:"每日两次薄涂于患处,或遵药剂师建议。"},
+  {id:15, name:"Nurofen for Children (200mL)", brand:"Reckitt", size:"200mL suspension", cat:"baby", price:11.49, icon:"🍼",
+   desc:"Ibuprofen suspension for children 3 months to 12 years — fever and pain relief.",
+   descZh:"布洛芬混悬液,适用于3个月至12岁儿童 —— 退烧止痛。",
+   dose:"Dose by weight and age per the package chart. Use the measuring device supplied.",
+   doseZh:"按包装剂量表根据体重年龄给药,请使用随附量具。"},
+  {id:16, name:"Huggies Newborn Nappies (56s)", brand:"Huggies", size:"56 pack, up to 5kg", cat:"baby", price:17.99, icon:"🍼",
+   desc:"Newborn nappies with wetness indicator and umbilical cord cut-out.",
+   descZh:"新生儿纸尿裤,带尿湿显示条与脐带保护缺口。",
+   dose:"Change regularly; size up when snug.",
+   doseZh:"请定时更换;偏紧时升码。"},
+  {id:17, name:"Bepanthen Nappy Cream (100g)", brand:"Bayer", size:"100g", cat:"baby", price:9.49, icon:"🧴",
+   desc:"Pro-vitamin B5 barrier ointment protecting delicate skin at every nappy change.",
+   descZh:"维他命原B5护臀膏,每次换尿裤时保护娇嫩肌肤。",
+   dose:"Apply a thin layer at each nappy change.",
+   doseZh:"每次更换尿裤时薄涂一层。"},
+  {id:18, name:"Baby Panadol Drops (20mL)", brand:"Haleon", size:"20mL with syringe", cat:"baby", price:8.99, icon:"💧",
+   desc:"Paracetamol colour-free drops for babies 1 month+ — fever and pain relief.",
+   descZh:"无色素对乙酰氨基酚滴剂,适用于1个月以上婴儿 —— 退烧止痛。",
+   dose:"Dose strictly by weight per the package chart using the syringe supplied.",
+   doseZh:"严格按包装剂量表根据体重给药,请使用随附滴管。"},
+  {id:19, name:"Reusable Ice/Heat Pack", brand:"Generic", size:"Standard", cat:"everyday", price:7.99, icon:"🩹",
+   desc:"Microwave for heat therapy or freeze for cold therapy — strains, swelling and cramps.",
+   descZh:"微波加热或冷冻使用 —— 适用于拉伤、肿胀与痉挛。",
+   dose:"Wrap in a cloth before applying to skin. Maximum 20 minutes per session.",
+   doseZh:"使用前请用布包裹,每次不超过20分钟。"},
+  {id:20, name:"Digital Thermometer", brand:"Generic", size:"1 unit", cat:"everyday", price:12.50, icon:"🌡️",
+   desc:"Fast-read digital thermometer with fever alert, suitable for the whole family.",
+   descZh:"快速读数电子体温计,带发烧警示,适合全家使用。",
+   dose:"Follow the enclosed instructions for oral, underarm or rectal use.",
+   doseZh:"请按说明书选择口腔、腋下或直肠测量方式。"},
+  {id:21, name:"Blood Pressure Monitor", brand:"Generic", size:"Upper-arm cuff", cat:"everyday", price:49.99, icon:"🩺",
+   desc:"Automatic upper-arm monitor with irregular heartbeat detection and 2-user memory.",
+   descZh:"全自动上臂式血压计,带心律不齐检测与双人记忆功能。",
+   dose:"Measure seated, after 5 minutes' rest, cuff at heart level.",
+   doseZh:"坐姿测量,静息5分钟后进行,袖带与心脏保持同一水平。"},
+  {id:22, name:"Reusable Water Bottle 750mL", brand:"Generic", size:"750mL", cat:"everyday", price:14.99, icon:"🧴",
+   desc:"BPA-free bottle with leak-proof lid — hand wash recommended.",
+   descZh:"不含BPA,防漏瓶盖设计 —— 建议手洗。",
+   dose:"",
+   doseZh:""},
 ];
 
 let activeTab = "all";
@@ -616,7 +898,34 @@ const I18N = {
     'dyn.flagRx':'Rx','dyn.flagPharm':'Pharmacist only','dyn.flagSale':'Sale','dyn.flagHot':'🔥 Trending',
     'dyn.compareAt':'Compare at Chemist Warehouse ↗',
     'dyn.toastAdded':'Added to cart','dyn.toastReordered':'Reordered — added to cart','dyn.toastCartEmpty':'Your cart is empty',
-    'dyn.toastCheckout':'Demo checkout — step 2 (delivery details) would appear here','dyn.uploading':'Uploading'
+    'dyn.toastCheckout':'Demo checkout — step 2 (delivery details) would appear here','dyn.uploading':'Uploading',
+    'dyn.flagPract':'Practitioner',
+    'pd.title':'Product details','pd.desc':'About this product','pd.dose':'Directions','pd.warn':'Important',
+    'pd.labelLine':'Always read the label and follow the directions for use. If symptoms persist, talk to your pharmacist or doctor.',
+    'pd.imgNote':'Illustration only — official product photography is supplied through your wholesaler content feed once the range is stocked.',
+    'pd.rxNote':'Prescription medicine — a valid script must be received and checked by our pharmacist before this item is dispensed.',
+    'pd.practNote':'Practitioner-range product — our pharmacist will confirm suitability before dispatch.',
+    'pd.pharmNote':'Pharmacist medicine — our pharmacist may contact you to confirm this is right for you.',
+    'co.title':'Checkout','co.demoNote':'Demo checkout — no real payment is processed.',
+    'co.delivery':'Delivery details','co.name':'Full name','co.phone':'Mobile','co.address':'Street address','co.otherSuburb':'Other Brisbane',
+    'co.method':'Delivery method',
+    'co.m1':'Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)',
+    'co.m2':'Standard post (1–3 days) — $7.95, free over $30',
+    'co.m3':'Click & collect — free',
+    'co.payment':'Payment','co.payCard':'Card','co.payBank':'Bank transfer',
+    'co.cardNo':'Card number','co.cardExp':'MM / YY','co.cardCvc':'CVC',
+    'co.walletNote':'One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.',
+    'co.bankNote':'Pay by PayID / bank transfer — account details appear on your order confirmation. Orders ship as soon as funds clear (instant with most Australian banks via Osko).',
+    'co.place':'Place order','co.errFill':'Please fill in your name, mobile, and address.',
+    'co.successTitle':'Order received!',
+    'co.successBody':"This is a demo — no payment was taken and nothing will ship. At launch you'd receive an SMS confirmation with tracking within minutes.",
+    'trust.title':'Built to be verifiable','trust.sub':'Every registration a real pharmacy must hold, displayed where customers can check it.',
+    'trust.c1t':'QLD pharmacy business licence','trust.c1b':'Issued by the Queensland Pharmacy Business Ownership Council. The licence number will be displayed here for public verification.',
+    'trust.c2t':'Registered pharmacist owner','trust.c2b':'Proprietor & superintendent pharmacist name with AHPRA registration number — checkable on the public register.',
+    'trust.c3t':'Licensed premises','trust.c3b':'Every order is dispensed from our licensed Brisbane pharmacy premises. Street address published here.',
+    'trust.c4t':'Payments & privacy','trust.c4b':'Cards and wallets processed by a PCI-DSS accredited gateway. Health information handled under the Australian Privacy Principles.',
+    'trust.pending':'Issued before launch',
+    'trust.note':'These panels are intentionally blank in this preview — real registration numbers appear here when the licence is granted. No placeholder numbers, ever.'
   },
   zh: {
     'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
@@ -665,7 +974,34 @@ const I18N = {
     'dyn.flagRx':'处方药','dyn.flagPharm':'药剂师指导','dyn.flagSale':'特价','dyn.flagHot':'🔥 热门',
     'dyn.compareAt':'前往 Chemist Warehouse 比价 ↗',
     'dyn.toastAdded':'已加入购物车','dyn.toastReordered':'已重新下单并加入购物车','dyn.toastCartEmpty':'购物车是空的',
-    'dyn.toastCheckout':'演示结账 —— 第2步(配送信息)将在此显示','dyn.uploading':'正在上传'
+    'dyn.toastCheckout':'演示结账 —— 第2步(配送信息)将在此显示','dyn.uploading':'正在上传',
+    'dyn.flagPract':'专业渠道',
+    'pd.title':'产品详情','pd.desc':'产品说明','pd.dose':'用法用量','pd.warn':'重要提示',
+    'pd.labelLine':'请务必阅读标签并按说明使用。如症状持续,请咨询药剂师或医生。',
+    'pd.imgNote':'示意图 —— 正式产品图片将在建立进货渠道后由批发商内容库提供。',
+    'pd.rxNote':'处方药 —— 需收到有效处方并经药剂师审核后方可调配。',
+    'pd.practNote':'专业渠道产品 —— 发货前药剂师将确认是否适合您。',
+    'pd.pharmNote':'药剂师药品 —— 药剂师可能会与您联系,确认产品适合您。',
+    'co.title':'结算','co.demoNote':'演示结算 —— 不会产生真实付款。',
+    'co.delivery':'配送信息','co.name':'姓名','co.phone':'手机号码','co.address':'街道地址','co.otherSuburb':'布里斯班其他区域',
+    'co.method':'配送方式',
+    'co.m1':'当日快递 —— $9.95(Sunnybank · Underwood · Calamvale · Indooroopilly)',
+    'co.m2':'普通邮寄(1-3天)—— $7.95,满$30免费',
+    'co.m3':'门店自取 —— 免费',
+    'co.payment':'付款方式','co.payCard':'银行卡','co.payBank':'银行转账',
+    'co.cardNo':'卡号','co.cardExp':'月 / 年','co.cardCvc':'安全码',
+    'co.walletNote':'一键钱包支付 —— 正式上线后通过支付网关(Stripe、Tyro等)开通。',
+    'co.bankNote':'PayID / 银行转账 —— 账户信息将显示在订单确认页。到账后立即发货(大多数澳洲银行通过Osko即时到账)。',
+    'co.place':'提交订单','co.errFill':'请填写姓名、手机号码和地址。',
+    'co.successTitle':'订单已收到!',
+    'co.successBody':'这是演示 —— 未产生任何付款,也不会发货。正式上线后,您将在几分钟内收到含物流跟踪的短信确认。',
+    'trust.title':'可查证的信任','trust.sub':'正规药房必须持有的每一项资质,都公示在顾客可查证的位置。',
+    'trust.c1t':'昆士兰药房营业执照','trust.c1b':'由昆士兰药房企业所有权委员会(PBOC)签发,执照编号将在此公示,供公众查验。',
+    'trust.c2t':'注册药剂师业主','trust.c2b':'业主兼监管药剂师姓名及AHPRA注册号 —— 可在公开注册系统中查验。',
+    'trust.c3t':'持牌经营场所','trust.c3b':'所有订单均从我们位于布里斯班的持牌药房调配发出,街道地址将在此公布。',
+    'trust.c4t':'支付与隐私','trust.c4b':'银行卡与钱包支付经PCI-DSS认证网关处理,健康信息按《澳大利亚隐私原则》管理。',
+    'trust.pending':'上线前签发',
+    'trust.note':'此预览中这些面板刻意留空 —— 真实注册编号将在执照签发后公示。绝不使用虚构编号。'
   }
 };
 const CAT_LABEL_KEY = {medicine:'tab.medicine', vitamins:'tab.vitamins', beauty:'tab.beauty', baby:'tab.baby', everyday:'tab.everyday'};
@@ -682,6 +1018,7 @@ function applyLang(lang){
   if(toggle) toggle.textContent = lang === 'en' ? '中文' : 'EN';
   const suburbZhNote = document.getElementById('suburbZhNote');
   if(suburbZhNote) suburbZhNote.style.display = lang === 'zh' ? 'none' : '';
+  if(typeof closeModals === 'function') closeModals();
   renderGrid();
   renderCart();
   document.getElementById('pbsResults').innerHTML = '';
@@ -691,6 +1028,7 @@ function applyLang(lang){
 function flagFor(p){
   let left = '';
   if(p.rx) left = `<span class="prod-flag rx">${t('dyn.flagRx')}</span>`;
+  else if(p.pract) left = `<span class="prod-flag rx">${t('dyn.flagPract')}</span>`;
   else if(p.pharm) left = `<span class="prod-flag rx">${t('dyn.flagPharm')}</span>`;
   else if(p.was) left = `<span class="prod-flag">${t('dyn.flagSale')}</span>`;
   const right = p.hot ? `<span class="prod-flag hot">${t('dyn.flagHot')}</span>` : '';
@@ -707,7 +1045,7 @@ function renderGrid(){
     return matchTab && matchTerm;
   });
   grid.innerHTML = items.length ? items.map(p=>`
-    <div class="prod-card fade-up visible">
+    <div class="prod-card fade-up visible" data-pid="${p.id}">
       <div class="prod-thumb">${p.icon}
         ${flagFor(p)}
       </div>
@@ -847,9 +1185,100 @@ function closeCart(){ cartDrawer.classList.remove('open'); overlay.classList.rem
 document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('closeCart').addEventListener('click', closeCart);
 overlay.addEventListener('click', closeCart);
-document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+/* ---------------- Product detail + checkout modals ---------------- */
+const bwOverlay = document.getElementById('bwOverlay');
+const pdModal = document.getElementById('pdModal');
+const coModal = document.getElementById('coModal');
+function openModal(m){ m.classList.add('open'); bwOverlay.classList.add('open'); }
+function closeModals(){ pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open'); }
+bwOverlay.addEventListener('click', closeModals);
+document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModals(); });
+
+let pdQty = 1;
+function openProduct(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  pdQty = 1;
+  const desc = currentLang==='zh' ? (p.descZh || p.desc || '') : (p.desc || '');
+  const dose = currentLang==='zh' ? (p.doseZh || p.dose || '') : (p.dose || '');
+  const showLabelLine = ['medicine','vitamins','baby','beauty'].includes(p.cat);
+  let note = '';
+  if(p.rx) note = `<div class="pd-note">⚕️ ${t('pd.rxNote')}</div>`;
+  else if(p.pract) note = `<div class="pd-note">🧑‍⚕️ ${t('pd.practNote')}</div>`;
+  else if(p.pharm) note = `<div class="pd-note">💬 ${t('pd.pharmNote')}</div>`;
+  document.getElementById('pdBody').innerHTML = `
+    <div class="pd-grid">
+      <div>
+        <div class="pd-visual">${p.icon}${flagFor(p)}</div>
+        <div class="pd-img-note">${t('pd.imgNote')}</div>
+      </div>
+      <div class="pd-info">
+        <div class="pd-brand">${p.brand || ''}</div>
+        <h2>${p.name}</h2>
+        <div class="pd-size">${p.size || ''}</div>
+        <div class="stars">★★★★☆</div>
+        <div class="pd-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
+        ${desc ? `<div class="pd-block"><h4>${t('pd.desc')}</h4><p>${desc}</p></div>` : ''}
+        ${dose ? `<div class="pd-block"><h4>${t('pd.dose')}</h4><p>${dose}</p></div>` : ''}
+        ${showLabelLine ? `<div class="pd-block"><h4>${t('pd.warn')}</h4><p>${t('pd.labelLine')}</p></div>` : ''}
+        ${note}
+        <div class="pd-buy">
+          <div class="pd-qty"><button class="qty-btn" id="pdMinus">–</button><span id="pdQtyVal">1</span><button class="qty-btn" id="pdPlus">+</button></div>
+          <button class="add-btn" id="pdAdd" style="padding:12px 22px; font-size:13.5px;">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
+        </div>
+        <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
+      </div>
+    </div>`;
+  document.getElementById('pdMinus').addEventListener('click', ()=>{ pdQty = Math.max(1, pdQty-1); document.getElementById('pdQtyVal').textContent = pdQty; });
+  document.getElementById('pdPlus').addEventListener('click', ()=>{ pdQty++; document.getElementById('pdQtyVal').textContent = pdQty; });
+  document.getElementById('pdAdd').addEventListener('click', ()=>{
+    for(let i=0;i<pdQty;i++) addToCart(p.id);
+    showToast(t('dyn.toastAdded'));
+    closeModals();
+    openCart();
+  });
+  openModal(pdModal);
+}
+
+document.getElementById('prodGrid').addEventListener('click', (e)=>{
+  if(e.target.closest('.add-btn') || e.target.closest('.compare-link')) return;
+  const card = e.target.closest('.prod-card');
+  if(!card) return;
+  openProduct(parseInt(card.dataset.pid));
+});
+
+function openCheckout(){
   if(!cart.length){ showToast(t('dyn.toastCartEmpty')); return; }
-  showToast(t('dyn.toastCheckout'));
+  closeCart();
+  document.getElementById('coForm').style.display = '';
+  document.getElementById('coSuccess').classList.remove('show');
+  const subtotal = cart.reduce((s,l)=>s+l.price*l.qty,0);
+  document.getElementById('coSummary').innerHTML =
+    cart.map(l=>`<div class="line"><span>${l.icon} ${l.name} × ${l.qty}</span><span>$${(l.price*l.qty).toFixed(2)}</span></div>`).join('') +
+    `<div class="line total"><span>${t('cart.total')}</span><span>$${subtotal.toFixed(2)}</span></div>`;
+  openModal(coModal);
+}
+document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
+
+document.getElementById('payChips').addEventListener('click', (e)=>{
+  const chip = e.target.closest('.pay-chip');
+  if(!chip) return;
+  document.querySelectorAll('.pay-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  document.querySelectorAll('.pay-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel === chip.dataset.pay));
+});
+
+document.getElementById('coPlace').addEventListener('click', ()=>{
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const addr = document.getElementById('coAddress').value.trim();
+  if(!name || !phone || !addr){ showToast(t('co.errFill')); return; }
+  document.getElementById('coForm').style.display = 'none';
+  document.getElementById('coSuccess').classList.add('show');
+  document.getElementById('coOrderNo').textContent = '#BW-' + Date.now().toString().slice(-6);
+  cart = [];
+  renderCart();
 });
 
 /* ---------------- Toast ---------------- */
