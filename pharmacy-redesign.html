@@ -220,9 +220,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .foot-grid h4{color:#fff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
 .foot-grid a{display:block; font-size:13px; color:#a9c9c2; margin-bottom:9px;}
 .foot-grid a:hover{color:#fff;}
-.foot-social{display:flex; gap:10px; margin-bottom:20px;}
-.foot-social-link{border:1.5px solid rgba(255,255,255,0.18); border-radius:20px; padding:8px 14px; font-size:12.5px; color:#cfe8e2; transition:border-color .15s, color .15s;}
-.foot-social-link:hover{border-color:rgba(255,255,255,0.5); color:#fff;}
+
 .foot-bottom{border-top:1px solid rgba(255,255,255,0.12); padding-top:18px; font-size:12px; color:#7fa39b; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 @media (max-width:900px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
 
@@ -458,21 +456,15 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="categories">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2 data-i18n="cat.title">Shop by category</h2><p data-i18n="cat.sub">Medicines and retail, side by side — not split across separate apps.</p></div>
+      <div><h2 data-i18n="cat.title">Shop by category</h2><p data-i18n="cat.sub">A deliberately focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.</p></div>
     </div>
     <div class="cat-grid">
-      <div class="cat-card fade-up"><div class="ic">💊</div><div class="lbl" data-i18n="cat.1">Prescriptions</div></div>
-      <div class="cat-card fade-up"><div class="ic">🌿</div><div class="lbl" data-i18n="cat.2">Vitamins</div></div>
-      <div class="cat-card fade-up"><div class="ic">🧴</div><div class="lbl" data-i18n="cat.3">Skincare</div></div>
-      <div class="cat-card fade-up"><div class="ic">🍼</div><div class="lbl" data-i18n="cat.4">Baby &amp; Kids</div></div>
-      <div class="cat-card fade-up"><div class="ic">🩹</div><div class="lbl" data-i18n="cat.5">First Aid</div></div>
-      <div class="cat-card fade-up"><div class="ic">💇</div><div class="lbl" data-i18n="cat.6">Hair &amp; Beauty</div></div>
-      <div class="cat-card fade-up"><div class="ic">🏋️</div><div class="lbl" data-i18n="cat.7">Weight &amp; Fitness</div></div>
-      <div class="cat-card fade-up"><div class="ic">🧻</div><div class="lbl" data-i18n="cat.8">Everyday Essentials</div></div>
-      <div class="cat-card fade-up"><div class="ic">🩺</div><div class="lbl" data-i18n="cat.9">Health Devices</div></div>
-      <div class="cat-card fade-up"><div class="ic">🌸</div><div class="lbl" data-i18n="cat.10">Fragrance</div></div>
-      <div class="cat-card fade-up"><div class="ic">😴</div><div class="lbl" data-i18n="cat.11">Sleep &amp; Wellness</div></div>
-      <div class="cat-card fade-up"><div class="ic">🐾</div><div class="lbl" data-i18n="cat.12">Pet Health</div></div>
+      <div class="cat-card fade-up"><div class="ic">🛡️</div><div class="lbl" data-i18n="cat.c1">Immune Support</div></div>
+      <div class="cat-card fade-up"><div class="ic">🐟</div><div class="lbl" data-i18n="cat.c2">Omega-3 &amp; Heart</div></div>
+      <div class="cat-card fade-up"><div class="ic">🦠</div><div class="lbl" data-i18n="cat.c3">Probiotics &amp; Gut</div></div>
+      <div class="cat-card fade-up"><div class="ic">🌙</div><div class="lbl" data-i18n="cat.c4">Sleep &amp; Magnesium</div></div>
+      <div class="cat-card fade-up"><div class="ic">☀️</div><div class="lbl" data-i18n="cat.c5">Vitamins C &amp; D</div></div>
+      <div class="cat-card fade-up"><div class="ic">💊</div><div class="lbl" data-i18n="cat.c6">Pharmacy Medicines</div></div>
     </div>
   </div>
 </section>
@@ -482,16 +474,13 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <div class="wrap">
     <div class="section-head fade-up">
       <div><h2 data-i18n="best.title">Best sellers</h2><p data-i18n="best.sub">Tap a tab to filter — search bar above filters this grid too.</p></div>
-      <div class="see-all" data-i18n="best.seeAll">1,240+ items in range →</div>
+      <div class="see-all" data-i18n="best.seeAll">Curated starter range →</div>
     </div>
     <div class="tabs" id="tabs">
       <button class="tab-btn active" data-tab="all" data-i18n="tab.all">All</button>
       <button class="tab-btn" data-tab="trending" data-i18n="tab.trending">🔥 Trending exports</button>
-      <button class="tab-btn" data-tab="medicine" data-i18n="tab.medicine">Medicines</button>
-      <button class="tab-btn" data-tab="vitamins" data-i18n="tab.vitamins">Vitamins</button>
-      <button class="tab-btn" data-tab="beauty" data-i18n="tab.beauty">Beauty</button>
-      <button class="tab-btn" data-tab="baby" data-i18n="tab.baby">Baby</button>
-      <button class="tab-btn" data-tab="everyday" data-i18n="tab.everyday">Everyday</button>
+      <button class="tab-btn" data-tab="vitamins" data-i18n="tab.vitamins">Vitamins &amp; Supplements</button>
+      <button class="tab-btn" data-tab="pharmacy" data-i18n="tab.pharmacy">Pharmacy Medicines</button>
     </div>
     <div class="prod-grid" id="prodGrid"></div>
   </div>
@@ -593,15 +582,12 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         <div class="logo" style="color:#fff;"><span class="dot"></span>BrightWell</div>
         <p style="font-size:13px;color:#a9c9c2;margin-top:10px;max-width:260px;" data-i18n="foot.tagline">A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.</p>
       </div>
-      <div><h4 data-i18n="foot.shop">Shop</h4><a href="#" data-i18n="cat.1">Prescriptions</a><a href="#" data-i18n="cat.2">Vitamins</a><a href="#" data-i18n="cat.3b">Beauty</a><a href="#" data-i18n="cat.4">Baby &amp; Kids</a></div>
+      <div><h4 data-i18n="foot.shop">Shop</h4><a href="#tabs" data-i18n="tab.vitamins">Vitamins &amp; Supplements</a><a href="#tabs" data-i18n="tab.pharmacy">Pharmacy Medicines</a><a href="#trust" data-i18n="trust.title">Trust &amp; Registration</a></div>
       <div><h4 data-i18n="foot.help">Help</h4><a href="#" data-i18n="foot.help1">Ask a pharmacist</a><a href="#" data-i18n="foot.help2">Track my order</a><a href="#" data-i18n="foot.help3">Returns</a><a href="#" data-i18n="foot.help4">Delivery info</a></div>
       <div><h4 data-i18n="foot.company">Company</h4><a href="#" data-i18n="foot.company1">About</a><a href="#" data-i18n="foot.company2">Store locator</a><a href="#" data-i18n="foot.company3">Careers</a></div>
       <div><h4 data-i18n="foot.legal">Legal</h4><a href="#" data-i18n="foot.legal1">Privacy</a><a href="#" data-i18n="foot.legal2">Terms</a><a href="#" data-i18n="foot.legal3">Accessibility</a></div>
     </div>
-    <div class="foot-social">
-      <a href="#" class="foot-social-link" title="WeChat — coming soon">💬 WeChat</a>
-      <a href="#" class="foot-social-link" title="Xiaohongshu / RedNote — coming soon">📕 小红书 RedNote</a>
-    </div>
+
     <div class="foot-bottom">
       <span data-i18n="foot.copyright">© 2026 BrightWell — concept design, no real orders processed.</span>
       <span data-i18n="foot.builtAs">Built as a UX comparison to chemistwarehouse.com.au</span>
@@ -698,31 +684,36 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <script>
 /* ---------------- Product data ---------------- */
 const PRODUCTS = [
-  {id:1, name:"Amoxicillin 500mg (30 caps)", brand:"Generic (multiple suppliers)", size:"30 capsules", cat:"medicine", price:14.95, icon:"💊", rx:true,
-   desc:"Broad-spectrum penicillin antibiotic, dispensed only against a valid prescription from your doctor.",
-   descZh:"广谱青霉素类抗生素,仅凭医生开具的有效处方调配。",
-   dose:"Take exactly as prescribed. Always complete the full course, even if you feel better.",
-   doseZh:"严格按医嘱服用,即使症状好转也请完成整个疗程。"},
-  {id:2, name:"Ventolin Inhaler 100mcg", brand:"GSK", size:"200 metered doses", cat:"medicine", price:16.50, icon:"💨", pharm:true,
+  {id:2, name:"Ventolin Inhaler 100mcg", brand:"GSK", size:"200 metered doses", cat:"pharmacy", price:16.50, icon:"💨", pharm:true,
    desc:"Salbutamol reliever inhaler for asthma symptoms. Pharmacist-only medicine — our pharmacist will confirm it's appropriate before supply.",
    descZh:"沙丁胺醇哮喘缓解吸入剂。属药剂师专柜药品 —— 供应前药剂师会确认其适用性。",
    dose:"1–2 puffs when needed for relief of symptoms, as advised by your doctor or pharmacist.",
    doseZh:"需要缓解症状时吸入1-2揿,遵医嘱或药剂师建议使用。"},
-  {id:3, name:"Panadol Rapid 500mg (96s)", brand:"Haleon", size:"96 caplets", cat:"medicine", price:9.99, was:12.99, icon:"💊",
+  {id:3, name:"Panadol Rapid 500mg (96s)", brand:"Haleon", size:"96 caplets", cat:"pharmacy", price:9.99, was:12.99, icon:"💊",
    desc:"Fast-absorbed paracetamol for pain and fever relief, gentle on stomachs.",
    descZh:"快速吸收的对乙酰氨基酚,缓解疼痛与发烧,对胃部温和。",
    dose:"Adults: 2 caplets every 4–6 hours as needed (maximum 8 in 24 hours).",
    doseZh:"成人:每4-6小时2片(24小时内不超过8片)。"},
-  {id:4, name:"Nurofen Zavance (48s)", brand:"Reckitt", size:"48 tablets", cat:"medicine", price:13.49, icon:"💊",
+  {id:4, name:"Nurofen Zavance (48s)", brand:"Reckitt", size:"48 tablets", cat:"pharmacy", price:13.49, icon:"💊",
    desc:"Ibuprofen 200mg with faster absorption for headaches, dental and period pain.",
    descZh:"布洛芬200mg速释配方,缓解头痛、牙痛及经期疼痛。",
    dose:"Adults: 1–2 tablets every 4–6 hours with water (maximum 6 in 24 hours). Take with food if sensitive.",
    doseZh:"成人:每4-6小时1-2片,温水送服(24小时内不超过6片),胃敏感者请随餐服用。"},
-  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"medicine", price:19.95, icon:"🤧",
+  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"pharmacy", price:19.95, icon:"🤧",
    desc:"Non-drowsy fexofenadine for hayfever and allergy relief that lasts 24 hours.",
    descZh:"非嗜睡型非索非那定,24小时缓解花粉症与过敏症状。",
    dose:"Adults and children over 12: 1 tablet daily.",
    doseZh:"成人及12岁以上儿童:每日1片。"},
+  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", brand:"LEO Pharma", size:"30g gel", cat:"pharmacy", price:32.95, icon:"🧴", pharm:true, hot:true,
+   desc:"Azelaic acid 15% gel. Ask our pharmacist whether it suits your skin and how to introduce it gradually.",
+   descZh:"壬二酸15%凝胶。请咨询我们的药剂师是否适合您的肌肤,以及如何循序渐进地使用。",
+   dose:"Apply a thin layer to affected areas twice daily, or as advised by your pharmacist.",
+   doseZh:"每日两次薄涂于患处,或遵药剂师建议。"},
+  {id:30, name:"Proctosedyl Ointment 30g", brand:"Sanofi", size:"30g with applicator", cat:"pharmacy", price:18.99, icon:"🧴", pharm:true,
+   desc:"Haemorrhoid ointment combining cinchocaine (local anaesthetic) and hydrocortisone. Pharmacist-only — we'll check it's right for you before supply.",
+   descZh:"痔疮软膏,含辛可卡因(局部麻醉)与氢化可的松。药剂师专柜药品 —— 供应前我们会确认其适合您。",
+   dose:"Apply morning, night and after each bowel movement, for up to 7 days unless your pharmacist or doctor advises otherwise.",
+   doseZh:"早晚及每次排便后使用,除非药剂师或医生另有建议,连续使用不超过7天。"},
   {id:6, name:"Blackmores Fish Oil 1000mg", brand:"Blackmores", size:"200 capsules", cat:"vitamins", price:21.99, was:26.99, icon:"🐟", hot:true,
    desc:"Odourless omega-3 supporting heart, brain and eye health — Australia's most recognised fish oil.",
    descZh:"无腥味Omega-3,支持心脏、大脑与眼睛健康 —— 澳洲最知名的鱼油品牌。",
@@ -748,26 +739,6 @@ const PRODUCTS = [
    descZh:"多菌株每日益生菌,支持消化平衡与肠道健康。",
    dose:"Adults: 1 capsule daily, with or without food.",
    doseZh:"成人:每日1粒,可空腹或随餐服用。"},
-  {id:11, name:"CeraVe Hydrating Cleanser", brand:"CeraVe", size:"236mL", cat:"beauty", price:22.00, icon:"🧴",
-   desc:"Gentle, non-foaming cleanser with ceramides and hyaluronic acid for normal-to-dry skin.",
-   descZh:"温和无泡洁面乳,含神经酰胺与透明质酸,适合中性至干性肌肤。",
-   dose:"Use morning and night. Massage onto damp skin, rinse thoroughly.",
-   doseZh:"早晚使用。取适量于湿润肌肤按摩后彻底冲洗。"},
-  {id:12, name:"Cetaphil Sensitive Moisturiser", brand:"Cetaphil", size:"550mL", cat:"beauty", price:18.75, was:21.95, icon:"🧴",
-   desc:"Fragrance-free daily moisturising lotion for sensitive and dry skin — dermatologist recommended.",
-   descZh:"无香型每日保湿乳,适合敏感与干性肌肤 —— 皮肤科医生推荐。",
-   dose:"Apply liberally as often as needed.",
-   doseZh:"需要时随时取适量涂抹。"},
-  {id:13, name:"La Roche-Posay Anthelios SPF50+", brand:"La Roche-Posay", size:"50mL", cat:"beauty", price:26.99, icon:"🧴",
-   desc:"Ultra-light facial sunscreen with very high broad-spectrum protection — a daigou favourite.",
-   descZh:"轻盈面部防晒霜,超高倍广谱防护 —— 代购热门单品。",
-   dose:"Apply generously 20 minutes before sun exposure. Reapply every 2 hours.",
-   doseZh:"日晒前20分钟充分涂抹,每2小时补涂一次。"},
-  {id:14, name:"Maybelline Superstay Foundation", brand:"Maybelline", size:"30mL", cat:"beauty", price:19.99, icon:"💄",
-   desc:"Long-wear liquid foundation with up to 30-hour coverage.",
-   descZh:"持久型粉底液,妆效最长可达30小时。",
-   dose:"Apply to clean, moisturised skin and blend outward.",
-   doseZh:"用于洁净保湿后的肌肤,由内向外均匀推开。"},
   {id:23, name:"Blackmores Bio C 1000mg (150s)", brand:"Blackmores", size:"150 tablets", cat:"vitamins", price:19.99, icon:"🍊", hot:true,
    desc:"Buffered vitamin C that's gentle on the stomach, supporting immune health.",
    descZh:"缓冲型维生素C,对胃温和,支持免疫健康。",
@@ -798,51 +769,6 @@ const PRODUCTS = [
    descZh:"脂质体技术提升维生素C吸收率 —— 专业系列中的明星单品。",
    dose:"Adults: 5mL daily, or as directed by your practitioner.",
    doseZh:"成人:每日5毫升,或遵专业人士建议。"},
-  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", brand:"LEO Pharma", size:"30g gel", cat:"beauty", price:32.95, icon:"🧴", pharm:true, hot:true,
-   desc:"Azelaic acid 15% gel. Ask our pharmacist whether it suits your skin and how to introduce it gradually.",
-   descZh:"壬二酸15%凝胶。请咨询我们的药剂师是否适合您的肌肤,以及如何循序渐进地使用。",
-   dose:"Apply a thin layer to affected areas twice daily, or as advised by your pharmacist.",
-   doseZh:"每日两次薄涂于患处,或遵药剂师建议。"},
-  {id:15, name:"Nurofen for Children (200mL)", brand:"Reckitt", size:"200mL suspension", cat:"baby", price:11.49, icon:"🍼",
-   desc:"Ibuprofen suspension for children 3 months to 12 years — fever and pain relief.",
-   descZh:"布洛芬混悬液,适用于3个月至12岁儿童 —— 退烧止痛。",
-   dose:"Dose by weight and age per the package chart. Use the measuring device supplied.",
-   doseZh:"按包装剂量表根据体重年龄给药,请使用随附量具。"},
-  {id:16, name:"Huggies Newborn Nappies (56s)", brand:"Huggies", size:"56 pack, up to 5kg", cat:"baby", price:17.99, icon:"🍼",
-   desc:"Newborn nappies with wetness indicator and umbilical cord cut-out.",
-   descZh:"新生儿纸尿裤,带尿湿显示条与脐带保护缺口。",
-   dose:"Change regularly; size up when snug.",
-   doseZh:"请定时更换;偏紧时升码。"},
-  {id:17, name:"Bepanthen Nappy Cream (100g)", brand:"Bayer", size:"100g", cat:"baby", price:9.49, icon:"🧴",
-   desc:"Pro-vitamin B5 barrier ointment protecting delicate skin at every nappy change.",
-   descZh:"维他命原B5护臀膏,每次换尿裤时保护娇嫩肌肤。",
-   dose:"Apply a thin layer at each nappy change.",
-   doseZh:"每次更换尿裤时薄涂一层。"},
-  {id:18, name:"Baby Panadol Drops (20mL)", brand:"Haleon", size:"20mL with syringe", cat:"baby", price:8.99, icon:"💧",
-   desc:"Paracetamol colour-free drops for babies 1 month+ — fever and pain relief.",
-   descZh:"无色素对乙酰氨基酚滴剂,适用于1个月以上婴儿 —— 退烧止痛。",
-   dose:"Dose strictly by weight per the package chart using the syringe supplied.",
-   doseZh:"严格按包装剂量表根据体重给药,请使用随附滴管。"},
-  {id:19, name:"Reusable Ice/Heat Pack", brand:"Generic", size:"Standard", cat:"everyday", price:7.99, icon:"🩹",
-   desc:"Microwave for heat therapy or freeze for cold therapy — strains, swelling and cramps.",
-   descZh:"微波加热或冷冻使用 —— 适用于拉伤、肿胀与痉挛。",
-   dose:"Wrap in a cloth before applying to skin. Maximum 20 minutes per session.",
-   doseZh:"使用前请用布包裹,每次不超过20分钟。"},
-  {id:20, name:"Digital Thermometer", brand:"Generic", size:"1 unit", cat:"everyday", price:12.50, icon:"🌡️",
-   desc:"Fast-read digital thermometer with fever alert, suitable for the whole family.",
-   descZh:"快速读数电子体温计,带发烧警示,适合全家使用。",
-   dose:"Follow the enclosed instructions for oral, underarm or rectal use.",
-   doseZh:"请按说明书选择口腔、腋下或直肠测量方式。"},
-  {id:21, name:"Blood Pressure Monitor", brand:"Generic", size:"Upper-arm cuff", cat:"everyday", price:49.99, icon:"🩺",
-   desc:"Automatic upper-arm monitor with irregular heartbeat detection and 2-user memory.",
-   descZh:"全自动上臂式血压计,带心律不齐检测与双人记忆功能。",
-   dose:"Measure seated, after 5 minutes' rest, cuff at heart level.",
-   doseZh:"坐姿测量,静息5分钟后进行,袖带与心脏保持同一水平。"},
-  {id:22, name:"Reusable Water Bottle 750mL", brand:"Generic", size:"750mL", cat:"everyday", price:14.99, icon:"🧴",
-   desc:"BPA-free bottle with leak-proof lid — hand wash recommended.",
-   descZh:"不含BPA,防漏瓶盖设计 —— 建议手洗。",
-   dose:"",
-   doseZh:""},
 ];
 
 let activeTab = "all";
@@ -866,11 +792,12 @@ const I18N = {
     'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
     'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
     'qo.reorder1':'Blood pressure script (monthly)','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Sensitive skin moisturiser','qo.reorderBtn':'Reorder',
-    'cat.title':'Shop by category','cat.sub':'Medicines and retail, side by side — not split across separate apps.',
+    'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
     'cat.1':'Prescriptions','cat.2':'Vitamins','cat.3':'Skincare','cat.3b':'Beauty','cat.4':'Baby & Kids','cat.5':'First Aid','cat.6':'Hair & Beauty',
     'cat.7':'Weight & Fitness','cat.8':'Everyday Essentials','cat.9':'Health Devices','cat.10':'Fragrance','cat.11':'Sleep & Wellness','cat.12':'Pet Health',
-    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'1,240+ items in range →',
-    'tab.all':'All','tab.trending':'🔥 Trending exports','tab.medicine':'Medicines','tab.vitamins':'Vitamins','tab.beauty':'Beauty','tab.baby':'Baby','tab.everyday':'Everyday',
+    'cat.c1':'Immune Support','cat.c2':'Omega-3 & Heart','cat.c3':'Probiotics & Gut','cat.c4':'Sleep & Magnesium','cat.c5':'Vitamins C & D','cat.c6':'Pharmacy Medicines',
+    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'16 quality lines →',
+    'tab.all':'All','tab.trending':'🔥 Trending exports','tab.vitamins':'Vitamins & Supplements','tab.pharmacy':'Pharmacy Medicines',
     'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'Same medicines and retail range — a much shorter path to "ordered."',
     'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
     'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
@@ -942,11 +869,12 @@ const I18N = {
     'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
     'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
     'qo.reorder1':'降压药处方(每月)','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'敏感肌保湿霜','qo.reorderBtn':'重新购买',
-    'cat.title':'按类别选购','cat.sub':'药品与日用品并列展示 —— 无需在不同应用间切换。',
+    'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
     'cat.1':'处方药','cat.2':'维生素','cat.3':'护肤品','cat.3b':'美妆','cat.4':'母婴用品','cat.5':'急救用品','cat.6':'美发美妆',
     'cat.7':'体重管理与健身','cat.8':'日常用品','cat.9':'健康仪器','cat.10':'香水','cat.11':'睡眠与保健','cat.12':'宠物保健',
-    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'1,240+ 件商品 →',
-    'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.medicine':'药品','tab.vitamins':'维生素','tab.beauty':'美妆','tab.baby':'母婴','tab.everyday':'日常用品',
+    'cat.c1':'免疫支持','cat.c2':'Omega-3 & 心脏健康','cat.c3':'益生菌 & 肠道健康','cat.c4':'睡眠 & 镁','cat.c5':'维生素C & D','cat.c6':'药房药品',
+    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'16款精选产品 →',
+    'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.vitamins':'维生素与保健品','tab.pharmacy':'药房药品',
     'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样的药品与零售范围 —— 更短的下单路径。',
     'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
     'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
@@ -1004,7 +932,7 @@ const I18N = {
     'trust.note':'此预览中这些面板刻意留空 —— 真实注册编号将在执照签发后公示。绝不使用虚构编号。'
   }
 };
-const CAT_LABEL_KEY = {medicine:'tab.medicine', vitamins:'tab.vitamins', beauty:'tab.beauty', baby:'tab.baby', everyday:'tab.everyday'};
+const CAT_LABEL_KEY = {vitamins:'tab.vitamins', pharmacy:'tab.pharmacy'};
 let currentLang = localStorage.getItem('bw-lang') || 'en';
 function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key] || key); }
 
@@ -1050,7 +978,7 @@ function renderGrid(){
         ${flagFor(p)}
       </div>
       <div class="prod-body">
-        <div class="p-cat">${t(CAT_LABEL_KEY[p.cat] || 'tab.everyday')}</div>
+        <div class="p-cat">${t(CAT_LABEL_KEY[p.cat] || 'tab.vitamins')}</div>
         <div class="p-name">${p.name}</div>
         <div class="stars">★★★★☆</div>
         <div class="p-price-row">
@@ -1202,7 +1130,7 @@ function openProduct(id){
   pdQty = 1;
   const desc = currentLang==='zh' ? (p.descZh || p.desc || '') : (p.desc || '');
   const dose = currentLang==='zh' ? (p.doseZh || p.dose || '') : (p.dose || '');
-  const showLabelLine = ['medicine','vitamins','baby','beauty'].includes(p.cat);
+  const showLabelLine = ['vitamins','pharmacy'].includes(p.cat);
   let note = '';
   if(p.rx) note = `<div class="pd-note">⚕️ ${t('pd.rxNote')}</div>`;
   else if(p.pract) note = `<div class="pd-note">🧑‍⚕️ ${t('pd.practNote')}</div>`;
