@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrightWell — Health, delivered brilliantly</title>
+<meta name="description" content="Concept redesign: a faster, friendlier pharmacy & retail storefront with 3D hero, instant search, and 2-step checkout.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #f6faf9;
+  --surface: #ffffff;
+  --surface-2: #eef7f5;
+  --ink: #0d2726;
+  --ink-2: #52645f;
+  --ink-3: #8b978f;
+  --line: #e1ebe6;
+  --line-2: #cddbd4;
+  --primary: #0f9d8f;
+  --primary-dark: #0a7268;
+  --accent: #ff6f59;
+  --accent-2: #7c5cff;
+  --gold: #e0a100;
+  --danger: #d64545;
+  --sans: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --head: 'Poppins', 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(15,42,40,0.08);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans); color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+img,canvas{max-width:100%;display:block;}
+a{color:inherit; text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--head); font-weight:700; letter-spacing:-0.01em;}
+.wrap{max-width:1240px; margin:0 auto; padding:0 24px;}
+button{font-family:var(--sans); cursor:pointer;}
+
+/* ---------- Top utility bar ---------- */
+.util-bar{background:var(--ink); color:#dff5f1; font-size:12.5px;}
+.util-bar .wrap{display:flex; justify-content:space-between; align-items:center; padding:7px 24px; gap:12px; flex-wrap:wrap;}
+.util-bar .left{display:flex; gap:18px;}
+.util-bar .badge-demo{background:rgba(255,255,255,0.12); padding:2px 10px; border-radius:20px; font-weight:600; letter-spacing:0.02em;}
+
+/* ---------- Header ---------- */
+header.site{position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+.nav-row{display:flex; align-items:center; gap:22px; padding:14px 24px;}
+.logo{display:flex; align-items:center; gap:9px; font-family:var(--head); font-weight:800; font-size:22px; color:var(--primary-dark); white-space:nowrap;}
+.logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block;}
+nav.main-links{display:flex; gap:22px; flex:1;}
+nav.main-links a{font-size:14px; font-weight:600; color:var(--ink-2); padding:6px 2px; border-bottom:2px solid transparent; white-space:nowrap;}
+nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
+
+.search-wrap{position:relative; flex:1; max-width:420px;}
+.search-wrap input{width:100%; padding:10px 40px 10px 16px; border:1.5px solid var(--line-2); border-radius:30px; font-size:14px; background:var(--surface-2); transition:border-color .15s, box-shadow .15s;}
+.search-wrap input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(15,157,143,0.12); background:#fff;}
+.search-wrap .icon{position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--ink-3); font-size:15px; pointer-events:none;}
+.suggest{position:absolute; top:calc(100% + 6px); left:0; right:0; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; z-index:50; display:none;}
+.suggest.open{display:block;}
+.suggest .s-item{display:flex; justify-content:space-between; gap:10px; padding:10px 14px; font-size:13.5px; border-bottom:1px dashed var(--line);}
+.suggest .s-item:last-child{border-bottom:none;}
+.suggest .s-item:hover{background:var(--surface-2); cursor:pointer;}
+.suggest .s-item .tag{color:var(--ink-3); font-size:11px; text-transform:uppercase; letter-spacing:.06em;}
+
+.head-actions{display:flex; align-items:center; gap:10px;}
+.icon-btn{position:relative; width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line-2); background:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; transition:border-color .15s, transform .15s;}
+.icon-btn:hover{border-color:var(--primary); transform:translateY(-1px);}
+.icon-btn .count{position:absolute; top:-4px; right:-4px; background:var(--accent); color:#fff; font-size:10px; font-weight:700; min-width:17px; height:17px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+.lang-toggle{border:1.5px solid var(--line-2); background:#fff; color:var(--ink); border-radius:20px; padding:8px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; transition:border-color .15s, color .15s;}
+.lang-toggle:hover{border-color:var(--primary); color:var(--primary-dark);}
+.cta-btn{background:var(--primary); color:#fff; padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px; border:none; white-space:nowrap; transition:background .15s, transform .15s;}
+.cta-btn:hover{background:var(--primary-dark); transform:translateY(-1px);}
+.cta-ghost{background:#fff; color:var(--primary-dark); border:1.5px solid var(--primary); padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px;}
+.hamburger{display:none; width:40px; height:40px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; align-items:center; justify-content:center; font-size:18px;}
+
+/* ---------- Hero ---------- */
+.hero{position:relative; background:linear-gradient(135deg,#eafaf6 0%, #f6faf9 45%, #f2effc 100%); overflow:hidden; padding:64px 0 40px;}
+.hero .wrap{display:grid; grid-template-columns:1.05fr 1fr; gap:20px; align-items:center; position:relative; z-index:2;}
+.hero-copy .eyebrow{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--primary-dark); background:rgba(15,157,143,0.1); padding:6px 12px; border-radius:20px; margin-bottom:18px;}
+.hero-copy h1{font-size:44px; line-height:1.08; margin-bottom:16px;}
+.hero-copy h1 span{color:var(--primary-dark);}
+.hero-copy p.lead{font-size:16.5px; color:var(--ink-2); max-width:480px; margin-bottom:26px;}
+.hero-cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:28px;}
+.hero-cta-row .cta-btn, .hero-cta-row .cta-ghost{padding:13px 24px; font-size:14.5px;}
+.trust-strip{display:flex; gap:22px; flex-wrap:wrap;}
+.trust-strip .t-item{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--ink-2);}
+
+.suburb-band{background:var(--ink); color:#eafaf6; padding:22px 0;}
+.suburb-band .wrap{display:flex; align-items:center; gap:22px; flex-wrap:wrap; justify-content:space-between;}
+.suburb-band .sb-copy{font-size:13.5px; line-height:1.5; max-width:560px;}
+.suburb-band .sb-copy .zh{display:block; color:#a9c9c2; font-size:12.5px; margin-top:3px;}
+.suburb-chips{display:flex; gap:10px; flex-wrap:wrap;}
+.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.trust-strip .t-item .ic{font-size:16px;}
+
+.hero-visual{position:relative; height:440px;}
+#hero3d{width:100%; height:100%; border-radius:24px;}
+.no-3d #hero3d{display:none;}
+.no-3d .css-fallback{display:flex !important;}
+.css-fallback{display:none; position:absolute; inset:0; align-items:center; justify-content:center;}
+.pill-orbit{position:relative; width:280px; height:280px; transform-style:preserve-3d; animation:spin3d 14s linear infinite;}
+@keyframes spin3d{from{transform:rotateY(0deg) rotateX(8deg);} to{transform:rotateY(360deg) rotateX(8deg);}}
+.pill{position:absolute; width:70px; height:34px; border-radius:20px; box-shadow:0 8px 18px rgba(0,0,0,0.12); left:50%; top:50%;}
+.pill:nth-child(1){background:linear-gradient(90deg,#0f9d8f 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(90px) rotate(10deg);}
+.pill:nth-child(2){background:linear-gradient(90deg,#ff6f59 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(-40px) translateX(60px) rotate(-15deg) scale(0.85);}
+.pill:nth-child(3){background:linear-gradient(90deg,#7c5cff 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(20px) translateX(-70px) translateY(60px) rotate(30deg) scale(0.9);}
+.pill:nth-child(4){background:linear-gradient(90deg,#0a7268 50%, #eafff9 50%); transform:translate(-50%,-50%) translateZ(-70px) translateY(-70px) rotate(-25deg) scale(0.8);}
+
+.float-badge{position:absolute; background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); border-radius:14px; padding:10px 14px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:8px; animation:floaty 5s ease-in-out infinite;}
+.float-badge.b1{top:8%; right:4%; animation-delay:0s;}
+.float-badge.b2{bottom:14%; left:2%; animation-delay:1.2s;}
+.float-badge.b3{bottom:6%; right:14%; animation-delay:2.4s;}
+@keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}}
+
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr;}
+  .hero-visual{height:320px; order:-1;}
+  nav.main-links, .search-wrap{display:none;}
+  .hamburger{display:flex;}
+}
+
+/* ---------- Sections ---------- */
+.section{padding:56px 0;}
+.section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; gap:16px; flex-wrap:wrap;}
+.section-head h2{font-size:28px;}
+.section-head p{color:var(--ink-2); font-size:14px; margin-top:4px;}
+.section-head .see-all{font-size:13.5px; font-weight:600; color:var(--primary-dark); white-space:nowrap;}
+
+/* Quick order */
+.quick-order{background:var(--surface-2);}
+.qo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+.qo-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; display:flex; flex-direction:column; gap:12px; transition:transform .18s, box-shadow .18s;}
+.qo-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
+.qo-card .qo-icon{width:46px; height:46px; border-radius:12px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:22px;}
+.qo-card h3{font-size:17px;}
+.qo-card p{font-size:13.5px; color:var(--ink-2);}
+.dropzone{border:2px dashed var(--line-2); border-radius:12px; padding:16px; text-align:center; font-size:13px; color:var(--ink-2); transition:border-color .15s, background .15s; margin-top:4px;}
+.dropzone.drag{border-color:var(--primary); background:rgba(15,157,143,0.06);}
+.dropzone input{display:none;}
+.progress-track{height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-top:10px; display:none;}
+.progress-track.show{display:block;}
+.progress-fill{height:100%; width:0%; background:var(--primary); transition:width .25s;}
+.upload-status{font-size:12.5px; color:var(--primary-dark); font-weight:600; margin-top:8px; display:none;}
+.upload-status.show{display:block;}
+.pbs-search{display:flex; gap:8px; margin-top:4px;}
+.pbs-search input{flex:1; padding:9px 12px; border:1.5px solid var(--line-2); border-radius:8px; font-size:13.5px;}
+.pbs-search button{padding:9px 14px; border:none; border-radius:8px; background:var(--primary); color:#fff; font-weight:600; font-size:13px;}
+.reorder-list{display:flex; flex-direction:column; gap:8px; margin-top:2px;}
+.reorder-item{display:flex; justify-content:space-between; align-items:center; font-size:13px; background:var(--surface-2); border-radius:8px; padding:8px 10px;}
+.reorder-item button{border:none; background:var(--ink); color:#fff; font-size:11px; font-weight:600; padding:5px 10px; border-radius:6px;}
+
+/* Categories */
+.cat-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:14px;}
+.cat-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px 14px; text-align:center; transition:transform .2s, box-shadow .2s, border-color .2s;}
+.cat-card:hover{transform:translateY(-6px) rotateX(4deg); box-shadow:var(--shadow); border-color:var(--primary);}
+.cat-card .ic{font-size:30px; margin-bottom:10px;}
+.cat-card .lbl{font-size:12.5px; font-weight:600;}
+@media (max-width:900px){.cat-grid{grid-template-columns:repeat(3,1fr);}}
+
+/* Product grid + tabs */
+.tabs{display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap;}
+.tab-btn{padding:8px 16px; border-radius:20px; border:1.5px solid var(--line-2); background:#fff; font-size:13px; font-weight:600; color:var(--ink-2); transition:all .15s;}
+.tab-btn.active, .tab-btn:hover{border-color:var(--primary); color:var(--primary-dark); background:rgba(15,157,143,0.08);}
+.prod-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+@media (max-width:960px){.prod-grid{grid-template-columns:repeat(2,1fr);}}
+.prod-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; transition:transform .18s, box-shadow .18s; position:relative;}
+.prod-card:hover{transform:translateY(-5px); box-shadow:var(--shadow);}
+.prod-thumb{height:130px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:52px; position:relative;}
+.prod-flag{position:absolute; top:10px; left:10px; background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:12px; text-transform:uppercase;}
+.prod-flag.rx{background:var(--gold);}
+.prod-flag.hot{background:var(--accent-2); left:auto; right:10px;}
+.prod-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1;}
+.prod-body .p-cat{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:600;}
+.prod-body .p-name{font-size:14.5px; font-weight:700; line-height:1.3; min-height:38px;}
+.prod-body .p-price-row{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
+.prod-body .p-price{font-size:16px; font-weight:800; color:var(--ink);}
+.prod-body .p-price .was{font-size:12px; color:var(--ink-3); text-decoration:line-through; font-weight:500; margin-left:6px;}
+.add-btn{border:none; background:var(--ink); color:#fff; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:8px; transition:background .15s, transform .12s;}
+.add-btn:hover{background:var(--primary-dark);}
+.add-btn.added{background:var(--primary);}
+.compare-link{font-size:11px; color:var(--ink-3); margin-top:6px; display:inline-flex; align-items:center; gap:3px;}
+.compare-link:hover{color:var(--primary-dark);}
+.stars{color:var(--gold); font-size:12px;}
+
+/* Compare table */
+.compare-wrap{overflow-x:auto;}
+table.compare{width:100%; border-collapse:collapse; background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);}
+table.compare th, table.compare td{padding:14px 18px; text-align:left; font-size:13.5px; border-bottom:1px solid var(--line);}
+table.compare th{background:var(--surface-2); font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);}
+table.compare tr:last-child td{border-bottom:none;}
+table.compare td.us{color:var(--primary-dark); font-weight:700;}
+table.compare td.them{color:var(--ink-3);}
+table.compare .row-label{font-weight:600;}
+
+/* Testimonials */
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media (max-width:900px){.testi-grid{grid-template-columns:1fr;}}
+.testi-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px;}
+.testi-card .stars{margin-bottom:10px;}
+.testi-card p{font-size:14px; color:var(--ink-2); margin-bottom:14px;}
+.testi-card .who{font-size:13px; font-weight:700;}
+.testi-card .where{font-size:12px; color:var(--ink-3);}
+
+/* App / loyalty banner */
+.banner{background:linear-gradient(120deg,var(--primary-dark), var(--accent-2)); border-radius:24px; color:#fff; padding:44px; display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; position:relative; overflow:hidden;}
+.banner h2{font-size:28px; margin-bottom:12px;}
+.banner p{opacity:.92; font-size:14.5px; max-width:440px; margin-bottom:18px;}
+.banner .cta-btn{background:#fff; color:var(--primary-dark);}
+.phone-mock{justify-self:center; width:190px; height:380px; background:#0d2726; border-radius:32px; padding:10px; box-shadow:0 20px 50px rgba(0,0,0,0.35); position:relative;}
+.phone-mock .screen{width:100%; height:100%; background:linear-gradient(160deg,#eafaf6,#f2effc); border-radius:22px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:16px;}
+.phone-mock .pts{font-size:34px; font-weight:800; color:var(--primary-dark);}
+.phone-mock .pts-lbl{font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.08em;}
+@media (max-width:900px){.banner{grid-template-columns:1fr;} .phone-mock{display:none;}}
+
+/* Footer */
+footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
+.foot-grid{display:grid; grid-template-columns:1.4fr repeat(4,1fr); gap:24px; margin-bottom:32px;}
+.foot-grid h4{color:#fff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
+.foot-grid a{display:block; font-size:13px; color:#a9c9c2; margin-bottom:9px;}
+.foot-grid a:hover{color:#fff;}
+
+.foot-bottom{border-top:1px solid rgba(255,255,255,0.12); padding-top:18px; font-size:12px; color:#7fa39b; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+@media (max-width:900px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* Cart drawer */
+.overlay{position:fixed; inset:0; background:rgba(13,39,38,0.35); opacity:0; pointer-events:none; transition:opacity .2s; z-index:200;}
+.overlay.open{opacity:1; pointer-events:auto;}
+.cart-drawer{position:fixed; top:0; right:0; height:100%; width:380px; max-width:92vw; background:#fff; box-shadow:-10px 0 40px rgba(0,0,0,0.18); transform:translateX(100%); transition:transform .25s ease; z-index:201; display:flex; flex-direction:column;}
+.cart-drawer.open{transform:translateX(0);}
+.cart-head{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line);}
+.cart-head h3{font-size:17px;}
+.cart-head button{background:none; border:none; font-size:20px; color:var(--ink-2);}
+.cart-items{flex:1; overflow-y:auto; padding:12px 20px;}
+.cart-empty{text-align:center; color:var(--ink-3); font-size:13.5px; padding:60px 10px;}
+.cart-line{display:flex; gap:12px; padding:12px 0; border-bottom:1px dashed var(--line);}
+.cart-line .thumb{width:48px; height:48px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;}
+.cart-line .info{flex:1;}
+.cart-line .info .name{font-size:13.5px; font-weight:700;}
+.cart-line .qty-row{display:flex; align-items:center; gap:8px; margin-top:6px;}
+.qty-btn{width:22px; height:22px; border-radius:50%; border:1px solid var(--line-2); background:#fff; font-size:13px; line-height:1;}
+.cart-line .price{font-size:13.5px; font-weight:700; white-space:nowrap;}
+.cart-line .rm{font-size:11px; color:var(--danger); margin-top:6px; cursor:pointer;}
+.cart-foot{padding:18px 20px; border-top:1px solid var(--line);}
+.cart-foot .sub-row{display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;}
+.cart-foot .sub-row.total{font-weight:800; font-size:16px; margin-top:8px;}
+.checkout-btn{width:100%; padding:13px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:14px; margin-top:12px;}
+.checkout-steps{font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:8px;}
+
+/* Pharmacist chat bubble */
+.chat-fab{position:fixed; bottom:22px; right:22px; background:var(--accent); color:#fff; border:none; border-radius:30px; padding:14px 20px; font-weight:700; font-size:13.5px; box-shadow:0 10px 24px rgba(255,111,89,0.4); z-index:150; display:flex; align-items:center; gap:8px;}
+.chat-fab:hover{transform:translateY(-2px);}
+.chat-pop{position:fixed; bottom:80px; right:22px; width:280px; background:#fff; border-radius:16px; box-shadow:var(--shadow); border:1px solid var(--line); padding:16px; display:none; z-index:150;}
+.chat-pop.open{display:block;}
+.chat-pop .cp-head{font-weight:700; font-size:13.5px; margin-bottom:6px;}
+.chat-pop p{font-size:12.5px; color:var(--ink-2); margin-bottom:10px;}
+
+.fade-up{opacity:0; transform:translateY(24px); transition:opacity .5s ease, transform .5s ease;}
+.fade-up.visible{opacity:1; transform:translateY(0);}
+
+/* ---------- Product detail & checkout modals ---------- */
+.bw-overlay{position:fixed; inset:0; background:rgba(13,39,38,0.45); opacity:0; pointer-events:none; transition:opacity .2s; z-index:220;}
+.bw-overlay.open{opacity:1; pointer-events:auto;}
+.bw-modal{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.97); width:720px; max-width:94vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:18px; box-shadow:0 30px 80px rgba(0,0,0,0.3); z-index:221; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;}
+.bw-modal.open{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}
+.bw-modal .bwm-head{display:flex; justify-content:space-between; align-items:center; padding:16px 22px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; z-index:2;}
+.bw-modal .bwm-head h3{font-size:17px;}
+.bw-modal .bwm-close{background:none; border:none; font-size:20px; color:var(--ink-2); cursor:pointer;}
+.pd-grid{display:grid; grid-template-columns:280px 1fr; gap:22px; padding:22px;}
+@media (max-width:700px){.pd-grid{grid-template-columns:1fr;}}
+.pd-visual{background:var(--surface-2); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:96px; min-height:230px; position:relative;}
+.pd-img-note{font-size:10.5px; color:var(--ink-3); margin-top:8px; line-height:1.4;}
+.pd-info .pd-brand{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:700;}
+.pd-info h2{font-size:22px; margin:4px 0 2px;}
+.pd-info .pd-size{font-size:12.5px; color:var(--ink-2); margin-bottom:6px;}
+.pd-price{font-size:24px; font-weight:800; margin:8px 0;}
+.pd-price .was{font-size:14px; color:var(--ink-3); text-decoration:line-through; font-weight:500; margin-left:8px;}
+.pd-block{margin-top:12px;}
+.pd-block h4{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); margin-bottom:4px;}
+.pd-block p{font-size:13.5px; color:var(--ink-2); line-height:1.5;}
+.pd-note{margin-top:12px; padding:10px 12px; border-radius:10px; font-size:12.5px; line-height:1.5; background:rgba(224,161,0,0.1); border:1px solid rgba(224,161,0,0.35); color:#7a5a05;}
+.pd-buy{display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap;}
+.pd-qty{display:flex; align-items:center; gap:12px; border:1.5px solid var(--line-2); border-radius:10px; padding:7px 12px;}
+.prod-card{cursor:pointer;}
+
+.co-body{padding:20px 22px;}
+.co-demo{background:rgba(124,92,255,0.08); border:1px solid rgba(124,92,255,0.3); color:#5a3fd4; font-size:12px; border-radius:10px; padding:8px 12px; margin-bottom:14px; font-weight:600;}
+.co-summary{background:var(--surface-2); border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:6px;}
+.co-summary .line{display:flex; justify-content:space-between; gap:12px; padding:3px 0;}
+.co-summary .line.total{font-weight:800; border-top:1px dashed var(--line-2); margin-top:6px; padding-top:8px;}
+.co-section-label{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:700; margin:16px 0 8px;}
+.co-fields{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.co-fields .full{grid-column:1/-1;}
+.co-fields input,.co-fields select{width:100%; padding:10px 12px; border:1.5px solid var(--line-2); border-radius:8px; font-size:13.5px; font-family:var(--sans); background:#fff; color:var(--ink);}
+.co-fields input:focus,.co-fields select:focus{outline:none; border-color:var(--primary);}
+.pay-chips{display:flex; gap:8px; flex-wrap:wrap;}
+.pay-chip{padding:9px 14px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink);}
+.pay-chip.active{border-color:var(--primary); background:rgba(15,157,143,0.08); color:var(--primary-dark);}
+.pay-panel{margin-top:12px; display:none;}
+.pay-panel.active{display:block;}
+.pay-note{font-size:12.5px; color:var(--ink-2); background:var(--surface-2); border-radius:10px; padding:10px 12px; line-height:1.5;}
+.co-place{width:100%; margin-top:18px; padding:14px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:800; font-size:14.5px; cursor:pointer;}
+.co-place:hover{background:var(--primary-dark);}
+.co-success{text-align:center; padding:30px 10px; display:none;}
+.co-success.show{display:block;}
+.co-success .big{font-size:48px;}
+.co-success h3{font-size:20px; margin:10px 0 6px;}
+.co-success p{font-size:13.5px; color:var(--ink-2); margin-top:4px;}
+
+/* Trust / registration panel */
+.trust-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+@media (max-width:960px){.trust-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.trust-grid{grid-template-columns:1fr;}}
+.trust-card{background:#fff; border:1.5px dashed var(--line-2); border-radius:var(--radius); padding:18px;}
+.trust-card .tc-ic{font-size:24px; margin-bottom:8px;}
+.trust-card h4{font-size:14px; margin-bottom:6px;}
+.trust-card p{font-size:12.5px; color:var(--ink-2); line-height:1.5;}
+.status-chip{display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--gold); border:1px solid var(--gold); border-radius:12px; padding:3px 9px;}
+.trust-note{font-size:12px; color:var(--ink-3); margin-top:14px; max-width:720px; line-height:1.5;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:11px 20px; border-radius:30px; font-size:13px; font-weight:600; opacity:0; pointer-events:none; transition:all .25s; z-index:300;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="util-bar">
+  <div class="wrap">
+    <div class="left">
+      <span>🚚 Free delivery over $30 · Same-day metro</span>
+      <span>💊 Pharmacist online now</span>
+    </div>
+    <span class="badge-demo">Concept redesign — vs. chemistwarehouse.com.au</span>
+  </div>
+</div>
+
+<header class="site">
+  <div class="nav-row wrap">
+    <div class="logo"><span class="dot"></span>BrightWell</div>
+    <nav class="main-links">
+      <a href="#quick-order" data-i18n="nav.order">Order a Script</a>
+      <a href="#categories" data-i18n="nav.shop">Shop</a>
+      <a href="#bestsellers" data-i18n="nav.bestsellers">Best Sellers</a>
+      <a href="#compare" data-i18n="nav.why">Why BrightWell</a>
+      <a href="#loyalty" data-i18n="nav.rewards">Rewards</a>
+    </nav>
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" data-i18n-placeholder="search.placeholder" autocomplete="off">
+      <span class="icon">🔍</span>
+      <div class="suggest" id="suggestBox"></div>
+    </div>
+    <div class="head-actions">
+      <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
+      <button class="icon-btn" title="Account">👤</button>
+      <button class="icon-btn" id="cartBtn" title="Cart">🛒<span class="count" id="cartCount">0</span></button>
+      <button class="hamburger" id="hamburger">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy fade-up">
+      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Meds &amp; retail, in one 2-step checkout</div>
+      <h1><span data-i18n="hero.h1a">Your health, </span><span data-i18n="hero.h1b">delivered brilliantly.</span></h1>
+      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
+      <div class="hero-cta-row">
+        <a href="#quick-order" class="cta-btn" data-i18n="hero.cta1">Order your prescription →</a>
+        <a href="#bestsellers" class="cta-ghost" data-i18n="hero.cta2">Shop best sellers</a>
+      </div>
+      <div class="trust-strip">
+        <div class="t-item"><span class="ic">🕒</span><span data-i18n="hero.trust1">Order in under 60 seconds</span></div>
+        <div class="t-item"><span class="ic">🩺</span><span data-i18n="hero.trust2">Live pharmacist chat 24/7</span></div>
+        <div class="t-item"><span class="ic">📍</span><span data-i18n="hero.trust3">Live stock at your nearest store</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="hero3d"></canvas>
+      <div class="css-fallback"><div class="pill-orbit"><div class="pill"></div><div class="pill"></div><div class="pill"></div><div class="pill"></div></div></div>
+      <div class="float-badge b1">⚡ 2-step checkout</div>
+      <div class="float-badge b2">🏆 BrightWell+ points</div>
+      <div class="float-badge b3">🚚 Same-day delivery</div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBURB FOCUS -->
+<div class="suburb-band">
+  <div class="wrap">
+    <div class="sb-copy">
+      <span data-i18n="suburb.copy">Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.</span>
+      <span class="zh" id="suburbZhNote">我们为布里斯班华人社区提供服务 — 药剂师可用中文或英文为您提供咨询。</span>
+    </div>
+    <div class="suburb-chips">
+      <span class="suburb-chip">Sunnybank</span>
+      <span class="suburb-chip">Underwood</span>
+      <span class="suburb-chip">Calamvale</span>
+      <span class="suburb-chip">Indooroopilly</span>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK ORDER -->
+<section class="section quick-order" id="quick-order">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div>
+        <h2 data-i18n="qo.title">Order in three ways — pick the fastest one</h2>
+        <p data-i18n="qo.sub">This is the part most pharmacy sites bury under menus. We put it first.</p>
+      </div>
+    </div>
+    <div class="qo-grid">
+      <div class="qo-card fade-up">
+        <div class="qo-icon">📷</div>
+        <h3 data-i18n="qo.card1.title">Upload a script</h3>
+        <p data-i18n="qo.card1.body">Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.</p>
+        <label class="dropzone" id="dropzone" for="rxFile">
+          <span id="dzText" data-i18n="qo.dropzone">Drop image here or click to browse</span>
+          <input type="file" id="rxFile" accept="image/*">
+        </label>
+        <div class="progress-track" id="progTrack"><div class="progress-fill" id="progFill"></div></div>
+        <div class="upload-status" id="uploadStatus" data-i18n="qo.uploadStatus">✅ Received — a pharmacist will confirm within 15 minutes.</div>
+      </div>
+
+      <div class="qo-card fade-up">
+        <div class="qo-icon">🔎</div>
+        <h3 data-i18n="qo.card2.title">Search by medicine or PBS code</h3>
+        <p data-i18n="qo.card2.body">Instant results as you type, with generic-brand price comparisons shown up front.</p>
+        <div class="pbs-search">
+          <input type="text" id="pbsInput" placeholder="e.g. Panadol, Ventolin, PBS 2432K…" data-i18n-placeholder="qo.pbsPlaceholder">
+          <button id="pbsBtn" data-i18n="qo.pbsBtn">Find</button>
+        </div>
+        <div class="reorder-list" id="pbsResults"></div>
+      </div>
+
+      <div class="qo-card fade-up">
+        <div class="qo-icon">🔁</div>
+        <h3 data-i18n="qo.card3.title">Reorder your regulars</h3>
+        <p data-i18n="qo.card3.body">One tap re-adds your last order — no re-searching, no re-typing your details.</p>
+        <div class="reorder-list">
+          <div class="reorder-item"><span data-i18n="qo.reorder1">Blood pressure script (monthly)</span><button data-reorder="1" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder3">Sensitive skin moisturiser</span><button data-reorder="12" data-i18n="qo.reorderBtn">Reorder</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" id="categories">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="cat.title">Shop by category</h2><p data-i18n="cat.sub">A deliberately focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.</p></div>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card fade-up"><div class="ic">🛡️</div><div class="lbl" data-i18n="cat.c1">Immune Support</div></div>
+      <div class="cat-card fade-up"><div class="ic">🐟</div><div class="lbl" data-i18n="cat.c2">Omega-3 &amp; Heart</div></div>
+      <div class="cat-card fade-up"><div class="ic">🦠</div><div class="lbl" data-i18n="cat.c3">Probiotics &amp; Gut</div></div>
+      <div class="cat-card fade-up"><div class="ic">🌙</div><div class="lbl" data-i18n="cat.c4">Sleep &amp; Magnesium</div></div>
+      <div class="cat-card fade-up"><div class="ic">☀️</div><div class="lbl" data-i18n="cat.c5">Vitamins C &amp; D</div></div>
+      <div class="cat-card fade-up"><div class="ic">💊</div><div class="lbl" data-i18n="cat.c6">Pharmacy Medicines</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BEST SELLERS / PRODUCT GRID -->
+<section class="section" id="bestsellers" style="background:var(--surface-2);">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="best.title">Best sellers</h2><p data-i18n="best.sub">Tap a tab to filter — search bar above filters this grid too.</p></div>
+      <div class="see-all" data-i18n="best.seeAll">Curated starter range →</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="all" data-i18n="tab.all">All</button>
+      <button class="tab-btn" data-tab="trending" data-i18n="tab.trending">🔥 Trending exports</button>
+      <button class="tab-btn" data-tab="vitamins" data-i18n="tab.vitamins">Vitamins &amp; Supplements</button>
+      <button class="tab-btn" data-tab="pharmacy" data-i18n="tab.pharmacy">Pharmacy Medicines</button>
+    </div>
+    <div class="prod-grid" id="prodGrid"></div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="section" id="compare">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">Same medicines and retail range — a much shorter path to "ordered."</p></div>
+    </div>
+    <div class="compare-wrap fade-up">
+      <table class="compare">
+        <tr><th data-i18n="cmp.h1">What matters</th><th data-i18n="cmp.h2">BrightWell</th><th data-i18n="cmp.h3">Typical big chain (e.g. Chemist Warehouse)</th></tr>
+        <tr><td class="row-label" data-i18n="cmp.r1">Checkout steps</td><td class="us" data-i18n="cmp.r1us">2 steps, cart drawer, no reload</td><td class="them" data-i18n="cmp.r1them">5–7 pages, full reloads</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r2">Prescription upload</td><td class="us" data-i18n="cmp.r2us">Photo upload, ~2 min, in-page</td><td class="them" data-i18n="cmp.r2them">Phone/fax or separate portal</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r3">Search</td><td class="us" data-i18n="cmp.r3us">Instant, filters meds + retail together</td><td class="them" data-i18n="cmp.r3them">Slow catalogue search, separate sections</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r4">Pharmacist help</td><td class="us" data-i18n="cmp.r4us">Live chat bubble, always visible</td><td class="them" data-i18n="cmp.r4them">In-store or phone only</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r5">Loyalty points</td><td class="us" data-i18n="cmp.r5us">Shown live in cart before you pay</td><td class="them" data-i18n="cmp.r5them">Applied after purchase, easy to miss</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r6">Visual design</td><td class="us" data-i18n="cmp.r6us">Clean, 3D hero, uncluttered</td><td class="them" data-i18n="cmp.r6them">Dense flyer-style layout, banner heavy</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r7">Mobile experience</td><td class="us" data-i18n="cmp.r7us">Same speed &amp; layout as desktop</td><td class="them" data-i18n="cmp.r7them">Slower, more taps to reach checkout</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--surface-2);">
+  <div class="wrap">
+    <div class="section-head fade-up"><div><h2 data-i18n="testi.title">What shoppers say</h2></div></div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"Uploaded my script on the way to work, picked it up ready by lunch. Didn't have to call anyone."</p><div class="who">Priya N.</div><div class="where">Brisbane, QLD</div></div>
+      <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"The reorder button alone is worth it — my monthly vitamins just appear in the cart."</p><div class="who">Marcus T.</div><div class="where">Sydney, NSW</div></div>
+      <div class="testi-card fade-up"><div class="stars">★★★★☆</div><p>"Checkout is actually two steps like it says. First pharmacy site that didn't make me want to give up."</p><div class="who">Aisha K.</div><div class="where">Melbourne, VIC</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LOYALTY -->
+<section class="section" id="loyalty">
+  <div class="wrap">
+    <div class="banner fade-up">
+      <div>
+        <h2 data-i18n="loy.title">BrightWell+ Rewards</h2>
+        <p data-i18n="loy.body">Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.</p>
+        <a href="#" class="cta-btn" data-i18n="loy.cta">Join free — takes 30 seconds</a>
+      </div>
+      <div class="phone-mock">
+        <div class="screen">
+          <div class="pts">2,480</div>
+          <div class="pts-lbl" data-i18n="loy.ptsLabel">Points balance</div>
+          <div style="font-size:11px;color:var(--ink-2);margin-top:6px;" data-i18n="loy.ptsValue">≈ $12.40 off your next order</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST / REGISTRATION -->
+<section class="section" id="trust" style="background:var(--surface-2);">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="trust.title">Built to be verifiable</h2><p data-i18n="trust.sub">Every registration a real pharmacy must hold, displayed where customers can check it.</p></div>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🏛️</div>
+        <h4 data-i18n="trust.c1t">QLD pharmacy business licence</h4>
+        <p data-i18n="trust.c1b">Issued by the Queensland Pharmacy Business Ownership Council. The licence number will be displayed here for public verification.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🧑‍⚕️</div>
+        <h4 data-i18n="trust.c2t">Registered pharmacist owner</h4>
+        <p data-i18n="trust.c2b">Proprietor &amp; superintendent pharmacist name with AHPRA registration number — checkable on the public register.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">📍</div>
+        <h4 data-i18n="trust.c3t">Licensed premises</h4>
+        <p data-i18n="trust.c3b">Every order is dispensed from our licensed Brisbane pharmacy premises. Street address published here.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="tc-ic">🔒</div>
+        <h4 data-i18n="trust.c4t">Payments &amp; privacy</h4>
+        <p data-i18n="trust.c4b">Cards and wallets processed by a PCI-DSS accredited gateway. Health information handled under the Australian Privacy Principles.</p>
+        <span class="status-chip" data-i18n="trust.pending">Issued before launch</span>
+      </div>
+    </div>
+    <p class="trust-note" data-i18n="trust.note">These panels are intentionally blank in this preview — real registration numbers appear here when the licence is granted. No placeholder numbers, ever.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="color:#fff;"><span class="dot"></span>BrightWell</div>
+        <p style="font-size:13px;color:#a9c9c2;margin-top:10px;max-width:260px;" data-i18n="foot.tagline">A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.</p>
+      </div>
+      <div><h4 data-i18n="foot.shop">Shop</h4><a href="#tabs" data-i18n="tab.vitamins">Vitamins &amp; Supplements</a><a href="#tabs" data-i18n="tab.pharmacy">Pharmacy Medicines</a><a href="#trust" data-i18n="trust.title">Trust &amp; Registration</a></div>
+      <div><h4 data-i18n="foot.help">Help</h4><a href="#" data-i18n="foot.help1">Ask a pharmacist</a><a href="#" data-i18n="foot.help2">Track my order</a><a href="#" data-i18n="foot.help3">Returns</a><a href="#" data-i18n="foot.help4">Delivery info</a></div>
+      <div><h4 data-i18n="foot.company">Company</h4><a href="#" data-i18n="foot.company1">About</a><a href="#" data-i18n="foot.company2">Store locator</a><a href="#" data-i18n="foot.company3">Careers</a></div>
+      <div><h4 data-i18n="foot.legal">Legal</h4><a href="#" data-i18n="foot.legal1">Privacy</a><a href="#" data-i18n="foot.legal2">Terms</a><a href="#" data-i18n="foot.legal3">Accessibility</a></div>
+    </div>
+
+    <div class="foot-bottom">
+      <span data-i18n="foot.copyright">© 2026 BrightWell — concept design, no real orders processed.</span>
+      <span data-i18n="foot.builtAs">Built as a UX comparison to chemistwarehouse.com.au</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="overlay" id="overlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
+  <div class="cart-foot">
+    <div class="sub-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+    <div class="sub-row"><span data-i18n="cart.pointsEarned">BrightWell+ points earned</span><span id="cartPoints">+0 pts</span></div>
+    <div class="sub-row total"><span data-i18n="cart.total">Total</span><span id="cartTotal">$0.00</span></div>
+    <button class="checkout-btn" id="checkoutBtn" data-i18n="cart.checkout">Checkout →</button>
+    <div class="checkout-steps" data-i18n="cart.step">Step 1 of 2 — delivery details next</div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="bw-overlay" id="bwOverlay"></div>
+<div class="bw-modal" id="pdModal" role="dialog" aria-modal="true">
+  <div class="bwm-head"><h3 data-i18n="pd.title">Product details</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div id="pdBody"></div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="bw-modal" id="coModal" role="dialog" aria-modal="true">
+  <div class="bwm-head"><h3 data-i18n="co.title">Checkout</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div class="co-body">
+    <div id="coForm">
+      <div class="co-demo" data-i18n="co.demoNote">Demo checkout — no real payment is processed.</div>
+      <div class="co-summary" id="coSummary"></div>
+      <div class="co-section-label" data-i18n="co.delivery">Delivery details</div>
+      <div class="co-fields">
+        <input id="coName" class="full" placeholder="Full name" data-i18n-placeholder="co.name" autocomplete="name">
+        <input id="coPhone" placeholder="Mobile" data-i18n-placeholder="co.phone" inputmode="tel" autocomplete="tel">
+        <select id="coSuburb">
+          <option>Sunnybank</option>
+          <option>Sunnybank Hills</option>
+          <option>Underwood</option>
+          <option>Calamvale</option>
+          <option>Indooroopilly</option>
+          <option data-i18n="co.otherSuburb">Other Brisbane</option>
+        </select>
+        <input id="coAddress" class="full" placeholder="Street address" data-i18n-placeholder="co.address" autocomplete="street-address">
+      </div>
+      <div class="co-section-label" data-i18n="co.method">Delivery method</div>
+      <div class="co-fields">
+        <select id="coMethod" class="full">
+          <option data-i18n="co.m1">Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)</option>
+          <option data-i18n="co.m2">Standard post (1–3 days) — $7.95, free over $30</option>
+          <option data-i18n="co.m3">Click &amp; collect — free</option>
+        </select>
+      </div>
+      <div class="co-section-label" data-i18n="co.payment">Payment</div>
+      <div class="pay-chips" id="payChips">
+        <button class="pay-chip active" data-pay="card">💳 <span data-i18n="co.payCard">Card</span> · Visa / Mastercard</button>
+        <button class="pay-chip" data-pay="apple">Apple Pay</button>
+        <button class="pay-chip" data-pay="google">Google Pay</button>
+        <button class="pay-chip" data-pay="bank">🏦 <span data-i18n="co.payBank">Bank transfer</span></button>
+      </div>
+      <div class="pay-panel active" data-panel="card">
+        <div class="co-fields" style="margin-top:10px;">
+          <input class="full" placeholder="Card number" data-i18n-placeholder="co.cardNo" inputmode="numeric">
+          <input placeholder="MM / YY" data-i18n-placeholder="co.cardExp" inputmode="numeric">
+          <input placeholder="CVC" data-i18n-placeholder="co.cardCvc" inputmode="numeric">
+        </div>
+      </div>
+      <div class="pay-panel" data-panel="apple"><div class="pay-note" data-i18n="co.walletNote">One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.</div></div>
+      <div class="pay-panel" data-panel="google"><div class="pay-note" data-i18n="co.walletNote">One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.</div></div>
+      <div class="pay-panel" data-panel="bank"><div class="pay-note" data-i18n="co.bankNote">Pay by PayID / bank transfer — account details appear on your order confirmation. Orders ship as soon as funds clear (instant with most Australian banks via Osko).</div></div>
+      <button class="co-place" id="coPlace" data-i18n="co.place">Place order</button>
+    </div>
+    <div class="co-success" id="coSuccess">
+      <div class="big">✅</div>
+      <h3 data-i18n="co.successTitle">Order received!</h3>
+      <p id="coOrderNo" style="font-weight:700;"></p>
+      <p data-i18n="co.successBody">This is a demo — no payment was taken and nothing will ship. At launch you'd receive an SMS confirmation with tracking within minutes.</p>
+    </div>
+  </div>
+</div>
+
+<button class="chat-fab" id="chatFab"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
+<div class="chat-pop" id="chatPop">
+  <div class="cp-head" data-i18n="chat.head">Pharmacist chat</div>
+  <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
+  <input type="text" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- Product data ---------------- */
+const PRODUCTS = [
+  {id:2, name:"Ventolin Inhaler 100mcg", brand:"GSK", size:"200 metered doses", cat:"pharmacy", price:16.50, icon:"💨", pharm:true,
+   desc:"Salbutamol reliever inhaler for asthma symptoms. Pharmacist-only medicine — our pharmacist will confirm it's appropriate before supply.",
+   descZh:"沙丁胺醇哮喘缓解吸入剂。属药剂师专柜药品 —— 供应前药剂师会确认其适用性。",
+   dose:"1–2 puffs when needed for relief of symptoms, as advised by your doctor or pharmacist.",
+   doseZh:"需要缓解症状时吸入1-2揿,遵医嘱或药剂师建议使用。"},
+  {id:3, name:"Panadol Rapid 500mg (96s)", brand:"Haleon", size:"96 caplets", cat:"pharmacy", price:9.99, was:12.99, icon:"💊",
+   desc:"Fast-absorbed paracetamol for pain and fever relief, gentle on stomachs.",
+   descZh:"快速吸收的对乙酰氨基酚,缓解疼痛与发烧,对胃部温和。",
+   dose:"Adults: 2 caplets every 4–6 hours as needed (maximum 8 in 24 hours).",
+   doseZh:"成人:每4-6小时2片(24小时内不超过8片)。"},
+  {id:4, name:"Nurofen Zavance (48s)", brand:"Reckitt", size:"48 tablets", cat:"pharmacy", price:13.49, icon:"💊",
+   desc:"Ibuprofen 200mg with faster absorption for headaches, dental and period pain.",
+   descZh:"布洛芬200mg速释配方,缓解头痛、牙痛及经期疼痛。",
+   dose:"Adults: 1–2 tablets every 4–6 hours with water (maximum 6 in 24 hours). Take with food if sensitive.",
+   doseZh:"成人:每4-6小时1-2片,温水送服(24小时内不超过6片),胃敏感者请随餐服用。"},
+  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"pharmacy", price:19.95, icon:"🤧",
+   desc:"Non-drowsy fexofenadine for hayfever and allergy relief that lasts 24 hours.",
+   descZh:"非嗜睡型非索非那定,24小时缓解花粉症与过敏症状。",
+   dose:"Adults and children over 12: 1 tablet daily.",
+   doseZh:"成人及12岁以上儿童:每日1片。"},
+  {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", brand:"LEO Pharma", size:"30g gel", cat:"pharmacy", price:32.95, icon:"🧴", pharm:true, hot:true,
+   desc:"Azelaic acid 15% gel. Ask our pharmacist whether it suits your skin and how to introduce it gradually.",
+   descZh:"壬二酸15%凝胶。请咨询我们的药剂师是否适合您的肌肤,以及如何循序渐进地使用。",
+   dose:"Apply a thin layer to affected areas twice daily, or as advised by your pharmacist.",
+   doseZh:"每日两次薄涂于患处,或遵药剂师建议。"},
+  {id:30, name:"Proctosedyl Ointment 30g", brand:"Sanofi", size:"30g with applicator", cat:"pharmacy", price:18.99, icon:"🧴", pharm:true,
+   desc:"Haemorrhoid ointment combining cinchocaine (local anaesthetic) and hydrocortisone. Pharmacist-only — we'll check it's right for you before supply.",
+   descZh:"痔疮软膏,含辛可卡因(局部麻醉)与氢化可的松。药剂师专柜药品 —— 供应前我们会确认其适合您。",
+   dose:"Apply morning, night and after each bowel movement, for up to 7 days unless your pharmacist or doctor advises otherwise.",
+   doseZh:"早晚及每次排便后使用,除非药剂师或医生另有建议,连续使用不超过7天。"},
+  {id:6, name:"Blackmores Fish Oil 1000mg", brand:"Blackmores", size:"200 capsules", cat:"vitamins", price:21.99, was:26.99, icon:"🐟", hot:true,
+   desc:"Odourless omega-3 supporting heart, brain and eye health — Australia's most recognised fish oil.",
+   descZh:"无腥味Omega-3,支持心脏、大脑与眼睛健康 —— 澳洲最知名的鱼油品牌。",
+   dose:"Adults: 1–3 capsules daily with meals.",
+   doseZh:"成人:每日1-3粒,随餐服用。"},
+  {id:7, name:"Swisse Ultiboost Multivitamin", brand:"Swisse", size:"120 tablets", cat:"vitamins", price:24.50, icon:"🌿",
+   desc:"Comprehensive daily multivitamin with 36+ vitamins, minerals and herbs for energy and vitality.",
+   descZh:"每日综合维生素,含36种以上维生素、矿物质与草本精华,支持能量与活力。",
+   dose:"Adults: 1 tablet daily during or immediately after a meal.",
+   doseZh:"成人:每日1片,随餐或餐后立即服用。"},
+  {id:8, name:"Magnesium + Zinc Tablets", brand:"Generic (multiple suppliers)", size:"100 tablets", cat:"vitamins", price:15.99, icon:"🧪",
+   desc:"Supports muscle function, recovery and healthy sleep patterns.",
+   descZh:"支持肌肉功能、恢复与健康睡眠。",
+   dose:"Adults: 1–2 tablets daily with food.",
+   doseZh:"成人:每日1-2片,随餐服用。"},
+  {id:9, name:"Vitamin D3 1000IU (200s)", brand:"Generic (multiple suppliers)", size:"200 capsules", cat:"vitamins", price:12.99, icon:"☀️",
+   desc:"Supports bone strength, immunity and calcium absorption — commonly low in indoor lifestyles.",
+   descZh:"支持骨骼强度、免疫力与钙吸收 —— 室内生活方式人群普遍缺乏。",
+   dose:"Adults: 1 capsule daily with food.",
+   doseZh:"成人:每日1粒,随餐服用。"},
+  {id:10, name:"Probiotic Daily Capsules", brand:"Generic (multiple suppliers)", size:"60 capsules", cat:"vitamins", price:29.95, icon:"🦠",
+   desc:"Multi-strain daily probiotic supporting digestive balance and gut health.",
+   descZh:"多菌株每日益生菌,支持消化平衡与肠道健康。",
+   dose:"Adults: 1 capsule daily, with or without food.",
+   doseZh:"成人:每日1粒,可空腹或随餐服用。"},
+  {id:23, name:"Blackmores Bio C 1000mg (150s)", brand:"Blackmores", size:"150 tablets", cat:"vitamins", price:19.99, icon:"🍊", hot:true,
+   desc:"Buffered vitamin C that's gentle on the stomach, supporting immune health.",
+   descZh:"缓冲型维生素C,对胃温和,支持免疫健康。",
+   dose:"Adults: 1 tablet 1–3 times daily with food.",
+   doseZh:"成人:每日1-3次,每次1片,随餐服用。"},
+  {id:24, name:"Blackmores CoQ10 150mg (30 caps)", brand:"Blackmores", size:"30 capsules", cat:"vitamins", price:24.99, icon:"❤️", hot:true,
+   desc:"High-strength coenzyme Q10 supporting heart health and cellular energy production.",
+   descZh:"高浓度辅酶Q10,支持心脏健康与细胞能量生成。",
+   dose:"Adults: 1 capsule daily with a meal.",
+   doseZh:"成人:每日1粒,随餐服用。"},
+  {id:25, name:"BioCeuticals ArmaForce (60 tabs)", brand:"BioCeuticals", size:"60 tablets", cat:"vitamins", price:34.95, icon:"🛡️", hot:true, pract:true,
+   desc:"Practitioner-strength immune formula with andrographis, echinacea, zinc and vitamin C — the cult-favourite of the BioCeuticals range.",
+   descZh:"专业级免疫配方,含穿心莲、紫锥菊、锌与维生素C —— BioCeuticals系列中的口碑明星产品。",
+   dose:"Adults: 1 tablet 1–2 times daily, or as directed by your healthcare practitioner.",
+   doseZh:"成人:每日1-2次,每次1片,或遵医嘱/药剂师建议。"},
+  {id:26, name:"BioCeuticals UltraMuscleze Night", brand:"BioCeuticals", size:"240g oral powder", cat:"vitamins", price:42.50, icon:"🌙", hot:true, pract:true,
+   desc:"Night-time magnesium powder with glycine and passionflower to support muscle relaxation and restful sleep.",
+   descZh:"夜间镁粉,含甘氨酸与西番莲,支持肌肉放松与安稳睡眠。",
+   dose:"Adults: 1 scoop in water in the evening, or as directed by your practitioner.",
+   doseZh:"成人:每晚1勺溶于水中服用,或遵专业人士建议。"},
+  {id:28, name:"BioCeuticals UltraBiotic 45 (30 caps)", brand:"BioCeuticals", size:"30 capsules", cat:"vitamins", price:52.95, icon:"🦠", hot:true, pract:true,
+   desc:"High-potency multi-strain probiotic (45 billion CFU) for gut flora restoration — popular after antibiotics.",
+   descZh:"高效多菌株益生菌(450亿CFU),用于恢复肠道菌群 —— 抗生素疗程后的热门选择。",
+   dose:"Adults: 1 capsule daily, or as directed. Refrigerate after opening.",
+   doseZh:"成人:每日1粒,或遵建议服用。开封后请冷藏。"},
+  {id:29, name:"BioCeuticals Liposomal Vitamin C", brand:"BioCeuticals", size:"200mL liquid", cat:"vitamins", price:43.95, icon:"🍋", hot:true, pract:true,
+   desc:"Liposomal delivery for enhanced vitamin C absorption — a standout of the practitioner range.",
+   descZh:"脂质体技术提升维生素C吸收率 —— 专业系列中的明星单品。",
+   dose:"Adults: 5mL daily, or as directed by your practitioner.",
+   doseZh:"成人:每日5毫升,或遵专业人士建议。"},
+];
+
+let activeTab = "all";
+let searchTerm = "";
+let cart = [];
+
+/* ---------------- i18n (EN / 中文) ---------------- */
+const I18N = {
+  en: {
+    'nav.order':'Order a Script','nav.shop':'Shop','nav.bestsellers':'Best Sellers','nav.why':'Why BrightWell','nav.rewards':'Rewards',
+    'search.placeholder':'Search medicines, vitamins, brands…',
+    'hero.eyebrow':'✦ Meds & retail, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
+    'hero.lead':"Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
+    'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
+    'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
+    'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
+    'qo.title':'Order in three ways — pick the fastest one','qo.sub':'This is the part most pharmacy sites bury under menus. We put it first.',
+    'qo.card1.title':'Upload a script','qo.card1.body':"Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.",
+    'qo.dropzone':'Drop image here or click to browse','qo.uploadStatus':'✅ Received — a pharmacist will confirm within 15 minutes.',
+    'qo.card2.title':'Search by medicine or PBS code','qo.card2.body':'Instant results as you type, with generic-brand price comparisons shown up front.',
+    'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
+    'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
+    'qo.reorder1':'Blood pressure script (monthly)','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Sensitive skin moisturiser','qo.reorderBtn':'Reorder',
+    'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
+    'cat.1':'Prescriptions','cat.2':'Vitamins','cat.3':'Skincare','cat.3b':'Beauty','cat.4':'Baby & Kids','cat.5':'First Aid','cat.6':'Hair & Beauty',
+    'cat.7':'Weight & Fitness','cat.8':'Everyday Essentials','cat.9':'Health Devices','cat.10':'Fragrance','cat.11':'Sleep & Wellness','cat.12':'Pet Health',
+    'cat.c1':'Immune Support','cat.c2':'Omega-3 & Heart','cat.c3':'Probiotics & Gut','cat.c4':'Sleep & Magnesium','cat.c5':'Vitamins C & D','cat.c6':'Pharmacy Medicines',
+    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'16 quality lines →',
+    'tab.all':'All','tab.trending':'🔥 Trending exports','tab.vitamins':'Vitamins & Supplements','tab.pharmacy':'Pharmacy Medicines',
+    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'Same medicines and retail range — a much shorter path to "ordered."',
+    'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
+    'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
+    'cmp.r2':'Prescription upload','cmp.r2us':'Photo upload, ~2 min, in-page','cmp.r2them':'Phone/fax or separate portal',
+    'cmp.r3':'Search','cmp.r3us':'Instant, filters meds + retail together','cmp.r3them':'Slow catalogue search, separate sections',
+    'cmp.r4':'Pharmacist help','cmp.r4us':'Live chat bubble, always visible','cmp.r4them':'In-store or phone only',
+    'cmp.r5':'Loyalty points','cmp.r5us':'Shown live in cart before you pay','cmp.r5them':'Applied after purchase, easy to miss',
+    'cmp.r6':'Visual design','cmp.r6us':'Clean, 3D hero, uncluttered','cmp.r6them':'Dense flyer-style layout, banner heavy',
+    'cmp.r7':'Mobile experience','cmp.r7us':'Same speed & layout as desktop','cmp.r7them':'Slower, more taps to reach checkout',
+    'testi.title':'What shoppers say',
+    'loy.title':'BrightWell+ Rewards','loy.body':'Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.',
+    'loy.cta':'Join free — takes 30 seconds','loy.ptsLabel':'Points balance','loy.ptsValue':'≈ $12.40 off your next order',
+    'foot.tagline':'A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.',
+    'foot.shop':'Shop','foot.help':'Help','foot.help1':'Ask a pharmacist','foot.help2':'Track my order','foot.help3':'Returns','foot.help4':'Delivery info',
+    'foot.company':'Company','foot.company1':'About','foot.company2':'Store locator','foot.company3':'Careers',
+    'foot.legal':'Legal','foot.legal1':'Privacy','foot.legal2':'Terms','foot.legal3':'Accessibility',
+    'foot.copyright':'© 2026 BrightWell — concept design, no real orders processed.','foot.builtAs':'Built as a UX comparison to chemistwarehouse.com.au',
+    'cart.title':'Your cart','cart.empty':'Your cart is empty — add something from Best Sellers.','cart.subtotal':'Subtotal',
+    'cart.pointsEarned':'BrightWell+ points earned','cart.total':'Total','cart.checkout':'Checkout →','cart.step':'Step 1 of 2 — delivery details next',
+    'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
+    'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
+    'chat.placeholder':'Type your question…',
+    'dyn.add':'Add','dyn.addScript':'Add script','dyn.added':'Added ✓','dyn.remove':'Remove',
+    'dyn.noMatches':'No matches — try a different search.','dyn.noMatchPbs':'No match — a pharmacist can help via chat',
+    'dyn.flagRx':'Rx','dyn.flagPharm':'Pharmacist only','dyn.flagSale':'Sale','dyn.flagHot':'🔥 Trending',
+    'dyn.compareAt':'Compare at Chemist Warehouse ↗',
+    'dyn.toastAdded':'Added to cart','dyn.toastReordered':'Reordered — added to cart','dyn.toastCartEmpty':'Your cart is empty',
+    'dyn.toastCheckout':'Demo checkout — step 2 (delivery details) would appear here','dyn.uploading':'Uploading',
+    'dyn.flagPract':'Practitioner',
+    'pd.title':'Product details','pd.desc':'About this product','pd.dose':'Directions','pd.warn':'Important',
+    'pd.labelLine':'Always read the label and follow the directions for use. If symptoms persist, talk to your pharmacist or doctor.',
+    'pd.imgNote':'Illustration only — official product photography is supplied through your wholesaler content feed once the range is stocked.',
+    'pd.rxNote':'Prescription medicine — a valid script must be received and checked by our pharmacist before this item is dispensed.',
+    'pd.practNote':'Practitioner-range product — our pharmacist will confirm suitability before dispatch.',
+    'pd.pharmNote':'Pharmacist medicine — our pharmacist may contact you to confirm this is right for you.',
+    'co.title':'Checkout','co.demoNote':'Demo checkout — no real payment is processed.',
+    'co.delivery':'Delivery details','co.name':'Full name','co.phone':'Mobile','co.address':'Street address','co.otherSuburb':'Other Brisbane',
+    'co.method':'Delivery method',
+    'co.m1':'Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)',
+    'co.m2':'Standard post (1–3 days) — $7.95, free over $30',
+    'co.m3':'Click & collect — free',
+    'co.payment':'Payment','co.payCard':'Card','co.payBank':'Bank transfer',
+    'co.cardNo':'Card number','co.cardExp':'MM / YY','co.cardCvc':'CVC',
+    'co.walletNote':'One-tap wallet payment — switched on through the payment gateway (Stripe, Tyro, etc.) at real launch.',
+    'co.bankNote':'Pay by PayID / bank transfer — account details appear on your order confirmation. Orders ship as soon as funds clear (instant with most Australian banks via Osko).',
+    'co.place':'Place order','co.errFill':'Please fill in your name, mobile, and address.',
+    'co.successTitle':'Order received!',
+    'co.successBody':"This is a demo — no payment was taken and nothing will ship. At launch you'd receive an SMS confirmation with tracking within minutes.",
+    'trust.title':'Built to be verifiable','trust.sub':'Every registration a real pharmacy must hold, displayed where customers can check it.',
+    'trust.c1t':'QLD pharmacy business licence','trust.c1b':'Issued by the Queensland Pharmacy Business Ownership Council. The licence number will be displayed here for public verification.',
+    'trust.c2t':'Registered pharmacist owner','trust.c2b':'Proprietor & superintendent pharmacist name with AHPRA registration number — checkable on the public register.',
+    'trust.c3t':'Licensed premises','trust.c3b':'Every order is dispensed from our licensed Brisbane pharmacy premises. Street address published here.',
+    'trust.c4t':'Payments & privacy','trust.c4b':'Cards and wallets processed by a PCI-DSS accredited gateway. Health information handled under the Australian Privacy Principles.',
+    'trust.pending':'Issued before launch',
+    'trust.note':'These panels are intentionally blank in this preview — real registration numbers appear here when the licence is granted. No placeholder numbers, ever.'
+  },
+  zh: {
+    'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
+    'search.placeholder':'搜索药品、维生素、品牌…',
+    'hero.eyebrow':'✦ 药品与日用品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
+    'hero.lead':'上传处方、一键重复购买,或浏览维生素与日常用品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
+    'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
+    'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
+    'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
+    'qo.title':'三种下单方式 —— 选最快的一种','qo.sub':'大多数药房网站把这部分藏在层层菜单里,我们把它放在最前面。',
+    'qo.card1.title':'上传处方','qo.card1.body':'拍下处方照片并拖拽上传,药剂师会为您审核 —— 无需打电话或传真。',
+    'qo.dropzone':'将图片拖到此处,或点击浏览','qo.uploadStatus':'✅ 已收到 —— 药剂师将在15分钟内确认。',
+    'qo.card2.title':'按药品名称或PBS编码搜索','qo.card2.body':'边输入边显示结果,并提前展示同类仿制药的价格对比。',
+    'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
+    'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
+    'qo.reorder1':'降压药处方(每月)','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'敏感肌保湿霜','qo.reorderBtn':'重新购买',
+    'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
+    'cat.1':'处方药','cat.2':'维生素','cat.3':'护肤品','cat.3b':'美妆','cat.4':'母婴用品','cat.5':'急救用品','cat.6':'美发美妆',
+    'cat.7':'体重管理与健身','cat.8':'日常用品','cat.9':'健康仪器','cat.10':'香水','cat.11':'睡眠与保健','cat.12':'宠物保健',
+    'cat.c1':'免疫支持','cat.c2':'Omega-3 & 心脏健康','cat.c3':'益生菌 & 肠道健康','cat.c4':'睡眠 & 镁','cat.c5':'维生素C & D','cat.c6':'药房药品',
+    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'16款精选产品 →',
+    'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.vitamins':'维生素与保健品','tab.pharmacy':'药房药品',
+    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样的药品与零售范围 —— 更短的下单路径。',
+    'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
+    'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
+    'cmp.r2':'处方上传','cmp.r2us':'拍照上传,约2分钟,页内完成','cmp.r2them':'电话/传真或跳转其他平台',
+    'cmp.r3':'搜索','cmp.r3us':'即时显示,药品与零售商品同时筛选','cmp.r3them':'目录搜索缓慢,分区查找',
+    'cmp.r4':'药剂师咨询','cmp.r4us':'实时聊天气泡,随时可见','cmp.r4them':'仅限店内或电话',
+    'cmp.r5':'积分奖励','cmp.r5us':'结账前购物车内实时显示','cmp.r5them':'购买后才发放,容易被忽略',
+    'cmp.r6':'视觉设计','cmp.r6us':'简洁,3D 主视觉,不杂乱','cmp.r6them':'密集传单式排版,横幅过多',
+    'cmp.r7':'移动端体验','cmp.r7us':'与桌面端同样流畅','cmp.r7them':'较慢,需要更多点击才能结账',
+    'testi.title':'顾客怎么说',
+    'loy.title':'BrightWell+ 会员积分','loy.body':'每笔订单(含药品)均可累积积分,余额实时显示在购物车中,而不是藏在APP的层层菜单里。',
+    'loy.cta':'免费加入 —— 只需30秒','loy.ptsLabel':'积分余额','loy.ptsValue':'≈ 可抵扣下次订单 $12.40',
+    'foot.tagline':'这是一个概念设计,展示更快、更友好的药房结账流程可能的样子。',
+    'foot.shop':'商店','foot.help':'帮助','foot.help1':'咨询药剂师','foot.help2':'追踪订单','foot.help3':'退换货','foot.help4':'配送信息',
+    'foot.company':'公司','foot.company1':'关于我们','foot.company2':'门店查找','foot.company3':'招聘信息',
+    'foot.legal':'法律信息','foot.legal1':'隐私政策','foot.legal2':'条款','foot.legal3':'无障碍声明',
+    'foot.copyright':'© 2026 BrightWell —— 概念设计,暂无真实订单处理。','foot.builtAs':'作为与 chemistwarehouse.com.au 的体验对比而构建',
+    'cart.title':'购物车','cart.empty':'购物车是空的 —— 从热销商品中添加一些吧。','cart.subtotal':'小计',
+    'cart.pointsEarned':'BrightWell+ 可获积分','cart.total':'总计','cart.checkout':'结账 →','cart.step':'第1步(共2步) —— 接下来填写配送信息',
+    'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
+    'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
+    'chat.placeholder':'输入您的问题…',
+    'dyn.add':'加入购物车','dyn.addScript':'上传处方','dyn.added':'已加入 ✓','dyn.remove':'移除',
+    'dyn.noMatches':'没有找到匹配商品 —— 试试其他搜索词。','dyn.noMatchPbs':'未找到匹配项 —— 可通过聊天咨询药剂师',
+    'dyn.flagRx':'处方药','dyn.flagPharm':'药剂师指导','dyn.flagSale':'特价','dyn.flagHot':'🔥 热门',
+    'dyn.compareAt':'前往 Chemist Warehouse 比价 ↗',
+    'dyn.toastAdded':'已加入购物车','dyn.toastReordered':'已重新下单并加入购物车','dyn.toastCartEmpty':'购物车是空的',
+    'dyn.toastCheckout':'演示结账 —— 第2步(配送信息)将在此显示','dyn.uploading':'正在上传',
+    'dyn.flagPract':'专业渠道',
+    'pd.title':'产品详情','pd.desc':'产品说明','pd.dose':'用法用量','pd.warn':'重要提示',
+    'pd.labelLine':'请务必阅读标签并按说明使用。如症状持续,请咨询药剂师或医生。',
+    'pd.imgNote':'示意图 —— 正式产品图片将在建立进货渠道后由批发商内容库提供。',
+    'pd.rxNote':'处方药 —— 需收到有效处方并经药剂师审核后方可调配。',
+    'pd.practNote':'专业渠道产品 —— 发货前药剂师将确认是否适合您。',
+    'pd.pharmNote':'药剂师药品 —— 药剂师可能会与您联系,确认产品适合您。',
+    'co.title':'结算','co.demoNote':'演示结算 —— 不会产生真实付款。',
+    'co.delivery':'配送信息','co.name':'姓名','co.phone':'手机号码','co.address':'街道地址','co.otherSuburb':'布里斯班其他区域',
+    'co.method':'配送方式',
+    'co.m1':'当日快递 —— $9.95(Sunnybank · Underwood · Calamvale · Indooroopilly)',
+    'co.m2':'普通邮寄(1-3天)—— $7.95,满$30免费',
+    'co.m3':'门店自取 —— 免费',
+    'co.payment':'付款方式','co.payCard':'银行卡','co.payBank':'银行转账',
+    'co.cardNo':'卡号','co.cardExp':'月 / 年','co.cardCvc':'安全码',
+    'co.walletNote':'一键钱包支付 —— 正式上线后通过支付网关(Stripe、Tyro等)开通。',
+    'co.bankNote':'PayID / 银行转账 —— 账户信息将显示在订单确认页。到账后立即发货(大多数澳洲银行通过Osko即时到账)。',
+    'co.place':'提交订单','co.errFill':'请填写姓名、手机号码和地址。',
+    'co.successTitle':'订单已收到!',
+    'co.successBody':'这是演示 —— 未产生任何付款,也不会发货。正式上线后,您将在几分钟内收到含物流跟踪的短信确认。',
+    'trust.title':'可查证的信任','trust.sub':'正规药房必须持有的每一项资质,都公示在顾客可查证的位置。',
+    'trust.c1t':'昆士兰药房营业执照','trust.c1b':'由昆士兰药房企业所有权委员会(PBOC)签发,执照编号将在此公示,供公众查验。',
+    'trust.c2t':'注册药剂师业主','trust.c2b':'业主兼监管药剂师姓名及AHPRA注册号 —— 可在公开注册系统中查验。',
+    'trust.c3t':'持牌经营场所','trust.c3b':'所有订单均从我们位于布里斯班的持牌药房调配发出,街道地址将在此公布。',
+    'trust.c4t':'支付与隐私','trust.c4b':'银行卡与钱包支付经PCI-DSS认证网关处理,健康信息按《澳大利亚隐私原则》管理。',
+    'trust.pending':'上线前签发',
+    'trust.note':'此预览中这些面板刻意留空 —— 真实注册编号将在执照签发后公示。绝不使用虚构编号。'
+  }
+};
+const CAT_LABEL_KEY = {vitamins:'tab.vitamins', pharmacy:'tab.pharmacy'};
+let currentLang = localStorage.getItem('bw-lang') || 'en';
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key] || key); }
+
+function applyLang(lang){
+  currentLang = lang;
+  localStorage.setItem('bw-lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
+  const toggle = document.getElementById('langToggle');
+  if(toggle) toggle.textContent = lang === 'en' ? '中文' : 'EN';
+  const suburbZhNote = document.getElementById('suburbZhNote');
+  if(suburbZhNote) suburbZhNote.style.display = lang === 'zh' ? 'none' : '';
+  if(typeof closeModals === 'function') closeModals();
+  renderGrid();
+  renderCart();
+  document.getElementById('pbsResults').innerHTML = '';
+  document.getElementById('suggestBox').classList.remove('open');
+}
+
+function flagFor(p){
+  let left = '';
+  if(p.rx) left = `<span class="prod-flag rx">${t('dyn.flagRx')}</span>`;
+  else if(p.pract) left = `<span class="prod-flag rx">${t('dyn.flagPract')}</span>`;
+  else if(p.pharm) left = `<span class="prod-flag rx">${t('dyn.flagPharm')}</span>`;
+  else if(p.was) left = `<span class="prod-flag">${t('dyn.flagSale')}</span>`;
+  const right = p.hot ? `<span class="prod-flag hot">${t('dyn.flagHot')}</span>` : '';
+  return left + right;
+}
+
+/* ---------------- Render product grid ---------------- */
+function renderGrid(){
+  const grid = document.getElementById('prodGrid');
+  const term = searchTerm.trim().toLowerCase();
+  const items = PRODUCTS.filter(p=>{
+    const matchTab = activeTab==="all" || (activeTab==="trending" ? p.hot : p.cat===activeTab);
+    const matchTerm = !term || p.name.toLowerCase().includes(term) || p.cat.includes(term);
+    return matchTab && matchTerm;
+  });
+  grid.innerHTML = items.length ? items.map(p=>`
+    <div class="prod-card fade-up visible" data-pid="${p.id}">
+      <div class="prod-thumb">${p.icon}
+        ${flagFor(p)}
+      </div>
+      <div class="prod-body">
+        <div class="p-cat">${t(CAT_LABEL_KEY[p.cat] || 'tab.vitamins')}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="stars">★★★★☆</div>
+        <div class="p-price-row">
+          <div class="p-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
+          <button class="add-btn" data-add="${p.id}">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
+        </div>
+        <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
+      </div>
+    </div>
+  `).join('') : `<div style="grid-column:1/-1;text-align:center;color:var(--ink-3);padding:40px 0;">${t('dyn.noMatches')}</div>`;
+
+  grid.querySelectorAll('[data-add]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      addToCart(parseInt(btn.dataset.add));
+      btn.textContent = t('dyn.added');
+      btn.classList.add('added');
+      setTimeout(()=>{ btn.textContent = PRODUCTS.find(p=>p.id==btn.dataset.add).rx ? t('dyn.addScript') : t('dyn.add'); btn.classList.remove('added'); }, 1200);
+    });
+  });
+}
+
+/* ---------------- Tabs ---------------- */
+document.getElementById('tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeTab = btn.dataset.tab;
+  renderGrid();
+});
+
+/* ---------------- Search + suggestions ---------------- */
+const searchInput = document.getElementById('searchInput');
+const suggestBox = document.getElementById('suggestBox');
+searchInput.addEventListener('input', ()=>{
+  searchTerm = searchInput.value;
+  renderGrid();
+  const term = searchTerm.trim().toLowerCase();
+  if(!term){ suggestBox.classList.remove('open'); return; }
+  const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,6);
+  if(!matches.length){ suggestBox.classList.remove('open'); return; }
+  suggestBox.innerHTML = matches.map(p=>`<div class="s-item" data-goto="${p.id}"><span>${p.icon} ${p.name}</span><span class="tag">${p.cat}</span></div>`).join('');
+  suggestBox.classList.add('open');
+});
+suggestBox.addEventListener('click', (e)=>{
+  const item = e.target.closest('.s-item');
+  if(!item) return;
+  addToCart(parseInt(item.dataset.goto));
+  suggestBox.classList.remove('open');
+  searchInput.value = '';
+  searchTerm = '';
+  renderGrid();
+});
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.search-wrap')) suggestBox.classList.remove('open');
+});
+
+/* ---------------- PBS quick search ---------------- */
+document.getElementById('pbsBtn').addEventListener('click', ()=>{
+  const term = document.getElementById('pbsInput').value.trim().toLowerCase();
+  const results = document.getElementById('pbsResults');
+  if(!term){ results.innerHTML = ''; return; }
+  const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,3);
+  results.innerHTML = matches.length ? matches.map(p=>`
+    <div class="reorder-item"><span>${p.icon} ${p.name} — $${p.price.toFixed(2)}</span><button data-add="${p.id}">${t('dyn.add')}</button></div>
+  `).join('') : `<div class="reorder-item"><span>${t('dyn.noMatchPbs')}</span></div>`;
+  results.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click', ()=>{ addToCart(parseInt(btn.dataset.add)); showToast(t('dyn.toastAdded')); }));
+});
+
+/* ---------------- Reorder shortcuts ---------------- */
+document.querySelectorAll('[data-reorder]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    addToCart(parseInt(btn.dataset.reorder));
+    showToast(t('dyn.toastReordered'));
+  });
+});
+
+/* ---------------- Cart logic ---------------- */
+function addToCart(id){
+  const prod = PRODUCTS.find(p=>p.id===id);
+  if(!prod) return;
+  const line = cart.find(l=>l.id===id);
+  if(line) line.qty++;
+  else cart.push({...prod, qty:1});
+  renderCart();
+}
+function changeQty(id, delta){
+  const line = cart.find(l=>l.id===id);
+  if(!line) return;
+  line.qty += delta;
+  if(line.qty<=0) cart = cart.filter(l=>l.id!==id);
+  renderCart();
+}
+function renderCart(){
+  const itemsEl = document.getElementById('cartItems');
+  const count = cart.reduce((s,l)=>s+l.qty,0);
+  document.getElementById('cartCount').textContent = count;
+  if(!cart.length){
+    itemsEl.innerHTML = `<div class="cart-empty">${t('cart.empty')}</div>`;
+  } else {
+    itemsEl.innerHTML = cart.map(l=>`
+      <div class="cart-line">
+        <div class="thumb">${l.icon}</div>
+        <div class="info">
+          <div class="name">${l.name}</div>
+          <div class="qty-row">
+            <button class="qty-btn" data-dec="${l.id}">–</button>
+            <span>${l.qty}</span>
+            <button class="qty-btn" data-inc="${l.id}">+</button>
+          </div>
+          <div class="rm" data-rm="${l.id}">${t('dyn.remove')}</div>
+        </div>
+        <div class="price">$${(l.price*l.qty).toFixed(2)}</div>
+      </div>
+    `).join('');
+  }
+  const subtotal = cart.reduce((s,l)=>s+l.price*l.qty,0);
+  document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('cartTotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('cartPoints').textContent = `+${Math.round(subtotal)} pts`;
+
+  itemsEl.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.inc),1)));
+  itemsEl.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.dec),-1)));
+  itemsEl.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click', ()=>{ cart = cart.filter(l=>l.id!==parseInt(b.dataset.rm)); renderCart(); }));
+}
+
+/* ---------------- Drawer open/close ---------------- */
+const cartDrawer = document.getElementById('cartDrawer');
+const overlay = document.getElementById('overlay');
+function openCart(){ cartDrawer.classList.add('open'); overlay.classList.add('open'); }
+function closeCart(){ cartDrawer.classList.remove('open'); overlay.classList.remove('open'); }
+document.getElementById('cartBtn').addEventListener('click', openCart);
+document.getElementById('closeCart').addEventListener('click', closeCart);
+overlay.addEventListener('click', closeCart);
+/* ---------------- Product detail + checkout modals ---------------- */
+const bwOverlay = document.getElementById('bwOverlay');
+const pdModal = document.getElementById('pdModal');
+const coModal = document.getElementById('coModal');
+function openModal(m){ m.classList.add('open'); bwOverlay.classList.add('open'); }
+function closeModals(){ pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open'); }
+bwOverlay.addEventListener('click', closeModals);
+document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModals(); });
+
+let pdQty = 1;
+function openProduct(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  pdQty = 1;
+  const desc = currentLang==='zh' ? (p.descZh || p.desc || '') : (p.desc || '');
+  const dose = currentLang==='zh' ? (p.doseZh || p.dose || '') : (p.dose || '');
+  const showLabelLine = ['vitamins','pharmacy'].includes(p.cat);
+  let note = '';
+  if(p.rx) note = `<div class="pd-note">⚕️ ${t('pd.rxNote')}</div>`;
+  else if(p.pract) note = `<div class="pd-note">🧑‍⚕️ ${t('pd.practNote')}</div>`;
+  else if(p.pharm) note = `<div class="pd-note">💬 ${t('pd.pharmNote')}</div>`;
+  document.getElementById('pdBody').innerHTML = `
+    <div class="pd-grid">
+      <div>
+        <div class="pd-visual">${p.icon}${flagFor(p)}</div>
+        <div class="pd-img-note">${t('pd.imgNote')}</div>
+      </div>
+      <div class="pd-info">
+        <div class="pd-brand">${p.brand || ''}</div>
+        <h2>${p.name}</h2>
+        <div class="pd-size">${p.size || ''}</div>
+        <div class="stars">★★★★☆</div>
+        <div class="pd-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
+        ${desc ? `<div class="pd-block"><h4>${t('pd.desc')}</h4><p>${desc}</p></div>` : ''}
+        ${dose ? `<div class="pd-block"><h4>${t('pd.dose')}</h4><p>${dose}</p></div>` : ''}
+        ${showLabelLine ? `<div class="pd-block"><h4>${t('pd.warn')}</h4><p>${t('pd.labelLine')}</p></div>` : ''}
+        ${note}
+        <div class="pd-buy">
+          <div class="pd-qty"><button class="qty-btn" id="pdMinus">–</button><span id="pdQtyVal">1</span><button class="qty-btn" id="pdPlus">+</button></div>
+          <button class="add-btn" id="pdAdd" style="padding:12px 22px; font-size:13.5px;">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
+        </div>
+        <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
+      </div>
+    </div>`;
+  document.getElementById('pdMinus').addEventListener('click', ()=>{ pdQty = Math.max(1, pdQty-1); document.getElementById('pdQtyVal').textContent = pdQty; });
+  document.getElementById('pdPlus').addEventListener('click', ()=>{ pdQty++; document.getElementById('pdQtyVal').textContent = pdQty; });
+  document.getElementById('pdAdd').addEventListener('click', ()=>{
+    for(let i=0;i<pdQty;i++) addToCart(p.id);
+    showToast(t('dyn.toastAdded'));
+    closeModals();
+    openCart();
+  });
+  openModal(pdModal);
+}
+
+document.getElementById('prodGrid').addEventListener('click', (e)=>{
+  if(e.target.closest('.add-btn') || e.target.closest('.compare-link')) return;
+  const card = e.target.closest('.prod-card');
+  if(!card) return;
+  openProduct(parseInt(card.dataset.pid));
+});
+
+function openCheckout(){
+  if(!cart.length){ showToast(t('dyn.toastCartEmpty')); return; }
+  closeCart();
+  document.getElementById('coForm').style.display = '';
+  document.getElementById('coSuccess').classList.remove('show');
+  const subtotal = cart.reduce((s,l)=>s+l.price*l.qty,0);
+  document.getElementById('coSummary').innerHTML =
+    cart.map(l=>`<div class="line"><span>${l.icon} ${l.name} × ${l.qty}</span><span>$${(l.price*l.qty).toFixed(2)}</span></div>`).join('') +
+    `<div class="line total"><span>${t('cart.total')}</span><span>$${subtotal.toFixed(2)}</span></div>`;
+  openModal(coModal);
+}
+document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
+
+document.getElementById('payChips').addEventListener('click', (e)=>{
+  const chip = e.target.closest('.pay-chip');
+  if(!chip) return;
+  document.querySelectorAll('.pay-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  document.querySelectorAll('.pay-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel === chip.dataset.pay));
+});
+
+document.getElementById('coPlace').addEventListener('click', ()=>{
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const addr = document.getElementById('coAddress').value.trim();
+  if(!name || !phone || !addr){ showToast(t('co.errFill')); return; }
+  document.getElementById('coForm').style.display = 'none';
+  document.getElementById('coSuccess').classList.add('show');
+  document.getElementById('coOrderNo').textContent = '#BW-' + Date.now().toString().slice(-6);
+  cart = [];
+  renderCart();
+});
+
+/* ---------------- Toast ---------------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ---------------- Prescription upload (simulated) ---------------- */
+const dropzone = document.getElementById('dropzone');
+const rxFile = document.getElementById('rxFile');
+const progTrack = document.getElementById('progTrack');
+const progFill = document.getElementById('progFill');
+const uploadStatus = document.getElementById('uploadStatus');
+const dzText = document.getElementById('dzText');
+
+function simulateUpload(fileName){
+  dzText.textContent = fileName ? `${t('dyn.uploading')} "${fileName}"…` : `${t('dyn.uploading')}…`;
+  progTrack.classList.add('show');
+  uploadStatus.classList.remove('show');
+  let pct = 0;
+  const iv = setInterval(()=>{
+    pct += Math.random()*22;
+    if(pct>=100){ pct=100; clearInterval(iv);
+      progFill.style.width = '100%';
+      setTimeout(()=>{
+        dzText.textContent = t('qo.dropzone');
+        progTrack.classList.remove('show');
+        progFill.style.width = '0%';
+        uploadStatus.classList.add('show');
+      }, 400);
+    } else {
+      progFill.style.width = pct+'%';
+    }
+  }, 220);
+}
+rxFile.addEventListener('change', ()=>{
+  if(rxFile.files && rxFile.files[0]) simulateUpload(rxFile.files[0].name);
+});
+['dragover','dragenter'].forEach(evt=>dropzone.addEventListener(evt, (e)=>{ e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(evt=>dropzone.addEventListener(evt, (e)=>{ e.preventDefault(); dropzone.classList.remove('drag'); }));
+dropzone.addEventListener('drop', (e)=>{
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  simulateUpload(file ? file.name : null);
+});
+
+/* ---------------- Pharmacist chat popover ---------------- */
+const chatFab = document.getElementById('chatFab');
+const chatPop = document.getElementById('chatPop');
+chatFab.addEventListener('click', ()=>chatPop.classList.toggle('open'));
+
+/* ---------------- Scroll reveal ---------------- */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('visible'); });
+},{threshold:0.12});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+/* ---------------- Language toggle ---------------- */
+document.getElementById('langToggle').addEventListener('click', ()=>{
+  applyLang(currentLang === 'en' ? 'zh' : 'en');
+});
+
+/* ---------------- Init ---------------- */
+applyLang(currentLang);
+</script>
+
+<!-- ---------------- 3D hero (Three.js) with CSS fallback ---------------- -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  var canvas = document.getElementById('hero3d');
+  if(!canvas || typeof THREE === 'undefined'){
+    document.body.classList.add('no-3d');
+    return;
+  }
+  try{
+    var w = canvas.clientWidth || 500, h = canvas.clientHeight || 440;
+    var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h);
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(42, w/h, 0.1, 100);
+    camera.position.set(0, 0, 9);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    var key = new THREE.PointLight(0xffffff, 1.1); key.position.set(5,5,8); scene.add(key);
+    var fill = new THREE.PointLight(0x7fd8cf, 0.7); fill.position.set(-6,-3,5); scene.add(fill);
+
+    function makeCapsule(colorTop, colorBottom, scale){
+      var g = new THREE.Group();
+      var r = 0.5*scale;
+      var matTop = new THREE.MeshStandardMaterial({color: colorTop, roughness:0.35, metalness:0.08});
+      var matBot = new THREE.MeshStandardMaterial({color: colorBottom, roughness:0.35, metalness:0.08});
+      var halfTop = new THREE.Mesh(new THREE.CylinderGeometry(r,r,0.8*scale,28,1,true), matTop);
+      halfTop.position.y = 0.4*scale;
+      var halfBot = new THREE.Mesh(new THREE.CylinderGeometry(r,r,0.8*scale,28,1,true), matBot);
+      halfBot.position.y = -0.4*scale;
+      var capTop = new THREE.Mesh(new THREE.SphereGeometry(r,28,16,0,Math.PI*2,0,Math.PI/2), matTop);
+      capTop.position.y = 0.8*scale;
+      var capBot = new THREE.Mesh(new THREE.SphereGeometry(r,28,16,0,Math.PI*2,Math.PI/2,Math.PI/2), matBot);
+      capBot.position.y = -0.8*scale;
+      g.add(halfTop, halfBot, capTop, capBot);
+      return g;
+    }
+
+    var palette = [['#12a696','#ffffff'], ['#ff6f59','#ffffff'], ['#7c5cff','#ffffff'], ['#0b7a70','#eafff9']];
+    var objs = [];
+    for(var i=0;i<7;i++){
+      var p = palette[i % palette.length];
+      var c = makeCapsule(p[0], p[1], 0.8 + Math.random()*0.55);
+      c.position.set((Math.random()-0.5)*8, (Math.random()-0.5)*5, (Math.random()-0.5)*4);
+      c.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+      c.userData.spin = (Math.random()*0.4+0.15) * (Math.random()<0.5?-1:1);
+      c.userData.bobSpeed = Math.random()*0.6+0.4;
+      c.userData.bobOffset = Math.random()*Math.PI*2;
+      scene.add(c);
+      objs.push(c);
+    }
+    for(var j=0;j<10;j++){
+      var sm = new THREE.MeshStandardMaterial({color: palette[j%palette.length][0], roughness:0.5});
+      var sp = new THREE.Mesh(new THREE.SphereGeometry(0.13+Math.random()*0.12, 16,16), sm);
+      sp.position.set((Math.random()-0.5)*9,(Math.random()-0.5)*6,(Math.random()-0.5)*5);
+      sp.userData.spin = Math.random()*0.5+0.1;
+      sp.userData.bobSpeed = Math.random()*0.6+0.3;
+      sp.userData.bobOffset = Math.random()*Math.PI*2;
+      scene.add(sp);
+      objs.push(sp);
+    }
+
+    var mouseX=0, mouseY=0;
+    canvas.parentElement.addEventListener('mousemove', function(e){
+      var rect = canvas.getBoundingClientRect();
+      mouseX = ((e.clientX-rect.left)/rect.width - 0.5) * 2;
+      mouseY = ((e.clientY-rect.top)/rect.height - 0.5) * 2;
+    });
+
+    var clock = new THREE.Clock();
+    function animate(){
+      requestAnimationFrame(animate);
+      var t = clock.getElapsedTime();
+      objs.forEach(function(c){
+        c.rotation.x += 0.004 * c.userData.spin;
+        c.rotation.y += 0.006 * c.userData.spin;
+        c.position.y += Math.sin(t*c.userData.bobSpeed + c.userData.bobOffset) * 0.0015;
+      });
+      camera.position.x += (mouseX*1.4 - camera.position.x)*0.03;
+      camera.position.y += (-mouseY*0.9 - camera.position.y)*0.03;
+      camera.lookAt(0,0,0);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', function(){
+      var w2 = canvas.clientWidth || w, h2 = canvas.clientHeight || h;
+      camera.aspect = w2/h2; camera.updateProjectionMatrix();
+      renderer.setSize(w2,h2);
+    });
+  } catch(err){
+    document.body.classList.add('no-3d');
+  }
+})();
+</script>
+
+</body>
+</html>
