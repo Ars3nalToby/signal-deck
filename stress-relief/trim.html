@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="shared.css">
 <style>
   body{display:flex; flex-direction:column; align-items:center;}
-  .stage{height: 66vh; min-height: 440px; max-height: 600px; cursor:none;}
+  .stage{height: 66vh; min-height: 440px; max-height: 620px; cursor:none;}
   .controls{display:flex; gap:12px; justify-content:center; margin-top:18px;}
   .btn{
     background: var(--bg-2); border:1px solid var(--line); color: var(--ink);
@@ -45,7 +45,7 @@
   <canvas id="c"></canvas>
   <div class="celebrate" id="celebrate">
     <h2>Crisp edge.</h2>
-    <p>That fence line is immaculate. Overgrowth incoming?</p>
+    <p>That concrete line is razor sharp. Overgrowth incoming?</p>
     <button id="next-btn">Next Overgrown Edge</button>
   </div>
 </div>
@@ -53,10 +53,14 @@
 <div class="controls">
   <button class="btn primary" id="regrow-btn">Let It Overgrow</button>
 </div>
-<p class="hint">Hold to rev the trimmer, then sweep along the fence line. Low, steady passes give the cleanest cut.</p>
+<p class="hint">Hold to rev, then sweep the head along the concrete edge. Slow, low passes cut cleanest.</p>
 
 <script src="shared.js"></script>
 <script>
+// Top-down "overgrown grass spilling onto concrete sidewalk" edging scene.
+// Textures are baked into offscreen canvases once per resize; only blades,
+// trimmer, and effects redraw each frame.
+
 const stageEl = document.getElementById('stage');
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -64,17 +68,23 @@ let W, H, DPR;
 
 Unwind.wireMuteButton(document.getElementById('mute-btn'));
 
-let blades = [];         // individual grass blades
-let clippings = [];      // cut fragments flying
-let dust = [];           // dust puffs when line hits soil
-let mouseX = -200, mouseY = -200;
-let trimming = false;    // pointer held down = engine revved + cutting
-let headX = -200, headY = -200;      // smoothed trimmer head position
+// ---------- scene layout ----------
+let borderY;                    // grass strip ends here, concrete begins
+let concreteBG, grassBG;        // baked texture canvases
+
+// ---------- state ----------
+let blades = [];                // per-blade overgrown extensions into concrete
+let clippings = [];
+let dust = [];
+let sparks = [];
+let mouseX = -300, mouseY = -300;
+let trimming = false;
+let headX = -300, headY = -300;
 let swayT = 0;
 let edgesDone = 0;
 let celebrated = false;
-const CUT_TARGET = 14;   // blade height considered "trimmed"
-const CUT_RADIUS = 34;   // trimmer line reach
+const CUT_RADIUS = 30;
+const MIN_LEN = 2;
 
 function resize(){
   DPR = Math.min(window.devicePixelRatio||1, 2);
@@ -82,46 +92,170 @@ function resize(){
   canvas.width = W*DPR; canvas.height = H*DPR;
   canvas.style.width = W+'px'; canvas.style.height = H+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
+  borderY = Math.round(H*0.42);
+  concreteBG = bakeConcrete(W, H-borderY+8);
+  grassBG = bakeGrassMat(W, borderY+8);
   plantGrass();
 }
 
-// ---------- world ----------
-function groundY(){ return H*0.62; }
+// ---------- baked textures ----------
+function bakeConcrete(w, h){
+  const off = document.createElement('canvas');
+  off.width = w; off.height = h;
+  const o = off.getContext('2d');
+  // base
+  const grad = o.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'#9a978c');
+  grad.addColorStop(0.4,'#a6a397');
+  grad.addColorStop(1,'#8f8c81');
+  o.fillStyle = grad; o.fillRect(0,0,w,h);
+  // large tonal patches
+  for(let i=0;i<50;i++){
+    const x = Math.random()*w, y = Math.random()*h, r = 60+Math.random()*140;
+    const c = 140 + (Math.random()-0.5)*40;
+    o.fillStyle = 'rgba('+c+','+(c-4)+','+(c-14)+','+(0.03+Math.random()*0.05)+')';
+    o.beginPath(); o.arc(x,y,r,0,Math.PI*2); o.fill();
+  }
+  // slight sun-side warmth top-left
+  const warm = o.createRadialGradient(w*0.2, 0, 0, w*0.2, 0, w*0.9);
+  warm.addColorStop(0,'rgba(255,230,180,0.12)');
+  warm.addColorStop(1,'rgba(255,230,180,0)');
+  o.fillStyle = warm; o.fillRect(0,0,w,h);
+  // fine noise via imageData
+  try{
+    const img = o.getImageData(0,0,w,h); const d = img.data;
+    for(let i=0;i<d.length;i+=4){
+      const n = (Math.random()-0.5)*22;
+      d[i]   = Math.max(0,Math.min(255,d[i]+n));
+      d[i+1] = Math.max(0,Math.min(255,d[i+1]+n));
+      d[i+2] = Math.max(0,Math.min(255,d[i+2]+n));
+    }
+    o.putImageData(img,0,0);
+  }catch(e){}
+  // aggregate flecks
+  const flecks = Math.floor(w*h/45);
+  for(let i=0;i<flecks;i++){
+    const x = Math.random()*w, y = Math.random()*h;
+    const g = 55+Math.random()*70;
+    o.fillStyle = 'rgba('+(g-8)+','+g+','+(g-16)+','+(0.35+Math.random()*0.5)+')';
+    o.fillRect(x,y,1,1);
+    if(Math.random()<0.15) o.fillRect(x+1,y,1,1);
+  }
+  // hairline cracks
+  for(let i=0;i<4;i++){
+    o.strokeStyle = 'rgba(50,45,40,'+(0.25+Math.random()*0.2)+')';
+    o.lineWidth = 0.7;
+    o.beginPath();
+    let cx = Math.random()*w, cy = 20+Math.random()*(h-40);
+    o.moveTo(cx,cy);
+    for(let j=0;j<25;j++){
+      cx += (Math.random()-0.4)*42;
+      cy += (Math.random()-0.5)*18;
+      o.lineTo(cx,cy);
+    }
+    o.stroke();
+  }
+  // subtle expansion joint (straight faint line ~1/3 across)
+  const jx = Math.floor(w*(0.28+Math.random()*0.4));
+  o.strokeStyle = 'rgba(35,32,28,0.4)';
+  o.lineWidth = 1.4;
+  o.beginPath(); o.moveTo(jx, -5); o.lineTo(jx+(Math.random()-0.5)*4, h+5); o.stroke();
+  o.strokeStyle = 'rgba(255,255,255,0.06)';
+  o.lineWidth = 0.6;
+  o.beginPath(); o.moveTo(jx+1, -5); o.lineTo(jx+1, h+5); o.stroke();
+  // vignette darkening at edges
+  const vg = o.createLinearGradient(0,0,0,h);
+  vg.addColorStop(0,'rgba(0,0,0,0.18)');
+  vg.addColorStop(0.15,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(0,0,0,0.08)');
+  o.fillStyle = vg; o.fillRect(0,0,w,h);
+  return off;
+}
 
+function bakeGrassMat(w, h){
+  const off = document.createElement('canvas');
+  off.width = w; off.height = h;
+  const o = off.getContext('2d');
+  // deep verdant base with slight upper darkening (further = deeper)
+  const grad = o.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'#2f5527');
+  grad.addColorStop(0.6,'#3f7b34');
+  grad.addColorStop(1,'#4b9040');
+  o.fillStyle = grad; o.fillRect(0,0,w,h);
+  // warm sunlight tint
+  const sun = o.createRadialGradient(w*0.25, 0, 0, w*0.25, 0, w*0.85);
+  sun.addColorStop(0,'rgba(255,235,150,0.18)');
+  sun.addColorStop(1,'rgba(255,235,150,0)');
+  o.fillStyle = sun; o.fillRect(0,0,w,h);
+  // fine top-down blade texture (short slashes)
+  const count = Math.floor(w*h*0.55);
+  for(let i=0;i<count;i++){
+    const x = Math.random()*w, y = Math.random()*h;
+    const len = 2 + Math.random()*7;
+    const lean = (Math.random()-0.5)*3.5;
+    const g = 105 + Math.random()*85;
+    const r = 45 + Math.random()*35;
+    const b = 30 + Math.random()*25;
+    o.strokeStyle = 'rgba('+r+','+g+','+b+','+(0.55+Math.random()*0.4)+')';
+    o.lineWidth = 0.7+Math.random()*0.9;
+    o.lineCap = 'round';
+    o.beginPath(); o.moveTo(x,y); o.lineTo(x+lean, y-len); o.stroke();
+  }
+  // bright yellow-green highlight tips scattered
+  for(let i=0;i<w*0.5;i++){
+    const x = Math.random()*w, y = Math.random()*h;
+    o.fillStyle = 'rgba(210,235,140,'+(0.25+Math.random()*0.35)+')';
+    o.fillRect(x,y,1,1);
+  }
+  // sparse darker clumps (patchiness)
+  for(let i=0;i<25;i++){
+    const x = Math.random()*w, y = Math.random()*h, r = 25+Math.random()*45;
+    o.fillStyle = 'rgba(30,55,25,'+(0.06+Math.random()*0.08)+')';
+    o.beginPath(); o.arc(x,y,r,0,Math.PI*2); o.fill();
+  }
+  return off;
+}
+
+// ---------- overgrown blade layer ----------
 function plantGrass(){
   blades = [];
-  const gy = groundY();
-  const bandH = H - gy;             // grass grows on the strip below the fence line
-  const count = Math.floor(W * 3.2); // dense: ~3 blades per px column
+  // dense forward-drooping overgrowth: 4 blades per pixel of width
+  const count = Math.floor(W * 4);
   for(let i=0;i<count;i++){
     const x = Math.random()*W;
-    const y = gy + Math.pow(Math.random(), 0.8)*bandH*0.92 + 6;
-    const depth = (y - gy)/bandH;   // 0 = back near fence, 1 = front
-    const maxH = 34 + Math.random()*46 + depth*18;
-    const green = 96 + Math.random()*70 - depth*22;
+    const rootJit = -(Math.random()*8) - 1;                   // roots planted slightly INSIDE grass mat (above border)
+    const maxLen = 42 + Math.random()*110;                    // overgrown extension into concrete area
+    const curl = (Math.random()-0.5)*0.55;                    // side lean while drooping over concrete
+    // color palette shifts blade to blade
+    const rBase = 50 + Math.random()*35;
+    const gBase = 105 + Math.random()*60;
+    const bBase = 32 + Math.random()*22;
     blades.push({
-      x, y, depth,
-      h: maxH,                       // current height
-      maxH,
-      w: 1.1 + depth*1.5 + Math.random()*0.7,
-      lean: (Math.random()-0.5)*0.5,
+      x,
+      rootY: borderY + rootJit,
+      length: maxLen,
+      maxLength: maxLen,
+      curl,
+      width: 1.2 + Math.random()*1.6,
       phase: Math.random()*Math.PI*2,
-      swayAmt: 0.06 + Math.random()*0.10,
-      r: 38 + Math.random()*30 - depth*10,
-      g: green,
-      bcol: 34 + Math.random()*26,
-      cut: false
+      swayAmt: 0.06 + Math.random()*0.12,
+      rootCol: 'rgb('+Math.round(rBase*0.7)+','+Math.round(gBase*0.7)+','+Math.round(bBase*0.7)+')',
+      midCol:  'rgb('+Math.round(rBase)+','+Math.round(gBase)+','+Math.round(bBase)+')',
+      tipCol:  'rgb('+Math.round(rBase+40)+','+Math.round(gBase+35)+','+Math.round(bBase+10)+')',
+      fresh: 0
     });
   }
-  // painter's order: back blades first
-  blades.sort((a,b)=>a.y-b.y);
+  // painter's order: front (further into concrete) drawn last so they overlap
+  blades.sort((a,b)=> a.length - b.length);
   celebrated = false;
+  clippings.length = 0; dust.length = 0; sparks.length = 0;
   updatePct();
 }
 
 function updatePct(){
   let cut = 0;
-  for(const b of blades) if(b.h <= CUT_TARGET+2) cut++;
+  const targetLen = 8;
+  for(const b of blades) if(b.length <= targetLen) cut++;
   const pct = blades.length ? Math.round(cut/blades.length*100) : 0;
   document.getElementById('pct-label').textContent = pct+'% trimmed';
   document.getElementById('pct-fill').style.width = pct+'%';
@@ -134,8 +268,8 @@ function updatePct(){
   return pct;
 }
 
-// ---------- audio: 2-stroke trimmer engine ----------
-let actx, engNodes = null, idleTimer = null;
+// ---------- audio ----------
+let actx, engNodes = null;
 function ensureAudio(){
   if(Unwind.isMuted()) return null;
   try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); return actx; }
@@ -143,37 +277,35 @@ function ensureAudio(){
 }
 function startEngine(){
   const ac = ensureAudio(); if(!ac || engNodes) return;
-  // buzzy saw stack + noise = weed-whacker rasp
   const master = ac.createGain(); master.gain.value = 0.0001;
-  master.gain.linearRampToValueAtTime(0.06, ac.currentTime+0.18);
+  master.gain.linearRampToValueAtTime(0.065, ac.currentTime+0.18);
   const filt = ac.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value = 1500; filt.Q.value = 2;
   filt.connect(master).connect(ac.destination);
-  const o1 = ac.createOscillator(); o1.type='sawtooth'; o1.frequency.value = 110;
-  const o2 = ac.createOscillator(); o2.type='square';  o2.frequency.value = 221;
-  const g2 = ac.createGain(); g2.gain.value = 0.35;
-  const lfo = ac.createOscillator(); lfo.frequency.value = 27;   // pops/putter
-  const lfoG = ac.createGain(); lfoG.gain.value = 14;
+  const o1 = ac.createOscillator(); o1.type='sawtooth'; o1.frequency.value = 118;
+  const o2 = ac.createOscillator(); o2.type='square';   o2.frequency.value = 237;
+  const g2 = ac.createGain(); g2.gain.value = 0.32;
+  const lfo = ac.createOscillator(); lfo.frequency.value = 29;
+  const lfoG = ac.createGain(); lfoG.gain.value = 15;
   lfo.connect(lfoG).connect(o1.frequency);
   o1.connect(filt); o2.connect(g2).connect(filt);
-  const nb = ac.createBuffer(1, ac.sampleRate*1, ac.sampleRate);
+  const nb = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
   const nd = nb.getChannelData(0);
   for(let i=0;i<nd.length;i++) nd[i] = Math.random()*2-1;
   const noise = ac.createBufferSource(); noise.buffer = nb; noise.loop = true;
-  const nf = ac.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=3200; nf.Q.value=0.7;
-  const ng = ac.createGain(); ng.gain.value = 0.25;
+  const nf = ac.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=3400; nf.Q.value=0.6;
+  const ng = ac.createGain(); ng.gain.value = 0.28;
   noise.connect(nf).connect(ng).connect(filt);
   o1.start(); o2.start(); lfo.start(); noise.start();
-  engNodes = {master, filt, o1, o2, lfo, noise, baseFreq: 110};
+  engNodes = {master, filt, o1, o2, lfo, noise, baseFreq: 118};
 }
-function setEngineLoad(load){ // 0 idle .. 1 bogged down in thick grass
+function setEngineLoad(load){
   if(!engNodes || !actx) return;
   const t = actx.currentTime;
-  // revs drop and get rougher under load
   const f = engNodes.baseFreq * (1.55 - load*0.5);
   engNodes.o1.frequency.setTargetAtTime(f, t, 0.06);
   engNodes.o2.frequency.setTargetAtTime(f*2.01, t, 0.06);
   engNodes.filt.frequency.setTargetAtTime(1500 + load*900, t, 0.08);
-  engNodes.master.gain.setTargetAtTime(0.05 + load*0.045, t, 0.08);
+  engNodes.master.gain.setTargetAtTime(0.055 + load*0.045, t, 0.08);
 }
 function stopEngine(){
   if(!engNodes || !actx) return;
@@ -184,162 +316,256 @@ function stopEngine(){
   }catch(e){}
 }
 
-// ---------- cutting ----------
+// ---------- cutting: line-circle intersection along blade segment ----------
 let cutThisFrame = 0;
-function cutAt(x, y){
+function cutAt(tx, ty){
   cutThisFrame = 0;
-  const r2 = CUT_RADIUS*CUT_RADIUS;
-  for(const b of blades){
-    if(b.h <= CUT_TARGET) continue;
-    // blade tip position (approx, ignoring sway for hit test)
-    const tipY = b.y - b.h;
-    // the line cuts anything whose stem passes through the cut circle
-    const dx = b.x - x;
-    // vertical overlap: cut height = distance from cut center to root
-    if(dx*dx > r2) continue;
-    const spanTop = Math.max(tipY, y - CUT_RADIUS*0.55);
-    if(spanTop > b.y) continue;
-    const dyRoot = b.y - y;
-    if(dyRoot < -CUT_RADIUS*0.55 || dyRoot > CUT_RADIUS*2.2) continue;
-    // new height: cut down to the line's height above the root (min CUT_TARGET)
-    let newH = Math.max(b.y - (y + Math.abs(dx)*0.18), CUT_TARGET*0.6);
-    newH = Math.max(newH, CUT_TARGET*0.55 + Math.random()*4);
-    if(newH < b.h - 2){
-      const cutLen = b.h - newH;
-      b.h = newH;
+  const r = CUT_RADIUS, r2 = r*r;
+  for(let i=0; i<blades.length; i++){
+    const b = blades[i];
+    if(b.length <= MIN_LEN) continue;
+    const x0 = b.x, y0 = b.rootY;
+    const dx = b.curl * b.length, dy = b.length;
+    // parametric line x = x0 + t*dx, y = y0 + t*dy, t in [0,1]
+    const fx = x0 - tx, fy = y0 - ty;
+    const A = dx*dx + dy*dy;
+    if(A < 1e-6) continue;
+    const B = 2*(fx*dx + fy*dy);
+    const C = fx*fx + fy*fy - r2;
+    const disc = B*B - 4*A*C;
+    if(disc < 0) continue;
+    const sq = Math.sqrt(disc);
+    const t1 = (-B - sq)/(2*A);
+    const t2 = (-B + sq)/(2*A);
+    if(t2 < 0 || t1 > 1) continue;             // segment misses circle
+    const cutT = Math.max(0, t1) - 0.03;
+    const newLen = Math.max(MIN_LEN, b.length * Math.max(0, cutT));
+    const trimmed = b.length - newLen;
+    if(trimmed > 0.6){
+      b.length = newLen;
+      b.fresh = 1;
       cutThisFrame++;
-      if(clippings.length < 260 && Math.random() < 0.55){
+      // clipping fragment flying off from where the cut happened
+      if(clippings.length < 300 && Math.random() < 0.6){
+        const cx = x0 + dx*cutT;
+        const cy = y0 + dy*cutT;
+        const away = Math.atan2(cy - ty, cx - tx);
+        const sp = 2 + Math.random()*5;
         clippings.push({
-          x: b.x, y: b.y - newH,
-          vx: (Math.random()-0.5)*5 + (Math.random()<0.5?-2.5:2.5),
-          vy: -(1.5 + Math.random()*3.5),
-          len: Math.min(cutLen, 6 + Math.random()*10),
-          rot: Math.random()*Math.PI, vrot: (Math.random()-0.5)*0.6,
-          r: b.r, g: b.g, bcol: b.b,
-          life: 1, decay: 0.014 + Math.random()*0.012
+          x: cx, y: cy,
+          vx: Math.cos(away)*sp + (Math.random()-0.5)*2,
+          vy: Math.sin(away)*sp - 1 - Math.random()*2,
+          len: Math.min(trimmed, 4+Math.random()*12),
+          rot: Math.random()*Math.PI, vrot:(Math.random()-0.5)*0.7,
+          color: b.midCol,
+          life: 1, decay: 0.013+Math.random()*0.012
         });
       }
     }
   }
-  // soil dust when line runs near bare ground
-  if(cutThisFrame === 0 && trimming && y > groundY()+10 && Math.random()<0.3 && dust.length < 60){
-    dust.push({x: x+(Math.random()-0.5)*20, y: y+8, r: 2+Math.random()*4, vx:(Math.random()-0.5)*1.2, vy:-(0.3+Math.random()*0.7), life: 0.6, decay: 0.02});
+  // scraping concrete near-edge: bright orange sparks
+  if(trimming && Math.abs(ty - borderY) < 10 && cutThisFrame < 3 && sparks.length < 40 && Math.random()<0.6){
+    for(let k=0;k<2;k++){
+      const a = -Math.PI/2 + (Math.random()-0.5)*Math.PI*0.8;
+      sparks.push({
+        x: tx+(Math.random()-0.5)*6, y: ty,
+        vx: Math.cos(a)*(2+Math.random()*3), vy: Math.sin(a)*(2+Math.random()*3),
+        life: 0.6, decay: 0.04+Math.random()*0.03,
+        size: 1+Math.random()*1.4
+      });
+    }
+  }
+  // dust puff on bare concrete
+  if(trimming && cutThisFrame === 0 && ty > borderY+18 && Math.random()<0.25 && dust.length < 40){
+    dust.push({
+      x: tx+(Math.random()-0.5)*20, y: ty+6,
+      r: 3+Math.random()*5,
+      vx:(Math.random()-0.5)*1.2, vy:-(0.3+Math.random()*0.6),
+      life: 0.7, decay: 0.02
+    });
   }
 }
 
 // ---------- drawing ----------
-function drawWorld(){
-  // sky
-  const sky = ctx.createLinearGradient(0,0,0,groundY());
-  sky.addColorStop(0,'#8ec8e8'); sky.addColorStop(0.7,'#c8e2ee'); sky.addColorStop(1,'#dcecf0');
-  ctx.fillStyle = sky; ctx.fillRect(0,0,W,groundY());
-
-  // distant hedge
-  ctx.fillStyle = '#5a8a4a';
-  ctx.beginPath();
-  ctx.moveTo(0, groundY()-46);
-  for(let x=0;x<=W;x+=40){
-    ctx.quadraticCurveTo(x+20, groundY()-58-((x*7)%17), x+40, groundY()-46);
-  }
-  ctx.lineTo(W, groundY()); ctx.lineTo(0, groundY());
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = 'rgba(30,50,25,0.25)';
-  ctx.fillRect(0, groundY()-14, W, 14);
-
-  // wooden fence along the edge
-  const fy = groundY()-44;
-  for(let x=8; x<W; x+=52){
-    const grain = ctx.createLinearGradient(x,0,x+34,0);
-    grain.addColorStop(0,'#9a7247'); grain.addColorStop(0.5,'#b08655'); grain.addColorStop(1,'#8a6640');
-    ctx.fillStyle = grain;
-    ctx.fillRect(x, fy, 34, 46);
-    ctx.beginPath(); ctx.moveTo(x, fy); ctx.lineTo(x+17, fy-9); ctx.lineTo(x+34, fy); ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = 'rgba(60,40,20,0.35)';
-    ctx.fillRect(x+4, fy+6, 2, 34);
-    ctx.fillRect(x+26, fy+10, 2, 26);
-  }
-  ctx.fillStyle = '#7a5a38';
-  ctx.fillRect(0, fy+10, W, 6);
-  ctx.fillRect(0, fy+30, W, 6);
-
-  // soil strip
-  const soil = ctx.createLinearGradient(0,groundY(),0,H);
-  soil.addColorStop(0,'#4a3a26'); soil.addColorStop(1,'#2e2418');
-  ctx.fillStyle = soil; ctx.fillRect(0, groundY(), W, H-groundY());
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  for(let i=0;i<40;i++){
-    const sx = (i*97.3)%W, sy = groundY()+((i*53.7)%(H-groundY()));
-    ctx.fillRect(sx, sy, 3+(i%4), 1.6);
-  }
+function drawScene(){
+  ctx.drawImage(grassBG, 0, 0);
+  ctx.drawImage(concreteBG, 0, borderY - 4);
+  // grass-side shadow onto concrete (contact AO)
+  const ao = ctx.createLinearGradient(0, borderY-2, 0, borderY+22);
+  ao.addColorStop(0,'rgba(0,0,0,0.28)');
+  ao.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = ao; ctx.fillRect(0, borderY-2, W, 24);
+  // a faint highlight rim along the crisp concrete edge (once revealed)
+  ctx.strokeStyle = 'rgba(255,240,210,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, borderY+0.5); ctx.lineTo(W, borderY+0.5); ctx.stroke();
 }
 
 function drawBlade(b, wind){
-  const sway = Math.sin(swayT*1.6 + b.phase) * b.swayAmt * (b.h/b.maxH) + wind;
-  const tipX = b.x + (b.lean + sway) * b.h;
-  const tipY = b.y - b.h;
-  const midX = b.x + (b.lean + sway) * b.h * 0.4;
-  const midY = b.y - b.h*0.55;
-  const shade = b.h <= CUT_TARGET+2 ? 0.82 : 1;   // cut stubble slightly darker
-  ctx.strokeStyle = 'rgb('+Math.round(b.r*shade)+','+Math.round(b.g*shade)+','+Math.round(b.bcol*shade)+')';
-  ctx.lineWidth = b.w;
+  if(b.length <= MIN_LEN + 0.5){
+    // freshly-cut stub: tiny bright green nub
+    ctx.fillStyle = b.tipCol;
+    ctx.beginPath(); ctx.arc(b.x, b.rootY+1, b.width*0.6, 0, Math.PI*2); ctx.fill();
+    return;
+  }
+  const sway = Math.sin(swayT*1.4 + b.phase) * b.swayAmt * (b.length/b.maxLength) + wind;
+  const rootX = b.x, rootY = b.rootY;
+  const tipX = rootX + (b.curl + sway) * b.length;
+  const tipY = rootY + b.length;
+  const midX = rootX + (b.curl*0.4 + sway*0.6) * b.length;
+  const midY = rootY + b.length*0.55;
+  // shadow (offset toward lower-right, sunlight from upper-left)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(20,30,15,0.28)';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = b.width * 1.35;
   ctx.beginPath();
-  ctx.moveTo(b.x, b.y);
+  ctx.moveTo(rootX+2, rootY+2);
+  ctx.quadraticCurveTo(midX+2, midY+2, tipX+2, tipY+2);
+  ctx.stroke();
+  ctx.restore();
+  // main blade with root->tip gradient
+  const grad = ctx.createLinearGradient(rootX, rootY, tipX, tipY);
+  grad.addColorStop(0, b.rootCol);
+  grad.addColorStop(0.55, b.midCol);
+  if(b.fresh > 0.02){
+    // just cut: bright fresh interior tip
+    grad.addColorStop(1, 'rgb(210,240,120)');
+  }else{
+    grad.addColorStop(1, b.tipCol);
+  }
+  ctx.strokeStyle = grad;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = b.width;
+  ctx.beginPath();
+  ctx.moveTo(rootX, rootY);
   ctx.quadraticCurveTo(midX, midY, tipX, tipY);
   ctx.stroke();
+  // tiny highlight streak on lit side of thicker blades
+  if(b.width > 2){
+    ctx.strokeStyle = 'rgba(230,245,180,0.35)';
+    ctx.lineWidth = b.width*0.35;
+    ctx.beginPath();
+    ctx.moveTo(rootX-0.6, rootY);
+    ctx.quadraticCurveTo(midX-0.6, midY, tipX-0.6, tipY);
+    ctx.stroke();
+  }
 }
 
 function drawTrimmer(){
-  if(mouseX < -100) return;
+  if(headX < -100) return;
+  // ground shadow blob
+  ctx.save();
+  const sx = headX + 6, sy = headY + 8;
+  const sg = ctx.createRadialGradient(sx, sy, 2, sx, sy, CUT_RADIUS+8);
+  sg.addColorStop(0,'rgba(0,0,0,0.35)');
+  sg.addColorStop(0.6,'rgba(0,0,0,0.18)');
+  sg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = sg;
+  ctx.beginPath(); ctx.ellipse(sx, sy, CUT_RADIUS+6, (CUT_RADIUS+6)*0.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
   ctx.save();
   ctx.translate(headX, headY);
-  // shaft up-right toward the "operator"
-  const shaftAng = -0.82;
+
+  // motor housing / guard behind head, orange
   ctx.save();
-  ctx.rotate(shaftAng);
-  const shaft = ctx.createLinearGradient(0,0,240,0);
-  shaft.addColorStop(0,'#3a3f45'); shaft.addColorStop(1,'#565e66');
-  ctx.fillStyle = shaft;
-  ctx.fillRect(14, -4, 260, 8);
+  ctx.rotate(-0.35);
+  // shaft going up-right toward operator
+  const shaftG = ctx.createLinearGradient(0,0,220,0);
+  shaftG.addColorStop(0,'#2a2e34');
+  shaftG.addColorStop(0.5,'#5a6068');
+  shaftG.addColorStop(1,'#3a3f45');
+  ctx.fillStyle = shaftG;
+  ctx.fillRect(18, -4, 240, 8);
+  // shaft highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.fillRect(18, -3.5, 240, 1);
   // loop handle
-  ctx.strokeStyle = '#2e3338'; ctx.lineWidth = 7;
-  ctx.beginPath(); ctx.arc(150, -14, 22, Math.PI*0.15, Math.PI*1.1); ctx.stroke();
+  ctx.strokeStyle = '#1e2226'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.15, Math.PI*1.1); ctx.stroke();
+  ctx.strokeStyle = '#3a3f45'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.15, Math.PI*1.1); ctx.stroke();
+  // rubber grip
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.35, Math.PI*0.85); ctx.stroke();
   ctx.restore();
-  // guard
-  ctx.fillStyle = '#c8481e';
+
+  // orange guard shell arc (behind + above head)
+  const guardG = ctx.createLinearGradient(-30, -18, 30, 6);
+  guardG.addColorStop(0,'#c8481e');
+  guardG.addColorStop(0.5,'#e5642a');
+  guardG.addColorStop(1,'#a53614');
+  ctx.fillStyle = guardG;
   ctx.beginPath();
-  ctx.ellipse(10, -10, 30, 13, -0.25, Math.PI*0.95, Math.PI*2.05);
-  ctx.fill();
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.ellipse(6, -12, 32, 15, -0.28, Math.PI*0.9, Math.PI*2.1);
+  ctx.closePath(); ctx.fill();
+  // guard highlight
+  ctx.strokeStyle = 'rgba(255,220,180,0.55)';
+  ctx.lineWidth = 1.4;
   ctx.beginPath();
-  ctx.ellipse(10, -8, 26, 9, -0.25, Math.PI, Math.PI*2);
+  ctx.ellipse(6, -14, 30, 13, -0.28, Math.PI*1.05, Math.PI*1.9);
+  ctx.stroke();
+  // guard underside shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(6, -9, 27, 10, -0.28, Math.PI, Math.PI*2);
   ctx.fill();
-  // head
-  ctx.fillStyle = '#22262a';
-  ctx.beginPath(); ctx.ellipse(0, 0, 13, 8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#3d434a';
-  ctx.beginPath(); ctx.ellipse(0, -2, 8, 4.5, 0, 0, Math.PI*2); ctx.fill();
-  // spinning line: motion-blur disc when revved
+
+  // metal head cap
+  ctx.fillStyle = '#20242a';
+  ctx.beginPath(); ctx.ellipse(0, 0, 14, 9, 0, 0, Math.PI*2); ctx.fill();
+  const capG = ctx.createRadialGradient(-3, -3, 1, 0, 0, 12);
+  capG.addColorStop(0, 'rgba(255,255,255,0.5)');
+  capG.addColorStop(0.5, 'rgba(255,255,255,0.1)');
+  capG.addColorStop(1, 'rgba(0,0,0,0.15)');
+  ctx.fillStyle = capG;
+  ctx.beginPath(); ctx.ellipse(0, 0, 12, 7, 0, 0, Math.PI*2); ctx.fill();
+  // hex bolt center
+  ctx.fillStyle = '#0e1114';
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a = i*Math.PI/3;
+    const px = Math.cos(a)*3.2, py = Math.sin(a)*3.2;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath(); ctx.fill();
+
+  // spinning line
   if(trimming){
-    ctx.globalAlpha = 0.35;
-    ctx.strokeStyle = '#eef2f6';
-    ctx.lineWidth = 1.4;
-    for(let i=0;i<3;i++){
+    // motion-blur disc
+    for(let i=3;i>=0;i--){
+      const a = 0.06 + i*0.05;
+      ctx.strokeStyle = 'rgba(240,245,250,'+a+')';
+      ctx.lineWidth = 1.3;
       ctx.beginPath();
-      ctx.ellipse(0, 2, CUT_RADIUS - i*3, (CUT_RADIUS - i*3)*0.32, 0, 0, Math.PI*2);
+      ctx.ellipse(0, 2, CUT_RADIUS - i*2.5, (CUT_RADIUS - i*2.5)*0.36, 0, 0, Math.PI*2);
       ctx.stroke();
     }
-    ctx.globalAlpha = 0.14;
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.ellipse(0, 2, CUT_RADIUS, CUT_RADIUS*0.32, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
+    // outer soft white glow
+    const glow = ctx.createRadialGradient(0, 2, CUT_RADIUS*0.6, 0, 2, CUT_RADIUS+2);
+    glow.addColorStop(0,'rgba(255,255,255,0)');
+    glow.addColorStop(0.7,'rgba(255,255,255,0.08)');
+    glow.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.ellipse(0,2, CUT_RADIUS+3, (CUT_RADIUS+3)*0.4, 0, 0, Math.PI*2); ctx.fill();
+    // fast-strobe wisps (asymmetric to sell rotation)
+    const phase = (performance.now()*0.06) % (Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    ctx.lineWidth = 1.4;
+    for(let k=0;k<2;k++){
+      const a = phase + k*Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a)*6, 2+Math.sin(a)*2);
+      ctx.lineTo(Math.cos(a)*(CUT_RADIUS-2), 2+Math.sin(a)*(CUT_RADIUS-2)*0.36);
+      ctx.stroke();
+    }
   }else{
-    // idle line tips
+    // static line tips at rest
     ctx.strokeStyle = '#dfe5ea'; ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.moveTo(-13,2); ctx.lineTo(-CUT_RADIUS*0.8, 6); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(13,2); ctx.lineTo(CUT_RADIUS*0.8, -1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-12,2); ctx.lineTo(-CUT_RADIUS*0.9, 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(12,2); ctx.lineTo(CUT_RADIUS*0.9, -1); ctx.stroke();
   }
   ctx.restore();
 }
@@ -359,7 +585,7 @@ canvas.addEventListener('pointermove', (e)=>{
   const p = pos(e); mouseX = p.x; mouseY = p.y;
 });
 window.addEventListener('pointerup', ()=>{ trimming = false; stopEngine(); });
-canvas.addEventListener('pointerleave', ()=>{ if(!trimming){ mouseX=-200; mouseY=-200; } });
+canvas.addEventListener('pointerleave', ()=>{ if(!trimming){ mouseX=-300; mouseY=-300; } });
 
 document.getElementById('regrow-btn').onclick = ()=>{ plantGrass(); };
 document.getElementById('next-btn').onclick = ()=>{
@@ -378,22 +604,27 @@ function loop(now){
   lastTime = now;
   swayT += 0.016*dt;
 
-  // trimmer head eases toward the pointer — feels like a real tool with mass
+  // trimmer head follows pointer with a bit of lag (weighted tool feel)
   if(mouseX > -100){
     if(headX < -100){ headX = mouseX; headY = mouseY; }
     headX = Unwind.lerp(headX, mouseX, Math.min(0.22*dt, 1));
     headY = Unwind.lerp(headY, mouseY, Math.min(0.22*dt, 1));
-  }else{ headX = -200; headY = -200; }
-
-  if(trimming && headX > -100){
-    cutAt(headX, headY+2);
-    setEngineLoad(Unwind.clamp(cutThisFrame/22, 0, 1));
+  }else{
+    headX = -300; headY = -300;
   }
 
-  drawWorld();
+  if(trimming && headX > -100){
+    cutAt(headX, headY);
+    setEngineLoad(Unwind.clamp(cutThisFrame/20, 0, 1));
+  }
 
-  const wind = Math.sin(swayT*0.7)*0.05;
-  for(const b of blades) drawBlade(b, wind);
+  drawScene();
+
+  const wind = Math.sin(swayT*0.6)*0.04;
+  for(const b of blades){
+    if(b.fresh > 0) b.fresh = Math.max(0, b.fresh - 0.02*dt);
+    drawBlade(b, wind);
+  }
 
   // clippings
   for(let i=clippings.length-1;i>=0;i--){
@@ -406,9 +637,14 @@ function loop(now){
     ctx.save();
     ctx.translate(c.x, c.y); ctx.rotate(c.rot);
     ctx.globalAlpha = Math.max(c.life, 0);
-    ctx.strokeStyle = 'rgb('+Math.round(c.r)+','+Math.round(c.g)+','+Math.round(c.bcol)+')';
-    ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.moveTo(-c.len/2,0); ctx.lineTo(c.len/2,0); ctx.stroke();
+    // shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(-c.len/2+1, 1.5, c.len, 1.6);
+    // clipping body
+    ctx.strokeStyle = c.color;
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-c.len/2, 0); ctx.lineTo(c.len/2, 0); ctx.stroke();
     ctx.restore();
   }
   ctx.globalAlpha = 1;
@@ -417,18 +653,33 @@ function loop(now){
   for(let i=dust.length-1;i>=0;i--){
     const d = dust[i];
     d.x += d.vx*dt; d.y += d.vy*dt; d.life -= d.decay*dt;
+    d.r += 0.15*dt;
     if(d.life<=0){ dust.splice(i,1); continue; }
-    ctx.globalAlpha = d.life*0.5;
-    ctx.fillStyle = '#8a755a';
+    ctx.globalAlpha = d.life*0.45;
+    ctx.fillStyle = '#8a7a62';
     ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // sparks (concrete grind)
+  for(let i=sparks.length-1;i>=0;i--){
+    const s = sparks[i];
+    s.vy += 0.28*dt;
+    s.x += s.vx*dt; s.y += s.vy*dt;
+    s.life -= s.decay*dt;
+    if(s.life <= 0){ sparks.splice(i,1); continue; }
+    ctx.globalAlpha = Math.max(s.life, 0);
+    ctx.fillStyle = '#fff3c8';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,150,60,0.7)';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.size*1.8, 0, Math.PI*2); ctx.fill();
   }
   ctx.globalAlpha = 1;
 
   drawTrimmer();
 
-  // recompute % a few times a second, not every frame
   pctFrame += dt;
-  if(pctFrame > 20){ pctFrame = 0; updatePct(); }
+  if(pctFrame > 16){ pctFrame = 0; updatePct(); }
 
   requestAnimationFrame(loop);
 }
