@@ -74,6 +74,9 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .cta-btn:hover{background:var(--primary-dark); transform:translateY(-1px);}
 .cta-ghost{background:#fff; color:var(--primary-dark); border:1.5px solid var(--primary); padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px;}
 .hamburger{display:none; width:40px; height:40px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; align-items:center; justify-content:center; font-size:18px;}
+header.site.nav-open nav.main-links{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:#fff; border-bottom:1px solid var(--line); box-shadow:var(--shadow); padding:14px 24px; gap:2px;}
+header.site.nav-open nav.main-links a{padding:10px 4px; font-size:15px; border-bottom:1px solid var(--line);}
+header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 
 /* ---------- Hero ---------- */
 .hero{position:relative; background:linear-gradient(135deg,#eafaf6 0%, #f6faf9 45%, #f2effc 100%); overflow:hidden; padding:64px 0 40px;}
@@ -131,6 +134,7 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 /* Quick order */
 .quick-order{background:var(--surface-2);}
 .qo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media (max-width:960px){.qo-grid{grid-template-columns:1fr;}}
 .qo-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; display:flex; flex-direction:column; gap:12px; transition:transform .18s, box-shadow .18s;}
 .qo-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
 .qo-card .qo-icon{width:46px; height:46px; border-radius:12px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:22px;}
@@ -358,7 +362,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
       <button class="icon-btn" title="Account">👤</button>
       <button class="icon-btn" id="cartBtn" title="Cart">🛒<span class="count" id="cartCount">0</span></button>
-      <button class="hamburger" id="hamburger">☰</button>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
 </header>
@@ -366,9 +370,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="hero">
   <div class="wrap">
     <div class="hero-copy fade-up">
-      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Meds &amp; retail, in one 2-step checkout</div>
+      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Vitamins &amp; pharmacy meds, in one 2-step checkout</div>
       <h1><span data-i18n="hero.h1a">Your health, </span><span data-i18n="hero.h1b">delivered brilliantly.</span></h1>
-      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
+      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
       <div class="hero-cta-row">
         <a href="#quick-order" class="cta-btn" data-i18n="hero.cta1">Order your prescription →</a>
         <a href="#bestsellers" class="cta-ghost" data-i18n="hero.cta2">Shop best sellers</a>
@@ -443,9 +447,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         <h3 data-i18n="qo.card3.title">Reorder your regulars</h3>
         <p data-i18n="qo.card3.body">One tap re-adds your last order — no re-searching, no re-typing your details.</p>
         <div class="reorder-list">
-          <div class="reorder-item"><span data-i18n="qo.reorder1">Blood pressure script (monthly)</span><button data-reorder="1" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder1">Blackmores Fish Oil 1000mg</span><button data-reorder="6" data-i18n="qo.reorderBtn">Reorder</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
-          <div class="reorder-item"><span data-i18n="qo.reorder3">Sensitive skin moisturiser</span><button data-reorder="12" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder3">BioCeuticals ArmaForce</span><button data-reorder="25" data-i18n="qo.reorderBtn">Reorder</button></div>
         </div>
       </div>
     </div>
@@ -490,7 +494,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="compare">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">Same medicines and retail range — a much shorter path to "ordered."</p></div>
+      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">The same trusted brands — a much shorter path to "ordered."</p></div>
     </div>
     <div class="compare-wrap fade-up">
       <table class="compare">
@@ -597,7 +601,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 
 <!-- CART DRAWER -->
 <div class="overlay" id="overlay"></div>
-<div class="cart-drawer" id="cartDrawer">
+<div class="cart-drawer" id="cartDrawer" role="dialog" aria-label="Shopping cart">
   <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
   <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
   <div class="cart-foot">
@@ -679,7 +683,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
   <input type="text" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ---------------- Product data ---------------- */
@@ -780,8 +784,8 @@ const I18N = {
   en: {
     'nav.order':'Order a Script','nav.shop':'Shop','nav.bestsellers':'Best Sellers','nav.why':'Why BrightWell','nav.rewards':'Rewards',
     'search.placeholder':'Search medicines, vitamins, brands…',
-    'hero.eyebrow':'✦ Meds & retail, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
-    'hero.lead':"Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
+    'hero.eyebrow':'✦ Vitamins & pharmacy meds, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
+    'hero.lead':"Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
     'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
     'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
@@ -791,14 +795,12 @@ const I18N = {
     'qo.card2.title':'Search by medicine or PBS code','qo.card2.body':'Instant results as you type, with generic-brand price comparisons shown up front.',
     'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
     'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
-    'qo.reorder1':'Blood pressure script (monthly)','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Sensitive skin moisturiser','qo.reorderBtn':'Reorder',
+    'qo.reorder1':'Blackmores Fish Oil 1000mg','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'Reorder',
     'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
-    'cat.1':'Prescriptions','cat.2':'Vitamins','cat.3':'Skincare','cat.3b':'Beauty','cat.4':'Baby & Kids','cat.5':'First Aid','cat.6':'Hair & Beauty',
-    'cat.7':'Weight & Fitness','cat.8':'Everyday Essentials','cat.9':'Health Devices','cat.10':'Fragrance','cat.11':'Sleep & Wellness','cat.12':'Pet Health',
     'cat.c1':'Immune Support','cat.c2':'Omega-3 & Heart','cat.c3':'Probiotics & Gut','cat.c4':'Sleep & Magnesium','cat.c5':'Vitamins C & D','cat.c6':'Pharmacy Medicines',
-    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'16 quality lines →',
+    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'17 quality lines →',
     'tab.all':'All','tab.trending':'🔥 Trending exports','tab.vitamins':'Vitamins & Supplements','tab.pharmacy':'Pharmacy Medicines',
-    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'Same medicines and retail range — a much shorter path to "ordered."',
+    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'The same trusted brands — a much shorter path to "ordered."',
     'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
     'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
     'cmp.r2':'Prescription upload','cmp.r2us':'Photo upload, ~2 min, in-page','cmp.r2them':'Phone/fax or separate portal',
@@ -857,8 +859,8 @@ const I18N = {
   zh: {
     'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
     'search.placeholder':'搜索药品、维生素、品牌…',
-    'hero.eyebrow':'✦ 药品与日用品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
-    'hero.lead':'上传处方、一键重复购买,或浏览维生素与日常用品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
+    'hero.eyebrow':'✦ 维生素与药房药品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
+    'hero.lead':'上传处方、一键重复购买,或浏览优质维生素、保健品与药房药品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
     'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
     'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
@@ -868,14 +870,12 @@ const I18N = {
     'qo.card2.title':'按药品名称或PBS编码搜索','qo.card2.body':'边输入边显示结果,并提前展示同类仿制药的价格对比。',
     'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
     'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
-    'qo.reorder1':'降压药处方(每月)','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'敏感肌保湿霜','qo.reorderBtn':'重新购买',
+    'qo.reorder1':'Blackmores 鱼油 1000mg','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'重新购买',
     'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
-    'cat.1':'处方药','cat.2':'维生素','cat.3':'护肤品','cat.3b':'美妆','cat.4':'母婴用品','cat.5':'急救用品','cat.6':'美发美妆',
-    'cat.7':'体重管理与健身','cat.8':'日常用品','cat.9':'健康仪器','cat.10':'香水','cat.11':'睡眠与保健','cat.12':'宠物保健',
     'cat.c1':'免疫支持','cat.c2':'Omega-3 & 心脏健康','cat.c3':'益生菌 & 肠道健康','cat.c4':'睡眠 & 镁','cat.c5':'维生素C & D','cat.c6':'药房药品',
-    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'16款精选产品 →',
+    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'17款精选产品 →',
     'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.vitamins':'维生素与保健品','tab.pharmacy':'药房药品',
-    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样的药品与零售范围 —— 更短的下单路径。',
+    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样值得信赖的品牌 —— 更短的下单路径。',
     'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
     'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
     'cmp.r2':'处方上传','cmp.r2us':'拍照上传,约2分钟,页内完成','cmp.r2them':'电话/传真或跳转其他平台',
@@ -1051,19 +1051,19 @@ document.getElementById('pbsBtn').addEventListener('click', ()=>{
 /* ---------------- Reorder shortcuts ---------------- */
 document.querySelectorAll('[data-reorder]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    addToCart(parseInt(btn.dataset.reorder));
-    showToast(t('dyn.toastReordered'));
+    if(addToCart(parseInt(btn.dataset.reorder))) showToast(t('dyn.toastReordered'));
   });
 });
 
 /* ---------------- Cart logic ---------------- */
 function addToCart(id){
   const prod = PRODUCTS.find(p=>p.id===id);
-  if(!prod) return;
+  if(!prod) return false;
   const line = cart.find(l=>l.id===id);
   if(line) line.qty++;
   else cart.push({...prod, qty:1});
   renderCart();
+  return true;
 }
 function changeQty(id, delta){
   const line = cart.find(l=>l.id===id);
@@ -1121,7 +1121,19 @@ function openModal(m){ m.classList.add('open'); bwOverlay.classList.add('open');
 function closeModals(){ pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open'); }
 bwOverlay.addEventListener('click', closeModals);
 document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModals(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModals(); closeCart(); } });
+
+/* ---------------- Mobile nav (hamburger) ---------------- */
+const hamburgerBtn = document.getElementById('hamburger');
+const siteHeader = document.querySelector('header.site');
+hamburgerBtn.addEventListener('click', ()=>{
+  const open = siteHeader.classList.toggle('nav-open');
+  hamburgerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+document.querySelectorAll('nav.main-links a').forEach(a=>a.addEventListener('click', ()=>{
+  siteHeader.classList.remove('nav-open');
+  hamburgerBtn.setAttribute('aria-expanded','false');
+}));
 
 let pdQty = 1;
 function openProduct(id){
