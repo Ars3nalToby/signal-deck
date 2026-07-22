@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="shared.css">
 <style>
   body{display:flex; flex-direction:column; align-items:center;}
-  .stage{height: 66vh; min-height: 440px; max-height: 620px; cursor:none;}
+  .stage{height: 70vh; min-height: 460px; max-height: 660px; cursor:none;}
   .controls{display:flex; gap:12px; justify-content:center; margin-top:18px;}
   .btn{
     background: var(--bg-2); border:1px solid var(--line); color: var(--ink);
@@ -30,7 +30,7 @@
   <div class="title">Trim the Edges</div>
   <div class="right">
     <div class="progress-wrap">
-      <span id="pct-label">0% trimmed</span>
+      <span id="pct-label">0% clear</span>
       <div class="progress-bar"><div class="progress-fill" id="pct-fill"></div></div>
     </div>
     <button class="mute-toggle" id="mute-btn">🔊</button>
@@ -38,28 +38,24 @@
 </div>
 
 <div class="counter-row">
-  <div class="stat"><div class="num" id="edges-count">0</div><div class="lbl">Edges Finished</div></div>
+  <div class="stat"><div class="num" id="weeds-count">0</div><div class="lbl">Weeds Trimmed</div></div>
 </div>
 
 <div class="stage" id="stage">
   <canvas id="c"></canvas>
-  <div class="celebrate" id="celebrate">
-    <h2>Crisp edge.</h2>
-    <p>That concrete line is razor sharp. Overgrowth incoming?</p>
-    <button id="next-btn">Next Overgrown Edge</button>
-  </div>
 </div>
 
 <div class="controls">
-  <button class="btn primary" id="regrow-btn">Let It Overgrow</button>
+  <button class="btn primary" id="regrow-btn">Fresh Overgrowth</button>
 </div>
-<p class="hint">Hold to rev, then sweep the head along the concrete edge. Slow, low passes cut cleanest.</p>
+<p class="hint">Hold to rev &amp; walk forward. Move the head to sweep the weeds in the cracks ahead of you.</p>
 
 <script src="shared.js"></script>
 <script>
-// Top-down "overgrown grass spilling onto concrete sidewalk" edging scene.
-// Textures are baked into offscreen canvases once per resize; only blades,
-// trimmer, and effects redraw each frame.
+// First-person "walking a weedy patio and trimming" scene.
+// You hold the trimmer (bottom of frame); holding revs the head AND walks you
+// forward, scrolling the paver ground toward you. Sweep the head over the weed
+// tufts sprouting in the joints to cut them.
 
 const stageEl = document.getElementById('stage');
 const canvas = document.getElementById('c');
@@ -68,23 +64,24 @@ let W, H, DPR;
 
 Unwind.wireMuteButton(document.getElementById('mute-btn'));
 
-// ---------- scene layout ----------
-let borderY;                    // grass strip ends here, concrete begins
-let concreteBG, grassBG;        // baked texture canvases
+// ---------- config ----------
+const WALK_SPEED = 2.6;          // px advanced per frame-unit while holding
+const TILE = 300;                // paver texture tile height
+const HEAD_R = 30;               // brush-head cut radius (base)
+const TUFT_MIN = 26, TUFT_VAR = 34;
 
 // ---------- state ----------
-let blades = [];                // per-blade overgrown extensions into concrete
-let clippings = [];
-let dust = [];
-let sparks = [];
+let paverTile;
+let tufts = [];
+let clippings = [], dust = [], sparks = [];
 let mouseX = -300, mouseY = -300;
-let trimming = false;
 let headX = -300, headY = -300;
-let swayT = 0;
-let edgesDone = 0;
-let celebrated = false;
-const CUT_RADIUS = 30;
-const MIN_LEN = 2;
+let trimming = false;
+let dist = 0;                     // total distance walked (scroll offset)
+let spin = 0;                     // brush-head rotation
+let swayT = 0, bobPhase = 0;
+let weedsTrimmed = 0, nextMilestone = 100;
+let clearPct = 0, pctFrame = 0;
 
 function resize(){
   DPR = Math.min(window.devicePixelRatio||1, 2);
@@ -92,183 +89,120 @@ function resize(){
   canvas.width = W*DPR; canvas.height = H*DPR;
   canvas.style.width = W+'px'; canvas.style.height = H+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  borderY = Math.round(H*0.42);
-  concreteBG = bakeConcrete(W, H-borderY+8);
-  grassBG = bakeGrassMat(W, borderY+8);
-  plantGrass();
+  paverTile = bakePavers(W, TILE);
+  seedTufts(true);
 }
 
-// ---------- baked textures ----------
-function bakeConcrete(w, h){
+// ---------- depth: near (bottom) big, far (top) small ----------
+function depthScale(screenY){
+  const t = Unwind.clamp(screenY / H, 0, 1);
+  return 0.58 + 0.72 * t;
+}
+
+// ---------- baked paver ground (tiles vertically) ----------
+function bakePavers(w, tileH){
   const off = document.createElement('canvas');
-  off.width = w; off.height = h;
+  off.width = w; off.height = tileH;
   const o = off.getContext('2d');
-  // base
-  const grad = o.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0,'#9a978c');
-  grad.addColorStop(0.4,'#a6a397');
-  grad.addColorStop(1,'#8f8c81');
-  o.fillStyle = grad; o.fillRect(0,0,w,h);
-  // large tonal patches
-  for(let i=0;i<50;i++){
-    const x = Math.random()*w, y = Math.random()*h, r = 60+Math.random()*140;
-    const c = 140 + (Math.random()-0.5)*40;
-    o.fillStyle = 'rgba('+c+','+(c-4)+','+(c-14)+','+(0.03+Math.random()*0.05)+')';
-    o.beginPath(); o.arc(x,y,r,0,Math.PI*2); o.fill();
+  const rowH = tileH/2;
+  o.fillStyle = '#8f8b80'; o.fillRect(0,0,w,tileH);
+
+  function slab(x,y,sw,sh){
+    const tone = 138 + (Math.random()-0.5)*30;
+    const g = o.createLinearGradient(x,y,x,y+sh);
+    g.addColorStop(0, 'rgb('+(tone+8)+','+(tone+5)+','+(tone-4)+')');
+    g.addColorStop(1, 'rgb('+(tone-14)+','+(tone-16)+','+(tone-24)+')');
+    o.fillStyle = g; o.fillRect(x+2,y+2,sw-4,sh-4);
+    // top-left lit bevel
+    o.fillStyle = 'rgba(255,255,255,0.10)'; o.fillRect(x+2,y+2,sw-4,2); o.fillRect(x+2,y+2,2,sh-4);
+    // bottom-right dark bevel
+    o.fillStyle = 'rgba(0,0,0,0.18)'; o.fillRect(x+2,y+sh-4,sw-4,2); o.fillRect(x+sw-4,y+2,2,sh-4);
   }
-  // slight sun-side warmth top-left
-  const warm = o.createRadialGradient(w*0.2, 0, 0, w*0.2, 0, w*0.9);
-  warm.addColorStop(0,'rgba(255,230,180,0.12)');
-  warm.addColorStop(1,'rgba(255,230,180,0)');
-  o.fillStyle = warm; o.fillRect(0,0,w,h);
-  // fine noise via imageData
+  // two brick-laid rows (offset so vertical joints don't line up)
+  const cols = 4, sw = w/cols;
+  for(let r=0;r<2;r++){
+    const yy = r*rowH;
+    const offx = r%2 ? -sw/2 : 0;
+    for(let cx=offx; cx<w+sw; cx+=sw){ slab(cx, yy, sw, rowH); }
+  }
+  // fine grit noise
   try{
-    const img = o.getImageData(0,0,w,h); const d = img.data;
+    const img = o.getImageData(0,0,w,tileH); const d = img.data;
     for(let i=0;i<d.length;i+=4){
-      const n = (Math.random()-0.5)*22;
-      d[i]   = Math.max(0,Math.min(255,d[i]+n));
-      d[i+1] = Math.max(0,Math.min(255,d[i+1]+n));
-      d[i+2] = Math.max(0,Math.min(255,d[i+2]+n));
+      const n = (Math.random()-0.5)*20;
+      d[i]=Math.max(0,Math.min(255,d[i]+n));
+      d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));
+      d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));
     }
     o.putImageData(img,0,0);
   }catch(e){}
-  // aggregate flecks
-  const flecks = Math.floor(w*h/45);
-  for(let i=0;i<flecks;i++){
-    const x = Math.random()*w, y = Math.random()*h;
-    const g = 55+Math.random()*70;
-    o.fillStyle = 'rgba('+(g-8)+','+g+','+(g-16)+','+(0.35+Math.random()*0.5)+')';
-    o.fillRect(x,y,1,1);
-    if(Math.random()<0.15) o.fillRect(x+1,y,1,1);
-  }
-  // hairline cracks
-  for(let i=0;i<4;i++){
-    o.strokeStyle = 'rgba(50,45,40,'+(0.25+Math.random()*0.2)+')';
-    o.lineWidth = 0.7;
-    o.beginPath();
-    let cx = Math.random()*w, cy = 20+Math.random()*(h-40);
-    o.moveTo(cx,cy);
-    for(let j=0;j<25;j++){
-      cx += (Math.random()-0.4)*42;
-      cy += (Math.random()-0.5)*18;
-      o.lineTo(cx,cy);
-    }
-    o.stroke();
-  }
-  // subtle expansion joint (straight faint line ~1/3 across)
-  const jx = Math.floor(w*(0.28+Math.random()*0.4));
-  o.strokeStyle = 'rgba(35,32,28,0.4)';
-  o.lineWidth = 1.4;
-  o.beginPath(); o.moveTo(jx, -5); o.lineTo(jx+(Math.random()-0.5)*4, h+5); o.stroke();
-  o.strokeStyle = 'rgba(255,255,255,0.06)';
-  o.lineWidth = 0.6;
-  o.beginPath(); o.moveTo(jx+1, -5); o.lineTo(jx+1, h+5); o.stroke();
-  // vignette darkening at edges
-  const vg = o.createLinearGradient(0,0,0,h);
-  vg.addColorStop(0,'rgba(0,0,0,0.18)');
-  vg.addColorStop(0.15,'rgba(0,0,0,0)');
-  vg.addColorStop(1,'rgba(0,0,0,0.08)');
-  o.fillStyle = vg; o.fillRect(0,0,w,h);
-  return off;
-}
-
-function bakeGrassMat(w, h){
-  const off = document.createElement('canvas');
-  off.width = w; off.height = h;
-  const o = off.getContext('2d');
-  // deep verdant base with slight upper darkening (further = deeper)
-  const grad = o.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0,'#2f5527');
-  grad.addColorStop(0.6,'#3f7b34');
-  grad.addColorStop(1,'#4b9040');
-  o.fillStyle = grad; o.fillRect(0,0,w,h);
-  // warm sunlight tint
-  const sun = o.createRadialGradient(w*0.25, 0, 0, w*0.25, 0, w*0.85);
-  sun.addColorStop(0,'rgba(255,235,150,0.18)');
-  sun.addColorStop(1,'rgba(255,235,150,0)');
-  o.fillStyle = sun; o.fillRect(0,0,w,h);
-  // fine top-down blade texture (short slashes)
-  const count = Math.floor(w*h*0.55);
-  for(let i=0;i<count;i++){
-    const x = Math.random()*w, y = Math.random()*h;
-    const len = 2 + Math.random()*7;
-    const lean = (Math.random()-0.5)*3.5;
-    const g = 105 + Math.random()*85;
-    const r = 45 + Math.random()*35;
-    const b = 30 + Math.random()*25;
-    o.strokeStyle = 'rgba('+r+','+g+','+b+','+(0.55+Math.random()*0.4)+')';
-    o.lineWidth = 0.7+Math.random()*0.9;
-    o.lineCap = 'round';
-    o.beginPath(); o.moveTo(x,y); o.lineTo(x+lean, y-len); o.stroke();
-  }
-  // bright yellow-green highlight tips scattered
-  for(let i=0;i<w*0.5;i++){
-    const x = Math.random()*w, y = Math.random()*h;
-    o.fillStyle = 'rgba(210,235,140,'+(0.25+Math.random()*0.35)+')';
+  // aggregate flecks + scattered debris
+  for(let i=0;i<w*tileH/40;i++){
+    const x=Math.random()*w, y=Math.random()*tileH, g=60+Math.random()*80;
+    o.fillStyle='rgba('+(g-8)+','+g+','+(g-14)+','+(0.3+Math.random()*0.5)+')';
     o.fillRect(x,y,1,1);
   }
-  // sparse darker clumps (patchiness)
-  for(let i=0;i<25;i++){
-    const x = Math.random()*w, y = Math.random()*h, r = 25+Math.random()*45;
-    o.fillStyle = 'rgba(30,55,25,'+(0.06+Math.random()*0.08)+')';
-    o.beginPath(); o.arc(x,y,r,0,Math.PI*2); o.fill();
+  for(let i=0;i<w/12;i++){
+    const x=Math.random()*w, y=Math.random()*tileH;
+    o.fillStyle='rgba('+(60+Math.random()*30)+','+(50+Math.random()*24)+','+(30+Math.random()*18)+','+(0.35+Math.random()*0.4)+')';
+    o.fillRect(x,y, 1+Math.random()*3, 1+Math.random()*2);
+  }
+  // joints: darker recessed gaps + mossy tint
+  o.strokeStyle='rgba(38,34,28,0.55)'; o.lineWidth=3;
+  [0, rowH, tileH].forEach(y=>{ o.beginPath(); o.moveTo(0,y); o.lineTo(w,y); o.stroke(); });
+  o.strokeStyle='rgba(70,90,45,0.25)'; o.lineWidth=4;
+  [rowH].forEach(y=>{ o.beginPath(); o.moveTo(0,y+0.5); o.lineTo(w,y+0.5); o.stroke(); });
+  // vertical joints
+  o.strokeStyle='rgba(38,34,28,0.5)'; o.lineWidth=3;
+  for(let r=0;r<2;r++){
+    const yy=r*rowH, offx = r%2 ? -sw/2 : 0;
+    for(let cx=offx; cx<=w+sw; cx+=sw){ o.beginPath(); o.moveTo(cx,yy); o.lineTo(cx,yy+rowH); o.stroke(); }
   }
   return off;
 }
 
-// ---------- overgrown blade layer ----------
-function plantGrass(){
-  blades = [];
-  // dense forward-drooping overgrowth: 4 blades per pixel of width
-  const count = Math.floor(W * 4);
-  for(let i=0;i<count;i++){
-    const x = Math.random()*W;
-    const rootJit = -(Math.random()*8) - 1;                   // roots planted slightly INSIDE grass mat (above border)
-    const maxLen = 42 + Math.random()*110;                    // overgrown extension into concrete area
-    const curl = (Math.random()-0.5)*0.55;                    // side lean while drooping over concrete
-    // color palette shifts blade to blade
-    const rBase = 50 + Math.random()*35;
-    const gBase = 105 + Math.random()*60;
-    const bBase = 32 + Math.random()*22;
+// ---------- weed tufts sprouting from joints ----------
+function newTuft(worldY){
+  const bladeN = 5 + Math.floor(Math.random()*4);
+  const gBase = 110 + Math.random()*55;
+  const rBase = 55 + Math.random()*40;
+  const bBase = 34 + Math.random()*22;
+  const blades = [];
+  for(let i=0;i<bladeN;i++){
     blades.push({
-      x,
-      rootY: borderY + rootJit,
-      length: maxLen,
-      maxLength: maxLen,
-      curl,
-      width: 1.2 + Math.random()*1.6,
-      phase: Math.random()*Math.PI*2,
-      swayAmt: 0.06 + Math.random()*0.12,
-      rootCol: 'rgb('+Math.round(rBase*0.7)+','+Math.round(gBase*0.7)+','+Math.round(bBase*0.7)+')',
-      midCol:  'rgb('+Math.round(rBase)+','+Math.round(gBase)+','+Math.round(bBase)+')',
-      tipCol:  'rgb('+Math.round(rBase+40)+','+Math.round(gBase+35)+','+Math.round(bBase+10)+')',
-      fresh: 0
+      ang: (i/(bladeN-1) - 0.5) * (0.9 + Math.random()*0.5) + (Math.random()-0.5)*0.15,
+      lenF: 0.7 + Math.random()*0.5,
+      curl: (Math.random()-0.5)*0.5,
+      w: 1.4 + Math.random()*1.4
     });
   }
-  // painter's order: front (further into concrete) drawn last so they overlap
-  blades.sort((a,b)=> a.length - b.length);
-  celebrated = false;
-  clippings.length = 0; dust.length = 0; sparks.length = 0;
-  updatePct();
+  return {
+    x: Math.random()*W,
+    worldY: worldY,
+    size: TUFT_MIN + Math.random()*TUFT_VAR,
+    h: 1,                                   // 1 = full, ~0.12 = cut stubble
+    phase: Math.random()*Math.PI*2,
+    sway: 0.04 + Math.random()*0.06,
+    rootCol: 'rgb('+Math.round(rBase*0.6)+','+Math.round(gBase*0.55)+','+Math.round(bBase*0.6)+')',
+    midCol:  'rgb('+Math.round(rBase)+','+Math.round(gBase)+','+Math.round(bBase)+')',
+    tipCol:  'rgb('+Math.round(rBase+35)+','+Math.round(gBase+40)+','+Math.round(bBase+8)+')',
+    blades,
+    hasFlower: Math.random() < 0.18,
+    fresh: 0
+  };
 }
-
-function updatePct(){
-  let cut = 0;
-  const targetLen = 8;
-  for(const b of blades) if(b.length <= targetLen) cut++;
-  const pct = blades.length ? Math.round(cut/blades.length*100) : 0;
-  document.getElementById('pct-label').textContent = pct+'% trimmed';
-  document.getElementById('pct-fill').style.width = pct+'%';
-  if(pct >= 93 && !celebrated){
-    celebrated = true;
-    stopEngine();
-    document.getElementById('celebrate').classList.add('show');
-    Unwind.confetti(stageEl, {colors:['#a8d96a','#6ee7d8','#dff2b0','#4a7a2c']});
+function seedTufts(reset){
+  if(reset){ tufts = []; dist = 0; }
+  const N = Math.floor(W*H/2600);
+  const span = H*1.7;
+  tufts = [];
+  for(let i=0;i<N;i++){
+    tufts.push(newTuft(dist - H*0.2 + Math.random()*span));
   }
-  return pct;
 }
+function tuftScreenY(t){ return H - (t.worldY - dist); }
 
-// ---------- audio ----------
+// ---------- audio (2-stroke brush cutter) ----------
 let actx, engNodes = null;
 function ensureAudio(){
   if(Unwind.isMuted()) return null;
@@ -316,370 +250,328 @@ function stopEngine(){
   }catch(e){}
 }
 
-// ---------- cutting: line-circle intersection along blade segment ----------
+// ---------- cutting ----------
 let cutThisFrame = 0;
-function cutAt(tx, ty){
+function cutSweep(){
   cutThisFrame = 0;
-  const r = CUT_RADIUS, r2 = r*r;
-  for(let i=0; i<blades.length; i++){
-    const b = blades[i];
-    if(b.length <= MIN_LEN) continue;
-    const x0 = b.x, y0 = b.rootY;
-    const dx = b.curl * b.length, dy = b.length;
-    // parametric line x = x0 + t*dx, y = y0 + t*dy, t in [0,1]
-    const fx = x0 - tx, fy = y0 - ty;
-    const A = dx*dx + dy*dy;
-    if(A < 1e-6) continue;
-    const B = 2*(fx*dx + fy*dy);
-    const C = fx*fx + fy*fy - r2;
-    const disc = B*B - 4*A*C;
-    if(disc < 0) continue;
-    const sq = Math.sqrt(disc);
-    const t1 = (-B - sq)/(2*A);
-    const t2 = (-B + sq)/(2*A);
-    if(t2 < 0 || t1 > 1) continue;             // segment misses circle
-    const cutT = Math.max(0, t1) - 0.03;
-    const newLen = Math.max(MIN_LEN, b.length * Math.max(0, cutT));
-    const trimmed = b.length - newLen;
-    if(trimmed > 0.6){
-      b.length = newLen;
-      b.fresh = 1;
+  if(headX < -100) return;
+  const scale = depthScale(headY);
+  const r = HEAD_R * scale, r2 = r*r;
+  for(const t of tufts){
+    if(t.h <= 0.14) continue;
+    const sy = tuftScreenY(t);
+    const dx = t.x - headX, dy = sy - headY;
+    if(dx*dx + dy*dy <= r2){
+      t.h = 0.12;
+      t.fresh = 1;
       cutThisFrame++;
-      // clipping fragment flying off from where the cut happened
-      if(clippings.length < 300 && Math.random() < 0.6){
-        const cx = x0 + dx*cutT;
-        const cy = y0 + dy*cutT;
-        const away = Math.atan2(cy - ty, cx - tx);
-        const sp = 2 + Math.random()*5;
+      weedsTrimmed++;
+      // fling clippings outward from the head
+      const spurt = 3 + Math.floor(Math.random()*3);
+      for(let k=0;k<spurt && clippings.length<340;k++){
+        const a = Math.atan2(dy, dx) + (Math.random()-0.5)*1.4;
+        const sp = 2.5 + Math.random()*5;
         clippings.push({
-          x: cx, y: cy,
-          vx: Math.cos(away)*sp + (Math.random()-0.5)*2,
-          vy: Math.sin(away)*sp - 1 - Math.random()*2,
-          len: Math.min(trimmed, 4+Math.random()*12),
-          rot: Math.random()*Math.PI, vrot:(Math.random()-0.5)*0.7,
-          color: b.midCol,
-          life: 1, decay: 0.013+Math.random()*0.012
+          x: t.x, y: sy,
+          vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - 1.5,
+          len: (5+Math.random()*10)*scale,
+          rot: Math.random()*Math.PI, vrot:(Math.random()-0.5)*0.8,
+          color: t.midCol, life: 1, decay: 0.014+Math.random()*0.012
         });
       }
     }
   }
-  // scraping concrete near-edge: bright orange sparks
-  if(trimming && Math.abs(ty - borderY) < 10 && cutThisFrame < 3 && sparks.length < 40 && Math.random()<0.6){
-    for(let k=0;k<2;k++){
-      const a = -Math.PI/2 + (Math.random()-0.5)*Math.PI*0.8;
-      sparks.push({
-        x: tx+(Math.random()-0.5)*6, y: ty,
-        vx: Math.cos(a)*(2+Math.random()*3), vy: Math.sin(a)*(2+Math.random()*3),
-        life: 0.6, decay: 0.04+Math.random()*0.03,
-        size: 1+Math.random()*1.4
-      });
-    }
+  if(weedsTrimmed >= nextMilestone){
+    nextMilestone += 100;
+    Unwind.confetti(stageEl, {colors:['#a8d96a','#6ee7d8','#dff2b0','#4a7a2c']});
+    const el = document.getElementById('weeds-count'); Unwind.pop(el);
   }
-  // dust puff on bare concrete
-  if(trimming && cutThisFrame === 0 && ty > borderY+18 && Math.random()<0.25 && dust.length < 40){
-    dust.push({
-      x: tx+(Math.random()-0.5)*20, y: ty+6,
-      r: 3+Math.random()*5,
-      vx:(Math.random()-0.5)*1.2, vy:-(0.3+Math.random()*0.6),
-      life: 0.7, decay: 0.02
-    });
+  // engine grinds against stone if sweeping over bare joint
+  if(trimming && cutThisFrame === 0 && Math.random()<0.5 && sparks.length<36){
+    for(let k=0;k<2;k++){
+      const a = -Math.PI/2 + (Math.random()-0.5)*Math.PI*0.9;
+      sparks.push({ x: headX+(Math.random()-0.5)*10, y: headY+(Math.random()-0.5)*10,
+        vx: Math.cos(a)*(2+Math.random()*3), vy: Math.sin(a)*(2+Math.random()*3),
+        life: 0.55, decay: 0.045+Math.random()*0.03, size: 1+Math.random()*1.3 });
+    }
   }
 }
 
 // ---------- drawing ----------
-function drawScene(){
-  ctx.drawImage(grassBG, 0, 0);
-  ctx.drawImage(concreteBG, 0, borderY - 4);
-  // grass-side shadow onto concrete (contact AO)
-  const ao = ctx.createLinearGradient(0, borderY-2, 0, borderY+22);
-  ao.addColorStop(0,'rgba(0,0,0,0.28)');
-  ao.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle = ao; ctx.fillRect(0, borderY-2, W, 24);
-  // a faint highlight rim along the crisp concrete edge (once revealed)
-  ctx.strokeStyle = 'rgba(255,240,210,0.06)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, borderY+0.5); ctx.lineTo(W, borderY+0.5); ctx.stroke();
+function drawGround(){
+  const off = ((dist % TILE) + TILE) % TILE;
+  for(let y = off - TILE; y < H; y += TILE){
+    ctx.drawImage(paverTile, 0, y);
+  }
+  // distance haze toward the top (things ahead are hazier/brighter)
+  const haze = ctx.createLinearGradient(0,0,0,H*0.55);
+  haze.addColorStop(0,'rgba(196,205,196,0.30)');
+  haze.addColorStop(1,'rgba(196,205,196,0)');
+  ctx.fillStyle = haze; ctx.fillRect(0,0,W,H*0.55);
+  // warm sun from upper-left
+  const sun = ctx.createRadialGradient(W*0.28, H*0.1, 0, W*0.28, H*0.1, W*0.9);
+  sun.addColorStop(0,'rgba(255,238,180,0.10)'); sun.addColorStop(1,'rgba(255,238,180,0)');
+  ctx.fillStyle = sun; ctx.fillRect(0,0,W,H);
+  // shadow of the operator (you) creeping in from the bottom
+  const me = ctx.createLinearGradient(0,H,0,H*0.7);
+  me.addColorStop(0,'rgba(0,0,0,0.22)'); me.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = me; ctx.fillRect(0,H*0.7,W,H*0.3);
 }
 
-function drawBlade(b, wind){
-  if(b.length <= MIN_LEN + 0.5){
-    // freshly-cut stub: tiny bright green nub
-    ctx.fillStyle = b.tipCol;
-    ctx.beginPath(); ctx.arc(b.x, b.rootY+1, b.width*0.6, 0, Math.PI*2); ctx.fill();
+function drawTuft(t){
+  const sy = tuftScreenY(t);
+  if(sy < -40 || sy > H+40) return;
+  const scale = depthScale(sy);
+  const wind = Math.sin(swayT*1.3 + t.phase) * t.sway;
+  const rootX = t.x, rootY = sy;
+  if(t.h <= 0.14){
+    // cut stubble: a few short pale nubs
+    ctx.strokeStyle = t.rootCol; ctx.lineWidth = 1.6*scale; ctx.lineCap='round';
+    for(let i=0;i<3;i++){
+      const bx = rootX + (i-1)*3*scale;
+      ctx.beginPath(); ctx.moveTo(bx, rootY); ctx.lineTo(bx+(Math.random()-0.5)*2, rootY - (3+Math.random()*3)*scale); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(214,226,150,0.7)';
+    ctx.beginPath(); ctx.arc(rootX, rootY-1, 1.6*scale, 0, Math.PI*2); ctx.fill();
     return;
   }
-  const sway = Math.sin(swayT*1.4 + b.phase) * b.swayAmt * (b.length/b.maxLength) + wind;
-  const rootX = b.x, rootY = b.rootY;
-  const tipX = rootX + (b.curl + sway) * b.length;
-  const tipY = rootY + b.length;
-  const midX = rootX + (b.curl*0.4 + sway*0.6) * b.length;
-  const midY = rootY + b.length*0.55;
-  // shadow (offset toward lower-right, sunlight from upper-left)
-  ctx.save();
-  ctx.strokeStyle = 'rgba(20,30,15,0.28)';
-  ctx.lineCap = 'round';
-  ctx.lineWidth = b.width * 1.35;
-  ctx.beginPath();
-  ctx.moveTo(rootX+2, rootY+2);
-  ctx.quadraticCurveTo(midX+2, midY+2, tipX+2, tipY+2);
-  ctx.stroke();
-  ctx.restore();
-  // main blade with root->tip gradient
-  const grad = ctx.createLinearGradient(rootX, rootY, tipX, tipY);
-  grad.addColorStop(0, b.rootCol);
-  grad.addColorStop(0.55, b.midCol);
-  if(b.fresh > 0.02){
-    // just cut: bright fresh interior tip
-    grad.addColorStop(1, 'rgb(210,240,120)');
-  }else{
-    grad.addColorStop(1, b.tipCol);
+  const L = t.size * t.h * scale;
+  // soft shadow
+  if(L > 10){
+    ctx.strokeStyle = 'rgba(18,26,12,0.22)'; ctx.lineCap='round';
+    for(const bl of t.blades){
+      const a = bl.ang + wind;
+      const bl_L = L*bl.lenF;
+      const tipX = rootX + Math.sin(a)*bl_L + bl.curl*bl_L*0.4 + 2.5;
+      const tipY = rootY - Math.cos(a)*bl_L + 2.5;
+      ctx.lineWidth = bl.w*scale*1.2;
+      ctx.beginPath(); ctx.moveTo(rootX+2.5, rootY+2.5);
+      ctx.quadraticCurveTo(rootX + Math.sin(a)*bl_L*0.5 + 2.5, rootY - Math.cos(a)*bl_L*0.5 + 2.5, tipX, tipY);
+      ctx.stroke();
+    }
   }
-  ctx.strokeStyle = grad;
-  ctx.lineCap = 'round';
-  ctx.lineWidth = b.width;
-  ctx.beginPath();
-  ctx.moveTo(rootX, rootY);
-  ctx.quadraticCurveTo(midX, midY, tipX, tipY);
-  ctx.stroke();
-  // tiny highlight streak on lit side of thicker blades
-  if(b.width > 2){
-    ctx.strokeStyle = 'rgba(230,245,180,0.35)';
-    ctx.lineWidth = b.width*0.35;
-    ctx.beginPath();
-    ctx.moveTo(rootX-0.6, rootY);
-    ctx.quadraticCurveTo(midX-0.6, midY, tipX-0.6, tipY);
-    ctx.stroke();
+  // blades
+  for(const bl of t.blades){
+    const a = bl.ang + wind;
+    const bl_L = L*bl.lenF;
+    const midX = rootX + Math.sin(a)*bl_L*0.5 + bl.curl*bl_L*0.2;
+    const midY = rootY - Math.cos(a)*bl_L*0.5;
+    const tipX = rootX + Math.sin(a)*bl_L + bl.curl*bl_L*0.4;
+    const tipY = rootY - Math.cos(a)*bl_L;
+    const g = ctx.createLinearGradient(rootX, rootY, tipX, tipY);
+    g.addColorStop(0, t.rootCol);
+    g.addColorStop(0.5, t.midCol);
+    g.addColorStop(1, t.fresh > 0.02 ? 'rgb(214,238,120)' : t.tipCol);
+    ctx.strokeStyle = g; ctx.lineWidth = bl.w*scale; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(rootX, rootY); ctx.quadraticCurveTo(midX, midY, tipX, tipY); ctx.stroke();
+  }
+  if(t.hasFlower){
+    ctx.fillStyle = '#f2d84a';
+    ctx.beginPath(); ctx.arc(rootX + Math.sin(wind)*L*0.3, rootY - L*0.9, 2.4*scale, 0, Math.PI*2); ctx.fill();
   }
 }
 
 function drawTrimmer(){
   if(headX < -100) return;
-  // ground shadow blob
+  const scale = depthScale(headY);
+  const pivotX = W*0.5, pivotY = H + 70;      // "you", just off the bottom
+  const ang = Math.atan2(headY - pivotY, headX - pivotX);
+
+  // head ground shadow
   ctx.save();
-  const sx = headX + 6, sy = headY + 8;
-  const sg = ctx.createRadialGradient(sx, sy, 2, sx, sy, CUT_RADIUS+8);
-  sg.addColorStop(0,'rgba(0,0,0,0.35)');
-  sg.addColorStop(0.6,'rgba(0,0,0,0.18)');
-  sg.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle = sg;
-  ctx.beginPath(); ctx.ellipse(sx, sy, CUT_RADIUS+6, (CUT_RADIUS+6)*0.5, 0, 0, Math.PI*2); ctx.fill();
+  const shg = ctx.createRadialGradient(headX+4, headY+8, 2, headX+4, headY+8, (HEAD_R+10)*scale);
+  shg.addColorStop(0,'rgba(0,0,0,0.34)'); shg.addColorStop(0.6,'rgba(0,0,0,0.16)'); shg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = shg;
+  ctx.beginPath(); ctx.ellipse(headX+4, headY+8, (HEAD_R+8)*scale, (HEAD_R+8)*scale*0.55, 0, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 
+  // ---- metal shaft from you to the head ----
+  ctx.save();
+  ctx.translate(pivotX, pivotY);
+  ctx.rotate(ang + Math.PI/2);
+  const shaftLen = Math.hypot(headX-pivotX, headY-pivotY);
+  const shaftW = 11;
+  const sg = ctx.createLinearGradient(-shaftW/2,0,shaftW/2,0);
+  sg.addColorStop(0,'#7d848c'); sg.addColorStop(0.4,'#c6ccd2'); sg.addColorStop(0.6,'#eef2f6'); sg.addColorStop(1,'#5b626a');
+  ctx.fillStyle = sg;
+  ctx.fillRect(-shaftW/2, 0, shaftW, shaftLen);
+  ctx.restore();
+
+  // ---- green motor/gearbox housing + spinning metal brush head ----
   ctx.save();
   ctx.translate(headX, headY);
+  ctx.scale(scale, scale);
+  ctx.rotate(ang + Math.PI/2);
 
-  // motor housing / guard behind head, orange
-  ctx.save();
-  ctx.rotate(-0.35);
-  // shaft going up-right toward operator
-  const shaftG = ctx.createLinearGradient(0,0,220,0);
-  shaftG.addColorStop(0,'#2a2e34');
-  shaftG.addColorStop(0.5,'#5a6068');
-  shaftG.addColorStop(1,'#3a3f45');
-  ctx.fillStyle = shaftG;
-  ctx.fillRect(18, -4, 240, 8);
-  // shaft highlight
-  ctx.fillStyle = 'rgba(255,255,255,0.18)';
-  ctx.fillRect(18, -3.5, 240, 1);
-  // loop handle
-  ctx.strokeStyle = '#1e2226'; ctx.lineWidth = 8;
-  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.15, Math.PI*1.1); ctx.stroke();
-  ctx.strokeStyle = '#3a3f45'; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.15, Math.PI*1.1); ctx.stroke();
-  // rubber grip
-  ctx.strokeStyle = '#111';
-  ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.arc(140, -18, 24, Math.PI*0.35, Math.PI*0.85); ctx.stroke();
+  // green angular gearbox housing (sits on the shaft, just behind the head)
+  const gh = ctx.createLinearGradient(0, 26, 0, 2);
+  gh.addColorStop(0,'#5fa01e'); gh.addColorStop(0.5,'#8ed12f'); gh.addColorStop(1,'#4f8a18');
+  ctx.fillStyle = gh;
+  ctx.beginPath();
+  ctx.moveTo(-16, 30); ctx.lineTo(16, 30); ctx.lineTo(13, 6);
+  ctx.lineTo(6, -6); ctx.lineTo(-6, -6); ctx.lineTo(-13, 6); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(-13,6); ctx.lineTo(-6,-6); ctx.stroke();
+  ctx.fillStyle='rgba(0,0,0,0.22)';
+  ctx.beginPath(); ctx.moveTo(16,30); ctx.lineTo(13,6); ctx.lineTo(6,-6); ctx.lineTo(9,28); ctx.closePath(); ctx.fill();
+  // bolt collar under the head
+  ctx.fillStyle='#2a2e33'; ctx.beginPath(); ctx.arc(0,-6,7,0,Math.PI*2); ctx.fill();
+
   ctx.restore();
 
-  // orange guard shell arc (behind + above head)
-  const guardG = ctx.createLinearGradient(-30, -18, 30, 6);
-  guardG.addColorStop(0,'#c8481e');
-  guardG.addColorStop(0.5,'#e5642a');
-  guardG.addColorStop(1,'#a53614');
-  ctx.fillStyle = guardG;
-  ctx.beginPath();
-  ctx.ellipse(6, -12, 32, 15, -0.28, Math.PI*0.9, Math.PI*2.1);
-  ctx.closePath(); ctx.fill();
-  // guard highlight
-  ctx.strokeStyle = 'rgba(255,220,180,0.55)';
-  ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  ctx.ellipse(6, -14, 30, 13, -0.28, Math.PI*1.05, Math.PI*1.9);
-  ctx.stroke();
-  // guard underside shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.beginPath();
-  ctx.ellipse(6, -9, 27, 10, -0.28, Math.PI, Math.PI*2);
-  ctx.fill();
-
-  // metal head cap
-  ctx.fillStyle = '#20242a';
-  ctx.beginPath(); ctx.ellipse(0, 0, 14, 9, 0, 0, Math.PI*2); ctx.fill();
-  const capG = ctx.createRadialGradient(-3, -3, 1, 0, 0, 12);
-  capG.addColorStop(0, 'rgba(255,255,255,0.5)');
-  capG.addColorStop(0.5, 'rgba(255,255,255,0.1)');
-  capG.addColorStop(1, 'rgba(0,0,0,0.15)');
-  ctx.fillStyle = capG;
-  ctx.beginPath(); ctx.ellipse(0, 0, 12, 7, 0, 0, Math.PI*2); ctx.fill();
-  // hex bolt center
-  ctx.fillStyle = '#0e1114';
-  ctx.beginPath();
-  for(let i=0;i<6;i++){
-    const a = i*Math.PI/3;
-    const px = Math.cos(a)*3.2, py = Math.sin(a)*3.2;
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-  }
-  ctx.closePath(); ctx.fill();
-
-  // spinning line
+  // ---- brush head: radiating metal flails, spinning ----
+  ctx.save();
+  ctx.translate(headX, headY);
+  ctx.scale(scale, scale);
+  // motion-blur disc while revving
   if(trimming){
-    // motion-blur disc
-    for(let i=3;i>=0;i--){
-      const a = 0.06 + i*0.05;
-      ctx.strokeStyle = 'rgba(240,245,250,'+a+')';
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      ctx.ellipse(0, 2, CUT_RADIUS - i*2.5, (CUT_RADIUS - i*2.5)*0.36, 0, 0, Math.PI*2);
-      ctx.stroke();
-    }
-    // outer soft white glow
-    const glow = ctx.createRadialGradient(0, 2, CUT_RADIUS*0.6, 0, 2, CUT_RADIUS+2);
-    glow.addColorStop(0,'rgba(255,255,255,0)');
-    glow.addColorStop(0.7,'rgba(255,255,255,0.08)');
-    glow.addColorStop(1,'rgba(255,255,255,0)');
+    const glow = ctx.createRadialGradient(0,0,HEAD_R*0.4,0,0,HEAD_R+3);
+    glow.addColorStop(0,'rgba(230,236,242,0.10)');
+    glow.addColorStop(0.75,'rgba(210,216,222,0.16)');
+    glow.addColorStop(1,'rgba(210,216,222,0)');
     ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.ellipse(0,2, CUT_RADIUS+3, (CUT_RADIUS+3)*0.4, 0, 0, Math.PI*2); ctx.fill();
-    // fast-strobe wisps (asymmetric to sell rotation)
-    const phase = (performance.now()*0.06) % (Math.PI*2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-    ctx.lineWidth = 1.4;
-    for(let k=0;k<2;k++){
-      const a = phase + k*Math.PI;
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a)*6, 2+Math.sin(a)*2);
-      ctx.lineTo(Math.cos(a)*(CUT_RADIUS-2), 2+Math.sin(a)*(CUT_RADIUS-2)*0.36);
-      ctx.stroke();
-    }
-  }else{
-    // static line tips at rest
-    ctx.strokeStyle = '#dfe5ea'; ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.moveTo(-12,2); ctx.lineTo(-CUT_RADIUS*0.9, 6); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(12,2); ctx.lineTo(CUT_RADIUS*0.9, -1); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,HEAD_R+2,0,Math.PI*2); ctx.fill();
   }
+  ctx.rotate(spin);
+  const spokes = 15;
+  ctx.strokeStyle = trimming ? 'rgba(200,206,212,0.45)' : '#aeb4ba';
+  for(let i=0;i<spokes;i++){
+    const a = (i/spokes)*Math.PI*2;
+    ctx.save(); ctx.rotate(a);
+    ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(0,5); ctx.lineTo(0, HEAD_R); ctx.stroke();
+    // frayed wire tip
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(0, HEAD_R); ctx.lineTo(1.6, HEAD_R+3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, HEAD_R); ctx.lineTo(-1.4, HEAD_R+2.5); ctx.stroke();
+    ctx.restore();
+  }
+  // crisper leading spokes so rotation reads even at speed
+  if(trimming){
+    ctx.strokeStyle = '#e8edf2'; ctx.lineWidth = 2.4;
+    for(let i=0;i<3;i++){
+      const a = (i/3)*Math.PI*2;
+      ctx.save(); ctx.rotate(a);
+      ctx.beginPath(); ctx.moveTo(0,5); ctx.lineTo(0, HEAD_R); ctx.stroke();
+      ctx.restore();
+    }
+  }
+  // metal hub cap
+  const hub = ctx.createRadialGradient(-2,-2,1,0,0,8);
+  hub.addColorStop(0,'#f2f5f8'); hub.addColorStop(0.5,'#9aa1a8'); hub.addColorStop(1,'#3d434a');
+  ctx.fillStyle = hub;
+  ctx.beginPath(); ctx.arc(0,0,7,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#20242a'; ctx.beginPath(); ctx.arc(0,0,2.4,0,Math.PI*2); ctx.fill();
   ctx.restore();
 }
 
 // ---------- input ----------
-function pos(e){
-  const rect = canvas.getBoundingClientRect();
-  return {x: e.clientX-rect.left, y: e.clientY-rect.top};
-}
+function pos(e){ const r = canvas.getBoundingClientRect(); return {x: e.clientX-r.left, y: e.clientY-r.top}; }
 canvas.addEventListener('pointerdown', (e)=>{
   const p = pos(e); mouseX = p.x; mouseY = p.y;
-  trimming = true;
-  startEngine();
+  trimming = true; startEngine();
   canvas.setPointerCapture(e.pointerId);
 });
-canvas.addEventListener('pointermove', (e)=>{
-  const p = pos(e); mouseX = p.x; mouseY = p.y;
-});
+canvas.addEventListener('pointermove', (e)=>{ const p = pos(e); mouseX = p.x; mouseY = p.y; });
 window.addEventListener('pointerup', ()=>{ trimming = false; stopEngine(); });
 canvas.addEventListener('pointerleave', ()=>{ if(!trimming){ mouseX=-300; mouseY=-300; } });
 
-document.getElementById('regrow-btn').onclick = ()=>{ plantGrass(); };
-document.getElementById('next-btn').onclick = ()=>{
-  edgesDone++;
-  const el = document.getElementById('edges-count');
-  el.textContent = edgesDone; Unwind.pop(el);
-  document.getElementById('celebrate').classList.remove('show');
-  plantGrass();
+document.getElementById('regrow-btn').onclick = ()=>{
+  for(const t of tufts){ t.h = 1; t.fresh = 0; }
 };
+
+function updateClearPct(){
+  let vis=0, clear=0;
+  for(const t of tufts){
+    const sy = tuftScreenY(t);
+    if(sy < 0 || sy > H) continue;
+    vis++;
+    if(t.h <= 0.14) clear++;
+  }
+  clearPct = vis ? Math.round(clear/vis*100) : 100;
+  document.getElementById('pct-label').textContent = clearPct+'% clear';
+  document.getElementById('pct-fill').style.width = clearPct+'%';
+}
 
 // ---------- main loop ----------
 let lastTime = performance.now();
-let pctFrame = 0;
 function loop(now){
   const dt = Unwind.clamp((now-lastTime)/16.67, 0, 3);
   lastTime = now;
   swayT += 0.016*dt;
 
-  // trimmer head follows pointer with a bit of lag (weighted tool feel)
+  // head eases toward pointer (tool has mass)
   if(mouseX > -100){
     if(headX < -100){ headX = mouseX; headY = mouseY; }
-    headX = Unwind.lerp(headX, mouseX, Math.min(0.22*dt, 1));
-    headY = Unwind.lerp(headY, mouseY, Math.min(0.22*dt, 1));
+    headX = Unwind.lerp(headX, mouseX, Math.min(0.25*dt, 1));
+    headY = Unwind.lerp(headY, mouseY, Math.min(0.25*dt, 1));
+  }else{ headX = -300; headY = -300; }
+
+  // walking forward while revving
+  if(trimming){
+    dist += WALK_SPEED*dt;
+    spin += 0.9*dt;
+    bobPhase += 0.22*dt;
+    cutSweep();
+    setEngineLoad(Unwind.clamp(cutThisFrame/12, 0, 1));
   }else{
-    headX = -300; headY = -300;
+    spin += 0.08*dt;
   }
 
-  if(trimming && headX > -100){
-    cutAt(headX, headY);
-    setEngineLoad(Unwind.clamp(cutThisFrame/20, 0, 1));
+  // recycle tufts that scrolled past you; keep field stocked ahead
+  const span = H*1.7;
+  for(const t of tufts){
+    if(t.fresh > 0) t.fresh = Math.max(0, t.fresh - 0.02*dt);
+    if(tuftScreenY(t) > H + 40){
+      t.worldY += span; t.x = Math.random()*W; t.h = 1; t.fresh = 0;
+      t.size = TUFT_MIN + Math.random()*TUFT_VAR;
+    }
   }
 
-  drawScene();
+  // camera bob (ground moves, hands stay) sells the walk
+  const bobX = trimming ? Math.sin(bobPhase)*2.2 : 0;
+  const bobY = trimming ? Math.abs(Math.sin(bobPhase))*2.6 : 0;
 
-  const wind = Math.sin(swayT*0.6)*0.04;
-  for(const b of blades){
-    if(b.fresh > 0) b.fresh = Math.max(0, b.fresh - 0.02*dt);
-    drawBlade(b, wind);
-  }
+  ctx.clearRect(0,0,W,H);
+  ctx.save();
+  ctx.translate(bobX, bobY);
+  drawGround();
+  tufts.sort((a,b)=> a.worldY - b.worldY);   // far first
+  for(const t of tufts) drawTuft(t);
 
   // clippings
   for(let i=clippings.length-1;i>=0;i--){
     const c = clippings[i];
-    c.vy += 0.22*dt;
-    c.x += c.vx*dt; c.y += c.vy*dt; c.rot += c.vrot*dt;
-    c.vx *= Math.pow(0.985, dt);
-    c.life -= c.decay*dt;
-    if(c.life <= 0 || c.y > H+10){ clippings.splice(i,1); continue; }
-    ctx.save();
-    ctx.translate(c.x, c.y); ctx.rotate(c.rot);
-    ctx.globalAlpha = Math.max(c.life, 0);
-    // shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.fillRect(-c.len/2+1, 1.5, c.len, 1.6);
-    // clipping body
-    ctx.strokeStyle = c.color;
-    ctx.lineWidth = 1.5;
-    ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(-c.len/2, 0); ctx.lineTo(c.len/2, 0); ctx.stroke();
+    c.vy += 0.22*dt; c.x += c.vx*dt; c.y += c.vy*dt; c.rot += c.vrot*dt;
+    c.vx *= Math.pow(0.985, dt); c.life -= c.decay*dt;
+    if(c.life<=0 || c.y>H+20){ clippings.splice(i,1); continue; }
+    ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rot);
+    ctx.globalAlpha = Math.max(c.life,0);
+    ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(-c.len/2+1,1.4,c.len,1.5);
+    ctx.strokeStyle=c.color; ctx.lineWidth=1.6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-c.len/2,0); ctx.lineTo(c.len/2,0); ctx.stroke();
     ctx.restore();
   }
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=1;
 
-  // dust
-  for(let i=dust.length-1;i>=0;i--){
-    const d = dust[i];
-    d.x += d.vx*dt; d.y += d.vy*dt; d.life -= d.decay*dt;
-    d.r += 0.15*dt;
-    if(d.life<=0){ dust.splice(i,1); continue; }
-    ctx.globalAlpha = d.life*0.45;
-    ctx.fillStyle = '#8a7a62';
-    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-
-  // sparks (concrete grind)
+  // dust + sparks
   for(let i=sparks.length-1;i>=0;i--){
-    const s = sparks[i];
-    s.vy += 0.28*dt;
-    s.x += s.vx*dt; s.y += s.vy*dt;
-    s.life -= s.decay*dt;
-    if(s.life <= 0){ sparks.splice(i,1); continue; }
-    ctx.globalAlpha = Math.max(s.life, 0);
-    ctx.fillStyle = '#fff3c8';
-    ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = 'rgba(255,150,60,0.7)';
-    ctx.beginPath(); ctx.arc(s.x, s.y, s.size*1.8, 0, Math.PI*2); ctx.fill();
+    const s=sparks[i]; s.vy+=0.28*dt; s.x+=s.vx*dt; s.y+=s.vy*dt; s.life-=s.decay*dt;
+    if(s.life<=0){ sparks.splice(i,1); continue; }
+    ctx.globalAlpha=Math.max(s.life,0);
+    ctx.fillStyle='#fff3c8'; ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,150,60,0.7)'; ctx.beginPath(); ctx.arc(s.x,s.y,s.size*1.8,0,Math.PI*2); ctx.fill();
   }
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=1;
+
+  ctx.restore();   // end bob
 
   drawTrimmer();
 
+  document.getElementById('weeds-count').textContent = weedsTrimmed;
   pctFrame += dt;
-  if(pctFrame > 16){ pctFrame = 0; updatePct(); }
+  if(pctFrame > 12){ pctFrame = 0; updateClearPct(); }
 
   requestAnimationFrame(loop);
 }
