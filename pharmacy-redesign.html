@@ -74,6 +74,9 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .cta-btn:hover{background:var(--primary-dark); transform:translateY(-1px);}
 .cta-ghost{background:#fff; color:var(--primary-dark); border:1.5px solid var(--primary); padding:10px 18px; border-radius:30px; font-weight:600; font-size:13.5px;}
 .hamburger{display:none; width:40px; height:40px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; align-items:center; justify-content:center; font-size:18px;}
+header.site.nav-open nav.main-links{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:#fff; border-bottom:1px solid var(--line); box-shadow:var(--shadow); padding:14px 24px; gap:2px;}
+header.site.nav-open nav.main-links a{padding:10px 4px; font-size:15px; border-bottom:1px solid var(--line);}
+header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 
 /* ---------- Hero ---------- */
 .hero{position:relative; background:linear-gradient(135deg,#eafaf6 0%, #f6faf9 45%, #f2effc 100%); overflow:hidden; padding:64px 0 40px;}
@@ -92,7 +95,20 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 .suburb-band .sb-copy{font-size:13.5px; line-height:1.5; max-width:560px;}
 .suburb-band .sb-copy .zh{display:block; color:#a9c9c2; font-size:12.5px; margin-top:3px;}
 .suburb-chips{display:flex; gap:10px; flex-wrap:wrap;}
-.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s;}
+.suburb-chip:hover{background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.5);}
+.sb-check{display:flex; flex-direction:column; gap:8px; min-width:260px;}
+.sb-check-row{display:flex; gap:8px;}
+.sb-check input{flex:1; padding:10px 13px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#fff; font-size:13px; font-family:var(--sans);}
+.sb-check input::placeholder{color:#7fa39b;}
+.sb-check input:focus{outline:none; border-color:var(--primary);}
+.sb-check button{padding:10px 18px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:13px; white-space:nowrap;}
+.sb-check button:hover{background:var(--primary-dark);}
+.sb-result{font-size:12.5px; font-weight:600; min-height:18px; opacity:0; transition:opacity .2s;}
+.sb-result.show{opacity:1;}
+.sb-result.ok{color:#7fe9c8;}
+.sb-result.next{color:#ffd48a;}
+.sb-result.no{color:#ff9e8f;}
 .trust-strip .t-item .ic{font-size:16px;}
 
 .hero-visual{position:relative; height:440px;}
@@ -131,6 +147,7 @@ nav.main-links a:hover{color:var(--primary-dark); border-color:var(--primary);}
 /* Quick order */
 .quick-order{background:var(--surface-2);}
 .qo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media (max-width:960px){.qo-grid{grid-template-columns:1fr;}}
 .qo-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; display:flex; flex-direction:column; gap:12px; transition:transform .18s, box-shadow .18s;}
 .qo-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
 .qo-card .qo-icon{width:46px; height:46px; border-radius:12px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:22px;}
@@ -247,6 +264,12 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .cart-foot .sub-row.total{font-weight:800; font-size:16px; margin-top:8px;}
 .checkout-btn{width:100%; padding:13px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:14px; margin-top:12px;}
 .checkout-steps{font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:8px;}
+.ship-meter{margin-bottom:14px;}
+.ship-meter .ship-label{font-size:12px; color:var(--ink-2); margin-bottom:6px; font-weight:600;}
+.ship-meter .ship-label b{color:var(--primary-dark);}
+.ship-meter.unlocked .ship-label{color:var(--primary-dark);}
+.ship-track{height:7px; background:var(--line); border-radius:5px; overflow:hidden;}
+.ship-fill{height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); border-radius:5px; transition:width .35s ease;}
 
 /* Pharmacist chat bubble */
 .chat-fab{position:fixed; bottom:22px; right:22px; background:var(--accent); color:#fff; border:none; border-radius:30px; padding:14px 20px; font-weight:700; font-size:13.5px; box-shadow:0 10px 24px rgba(255,111,89,0.4); z-index:150; display:flex; align-items:center; gap:8px;}
@@ -358,7 +381,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
       <button class="icon-btn" title="Account">👤</button>
       <button class="icon-btn" id="cartBtn" title="Cart">🛒<span class="count" id="cartCount">0</span></button>
-      <button class="hamburger" id="hamburger">☰</button>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
 </header>
@@ -366,9 +389,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="hero">
   <div class="wrap">
     <div class="hero-copy fade-up">
-      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Meds &amp; retail, in one 2-step checkout</div>
+      <div class="eyebrow" data-i18n="hero.eyebrow">✦ Vitamins &amp; pharmacy meds, in one 2-step checkout</div>
       <h1><span data-i18n="hero.h1a">Your health, </span><span data-i18n="hero.h1b">delivered brilliantly.</span></h1>
-      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
+      <p class="lead" data-i18n="hero.lead">Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.</p>
       <div class="hero-cta-row">
         <a href="#quick-order" class="cta-btn" data-i18n="hero.cta1">Order your prescription →</a>
         <a href="#bestsellers" class="cta-ghost" data-i18n="hero.cta2">Shop best sellers</a>
@@ -396,11 +419,18 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <span data-i18n="suburb.copy">Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.</span>
       <span class="zh" id="suburbZhNote">我们为布里斯班华人社区提供服务 — 药剂师可用中文或英文为您提供咨询。</span>
     </div>
-    <div class="suburb-chips">
-      <span class="suburb-chip">Sunnybank</span>
-      <span class="suburb-chip">Underwood</span>
-      <span class="suburb-chip">Calamvale</span>
-      <span class="suburb-chip">Indooroopilly</span>
+    <div class="sb-check">
+      <div class="sb-check-row">
+        <input id="sbInput" type="text" placeholder="Your suburb or postcode" data-i18n-placeholder="suburb.checkPlaceholder" autocomplete="off">
+        <button id="sbBtn" data-i18n="suburb.checkBtn">Check delivery</button>
+      </div>
+      <div class="sb-result" id="sbResult" role="status" aria-live="polite"></div>
+      <div class="suburb-chips">
+        <span class="suburb-chip" data-suburb="Sunnybank">Sunnybank</span>
+        <span class="suburb-chip" data-suburb="Underwood">Underwood</span>
+        <span class="suburb-chip" data-suburb="Calamvale">Calamvale</span>
+        <span class="suburb-chip" data-suburb="Indooroopilly">Indooroopilly</span>
+      </div>
     </div>
   </div>
 </div>
@@ -443,9 +473,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         <h3 data-i18n="qo.card3.title">Reorder your regulars</h3>
         <p data-i18n="qo.card3.body">One tap re-adds your last order — no re-searching, no re-typing your details.</p>
         <div class="reorder-list">
-          <div class="reorder-item"><span data-i18n="qo.reorder1">Blood pressure script (monthly)</span><button data-reorder="1" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder1">Blackmores Fish Oil 1000mg</span><button data-reorder="6" data-i18n="qo.reorderBtn">Reorder</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
-          <div class="reorder-item"><span data-i18n="qo.reorder3">Sensitive skin moisturiser</span><button data-reorder="12" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder3">BioCeuticals ArmaForce</span><button data-reorder="25" data-i18n="qo.reorderBtn">Reorder</button></div>
         </div>
       </div>
     </div>
@@ -490,7 +520,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <section class="section" id="compare">
   <div class="wrap">
     <div class="section-head fade-up">
-      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">Same medicines and retail range — a much shorter path to "ordered."</p></div>
+      <div><h2 data-i18n="cmp.title">Why this beats a typical big-box pharmacy site</h2><p data-i18n="cmp.sub">The same trusted brands — a much shorter path to "ordered."</p></div>
     </div>
     <div class="compare-wrap fade-up">
       <table class="compare">
@@ -597,10 +627,14 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 
 <!-- CART DRAWER -->
 <div class="overlay" id="overlay"></div>
-<div class="cart-drawer" id="cartDrawer">
+<div class="cart-drawer" id="cartDrawer" role="dialog" aria-label="Shopping cart">
   <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
   <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
   <div class="cart-foot">
+    <div class="ship-meter" id="shipMeter">
+      <div class="ship-label" id="shipLabel"></div>
+      <div class="ship-track"><div class="ship-fill" id="shipFill"></div></div>
+    </div>
     <div class="sub-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="cartSubtotal">$0.00</span></div>
     <div class="sub-row"><span data-i18n="cart.pointsEarned">BrightWell+ points earned</span><span id="cartPoints">+0 pts</span></div>
     <div class="sub-row total"><span data-i18n="cart.total">Total</span><span id="cartTotal">$0.00</span></div>
@@ -679,7 +713,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
   <input type="text" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ---------------- Product data ---------------- */
@@ -773,32 +807,37 @@ const PRODUCTS = [
 
 let activeTab = "all";
 let searchTerm = "";
+const FREE_SHIP = 30;
 let cart = [];
+try { cart = JSON.parse(localStorage.getItem('bw-cart') || '[]') || []; } catch(e) { cart = []; }
 
 /* ---------------- i18n (EN / 中文) ---------------- */
 const I18N = {
   en: {
     'nav.order':'Order a Script','nav.shop':'Shop','nav.bestsellers':'Best Sellers','nav.why':'Why BrightWell','nav.rewards':'Rewards',
     'search.placeholder':'Search medicines, vitamins, brands…',
-    'hero.eyebrow':'✦ Meds & retail, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
-    'hero.lead':"Upload a script, reorder in one tap, or browse vitamins and everyday essentials — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
+    'hero.eyebrow':'✦ Vitamins & pharmacy meds, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
+    'hero.lead':"Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
     'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
     'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
+    'suburb.checkPlaceholder':'Your suburb or postcode','suburb.checkBtn':'Check delivery',
+    'suburb.ok':'✅ Same-day delivery available in {x} — order by 2pm.',
+    'suburb.next':'🚚 {x} gets next-day metro delivery — same-day launching soon.',
+    'suburb.no':"📍 We don't deliver to {x} yet — but you can still order for Australia Post shipping.",
+    'suburb.empty':'Enter a Brisbane suburb or 4-digit postcode to check.',
     'qo.title':'Order in three ways — pick the fastest one','qo.sub':'This is the part most pharmacy sites bury under menus. We put it first.',
     'qo.card1.title':'Upload a script','qo.card1.body':"Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.",
     'qo.dropzone':'Drop image here or click to browse','qo.uploadStatus':'✅ Received — a pharmacist will confirm within 15 minutes.',
     'qo.card2.title':'Search by medicine or PBS code','qo.card2.body':'Instant results as you type, with generic-brand price comparisons shown up front.',
     'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
     'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
-    'qo.reorder1':'Blood pressure script (monthly)','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Sensitive skin moisturiser','qo.reorderBtn':'Reorder',
+    'qo.reorder1':'Blackmores Fish Oil 1000mg','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'Reorder',
     'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
-    'cat.1':'Prescriptions','cat.2':'Vitamins','cat.3':'Skincare','cat.3b':'Beauty','cat.4':'Baby & Kids','cat.5':'First Aid','cat.6':'Hair & Beauty',
-    'cat.7':'Weight & Fitness','cat.8':'Everyday Essentials','cat.9':'Health Devices','cat.10':'Fragrance','cat.11':'Sleep & Wellness','cat.12':'Pet Health',
     'cat.c1':'Immune Support','cat.c2':'Omega-3 & Heart','cat.c3':'Probiotics & Gut','cat.c4':'Sleep & Magnesium','cat.c5':'Vitamins C & D','cat.c6':'Pharmacy Medicines',
-    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'16 quality lines →',
+    'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'17 quality lines →',
     'tab.all':'All','tab.trending':'🔥 Trending exports','tab.vitamins':'Vitamins & Supplements','tab.pharmacy':'Pharmacy Medicines',
-    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'Same medicines and retail range — a much shorter path to "ordered."',
+    'cmp.title':'Why this beats a typical big-box pharmacy site','cmp.sub':'The same trusted brands — a much shorter path to "ordered."',
     'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
     'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
     'cmp.r2':'Prescription upload','cmp.r2us':'Photo upload, ~2 min, in-page','cmp.r2them':'Phone/fax or separate portal',
@@ -817,6 +856,7 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell — concept design, no real orders processed.','foot.builtAs':'Built as a UX comparison to chemistwarehouse.com.au',
     'cart.title':'Your cart','cart.empty':'Your cart is empty — add something from Best Sellers.','cart.subtotal':'Subtotal',
     'cart.pointsEarned':'BrightWell+ points earned','cart.total':'Total','cart.checkout':'Checkout →','cart.step':'Step 1 of 2 — delivery details next',
+    'cart.shipRemain':'Add <b>${x}</b> more for free same-day delivery','cart.shipUnlocked':'🎉 You’ve unlocked free same-day delivery!',
     'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
     'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
     'chat.placeholder':'Type your question…',
@@ -857,25 +897,28 @@ const I18N = {
   zh: {
     'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
     'search.placeholder':'搜索药品、维生素、品牌…',
-    'hero.eyebrow':'✦ 药品与日用品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
-    'hero.lead':'上传处方、一键重复购买,或浏览维生素与日常用品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
+    'hero.eyebrow':'✦ 维生素与药房药品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
+    'hero.lead':'上传处方、一键重复购买,或浏览优质维生素、保健品与药房药品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
     'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
     'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
+    'suburb.checkPlaceholder':'您的城区或邮编','suburb.checkBtn':'查询配送',
+    'suburb.ok':'✅ {x} 可享当日送达 —— 下午2点前下单。',
+    'suburb.next':'🚚 {x} 提供次日市区配送 —— 当日送达即将上线。',
+    'suburb.no':'📍 我们暂未覆盖 {x} —— 但您仍可下单,通过澳洲邮政寄送。',
+    'suburb.empty':'请输入布里斯班城区名或4位邮编进行查询。',
     'qo.title':'三种下单方式 —— 选最快的一种','qo.sub':'大多数药房网站把这部分藏在层层菜单里,我们把它放在最前面。',
     'qo.card1.title':'上传处方','qo.card1.body':'拍下处方照片并拖拽上传,药剂师会为您审核 —— 无需打电话或传真。',
     'qo.dropzone':'将图片拖到此处,或点击浏览','qo.uploadStatus':'✅ 已收到 —— 药剂师将在15分钟内确认。',
     'qo.card2.title':'按药品名称或PBS编码搜索','qo.card2.body':'边输入边显示结果,并提前展示同类仿制药的价格对比。',
     'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
     'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
-    'qo.reorder1':'降压药处方(每月)','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'敏感肌保湿霜','qo.reorderBtn':'重新购买',
+    'qo.reorder1':'Blackmores 鱼油 1000mg','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'重新购买',
     'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
-    'cat.1':'处方药','cat.2':'维生素','cat.3':'护肤品','cat.3b':'美妆','cat.4':'母婴用品','cat.5':'急救用品','cat.6':'美发美妆',
-    'cat.7':'体重管理与健身','cat.8':'日常用品','cat.9':'健康仪器','cat.10':'香水','cat.11':'睡眠与保健','cat.12':'宠物保健',
     'cat.c1':'免疫支持','cat.c2':'Omega-3 & 心脏健康','cat.c3':'益生菌 & 肠道健康','cat.c4':'睡眠 & 镁','cat.c5':'维生素C & D','cat.c6':'药房药品',
-    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'16款精选产品 →',
+    'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'17款精选产品 →',
     'tab.all':'全部','tab.trending':'🔥 热门出口商品','tab.vitamins':'维生素与保健品','tab.pharmacy':'药房药品',
-    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样的药品与零售范围 —— 更短的下单路径。',
+    'cmp.title':'为何优于典型大型药房网站','cmp.sub':'同样值得信赖的品牌 —— 更短的下单路径。',
     'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
     'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
     'cmp.r2':'处方上传','cmp.r2us':'拍照上传,约2分钟,页内完成','cmp.r2them':'电话/传真或跳转其他平台',
@@ -894,6 +937,7 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell —— 概念设计,暂无真实订单处理。','foot.builtAs':'作为与 chemistwarehouse.com.au 的体验对比而构建',
     'cart.title':'购物车','cart.empty':'购物车是空的 —— 从热销商品中添加一些吧。','cart.subtotal':'小计',
     'cart.pointsEarned':'BrightWell+ 可获积分','cart.total':'总计','cart.checkout':'结账 →','cart.step':'第1步(共2步) —— 接下来填写配送信息',
+    'cart.shipRemain':'再购 <b>${x}</b> 即可享免费当日送达','cart.shipUnlocked':'🎉 您已解锁免费当日送达!',
     'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
     'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
     'chat.placeholder':'输入您的问题…',
@@ -951,6 +995,8 @@ function applyLang(lang){
   renderCart();
   document.getElementById('pbsResults').innerHTML = '';
   document.getElementById('suggestBox').classList.remove('open');
+  const sbRes = document.getElementById('sbResult');
+  if(sbRes){ sbRes.className = 'sb-result'; sbRes.textContent = ''; }
 }
 
 function flagFor(p){
@@ -1051,19 +1097,19 @@ document.getElementById('pbsBtn').addEventListener('click', ()=>{
 /* ---------------- Reorder shortcuts ---------------- */
 document.querySelectorAll('[data-reorder]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    addToCart(parseInt(btn.dataset.reorder));
-    showToast(t('dyn.toastReordered'));
+    if(addToCart(parseInt(btn.dataset.reorder))) showToast(t('dyn.toastReordered'));
   });
 });
 
 /* ---------------- Cart logic ---------------- */
 function addToCart(id){
   const prod = PRODUCTS.find(p=>p.id===id);
-  if(!prod) return;
+  if(!prod) return false;
   const line = cart.find(l=>l.id===id);
   if(line) line.qty++;
   else cart.push({...prod, qty:1});
   renderCart();
+  return true;
 }
 function changeQty(id, delta){
   const line = cart.find(l=>l.id===id);
@@ -1100,6 +1146,31 @@ function renderCart(){
   document.getElementById('cartTotal').textContent = `$${subtotal.toFixed(2)}`;
   document.getElementById('cartPoints').textContent = `+${Math.round(subtotal)} pts`;
 
+  // Free-delivery progress meter
+  const meter = document.getElementById('shipMeter');
+  const shipLabel = document.getElementById('shipLabel');
+  const shipFill = document.getElementById('shipFill');
+  if(meter){
+    if(!cart.length){
+      meter.style.display = 'none';
+    } else {
+      meter.style.display = '';
+      const remaining = FREE_SHIP - subtotal;
+      if(remaining > 0){
+        meter.classList.remove('unlocked');
+        shipLabel.innerHTML = t('cart.shipRemain').replace('{x}', remaining.toFixed(2));
+        shipFill.style.width = Math.min(100, (subtotal/FREE_SHIP)*100) + '%';
+      } else {
+        meter.classList.add('unlocked');
+        shipLabel.innerHTML = t('cart.shipUnlocked');
+        shipFill.style.width = '100%';
+      }
+    }
+  }
+
+  // Persist cart across refreshes
+  try { localStorage.setItem('bw-cart', JSON.stringify(cart)); } catch(e) {}
+
   itemsEl.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.inc),1)));
   itemsEl.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.dec),-1)));
   itemsEl.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click', ()=>{ cart = cart.filter(l=>l.id!==parseInt(b.dataset.rm)); renderCart(); }));
@@ -1121,7 +1192,19 @@ function openModal(m){ m.classList.add('open'); bwOverlay.classList.add('open');
 function closeModals(){ pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open'); }
 bwOverlay.addEventListener('click', closeModals);
 document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModals(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModals(); closeCart(); } });
+
+/* ---------------- Mobile nav (hamburger) ---------------- */
+const hamburgerBtn = document.getElementById('hamburger');
+const siteHeader = document.querySelector('header.site');
+hamburgerBtn.addEventListener('click', ()=>{
+  const open = siteHeader.classList.toggle('nav-open');
+  hamburgerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+document.querySelectorAll('nav.main-links a').forEach(a=>a.addEventListener('click', ()=>{
+  siteHeader.classList.remove('nav-open');
+  hamburgerBtn.setAttribute('aria-expanded','false');
+}));
 
 let pdQty = 1;
 function openProduct(id){
@@ -1267,6 +1350,40 @@ const observer = new IntersectionObserver((entries)=>{
   entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('visible'); });
 },{threshold:0.12});
 document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+/* ---------------- Suburb delivery checker ---------------- */
+const SAME_DAY_SUBURBS = ['sunnybank','sunnybank hills','underwood','calamvale','indooroopilly','runcorn','robertson','macgregor','eight mile plains','stretton','kuraby','coopers plains','rochedale','algester','parkinson','acacia ridge','salisbury','nathan'];
+const SAME_DAY_POSTCODES = ['4109','4113','4115','4116','4108','4110','4123','4068','4118','4111'];
+const NEXT_DAY_SUBURBS = ['brisbane','brisbane city','south brisbane','west end','toowong','st lucia','mount gravatt','upper mount gravatt','mansfield','holland park','carindale','springwood','mount ommaney','forest lake','moorooka','annerley','yeronga','fortitude valley','chermside','wishart','garden city','logan','logan central','springfield','cleveland','carindale','woolloongabba','greenslopes','coorparoo','tarragindi','rocklea','darra','inala','richlands'];
+
+const sbInput = document.getElementById('sbInput');
+const sbResult = document.getElementById('sbResult');
+function checkSuburb(){
+  const raw = sbInput.value.trim();
+  if(!raw){ sbResult.className = 'sb-result show next'; sbResult.textContent = t('suburb.empty'); return; }
+  const q = raw.toLowerCase();
+  const isPostcode = /^\d{4}$/.test(raw);
+  let cls, key;
+  if(SAME_DAY_SUBURBS.includes(q) || SAME_DAY_POSTCODES.includes(raw)){
+    cls = 'ok'; key = 'suburb.ok';
+  } else if(isPostcode){
+    const pc = parseInt(raw,10);
+    if(pc>=4000 && pc<=4207){ cls='next'; key='suburb.next'; }
+    else { cls='no'; key='suburb.no'; }
+  } else if(NEXT_DAY_SUBURBS.includes(q)){
+    cls='next'; key='suburb.next';
+  } else {
+    cls='no'; key='suburb.no';
+  }
+  const label = isPostcode ? raw : raw.replace(/\b\w/g, c=>c.toUpperCase());
+  sbResult.className = 'sb-result show ' + cls;
+  sbResult.textContent = t(key).replace('{x}', label);
+}
+document.getElementById('sbBtn').addEventListener('click', checkSuburb);
+sbInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') checkSuburb(); });
+document.querySelectorAll('.suburb-chip[data-suburb]').forEach(chip=>{
+  chip.addEventListener('click', ()=>{ sbInput.value = chip.dataset.suburb; checkSuburb(); });
+});
 
 /* ---------------- Language toggle ---------------- */
 document.getElementById('langToggle').addEventListener('click', ()=>{
