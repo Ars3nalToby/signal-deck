@@ -95,7 +95,20 @@ header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 .suburb-band .sb-copy{font-size:13.5px; line-height:1.5; max-width:560px;}
 .suburb-band .sb-copy .zh{display:block; color:#a9c9c2; font-size:12.5px; margin-top:3px;}
 .suburb-chips{display:flex; gap:10px; flex-wrap:wrap;}
-.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.suburb-chip{border:1.5px solid rgba(255,255,255,0.25); border-radius:20px; padding:7px 14px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s;}
+.suburb-chip:hover{background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.5);}
+.sb-check{display:flex; flex-direction:column; gap:8px; min-width:260px;}
+.sb-check-row{display:flex; gap:8px;}
+.sb-check input{flex:1; padding:10px 13px; border-radius:10px; border:1.5px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#fff; font-size:13px; font-family:var(--sans);}
+.sb-check input::placeholder{color:#7fa39b;}
+.sb-check input:focus{outline:none; border-color:var(--primary);}
+.sb-check button{padding:10px 18px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:13px; white-space:nowrap;}
+.sb-check button:hover{background:var(--primary-dark);}
+.sb-result{font-size:12.5px; font-weight:600; min-height:18px; opacity:0; transition:opacity .2s;}
+.sb-result.show{opacity:1;}
+.sb-result.ok{color:#7fe9c8;}
+.sb-result.next{color:#ffd48a;}
+.sb-result.no{color:#ff9e8f;}
 .trust-strip .t-item .ic{font-size:16px;}
 
 .hero-visual{position:relative; height:440px;}
@@ -251,6 +264,12 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .cart-foot .sub-row.total{font-weight:800; font-size:16px; margin-top:8px;}
 .checkout-btn{width:100%; padding:13px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:14px; margin-top:12px;}
 .checkout-steps{font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:8px;}
+.ship-meter{margin-bottom:14px;}
+.ship-meter .ship-label{font-size:12px; color:var(--ink-2); margin-bottom:6px; font-weight:600;}
+.ship-meter .ship-label b{color:var(--primary-dark);}
+.ship-meter.unlocked .ship-label{color:var(--primary-dark);}
+.ship-track{height:7px; background:var(--line); border-radius:5px; overflow:hidden;}
+.ship-fill{height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); border-radius:5px; transition:width .35s ease;}
 
 /* Pharmacist chat bubble */
 .chat-fab{position:fixed; bottom:22px; right:22px; background:var(--accent); color:#fff; border:none; border-radius:30px; padding:14px 20px; font-weight:700; font-size:13.5px; box-shadow:0 10px 24px rgba(255,111,89,0.4); z-index:150; display:flex; align-items:center; gap:8px;}
@@ -400,11 +419,18 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <span data-i18n="suburb.copy">Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.</span>
       <span class="zh" id="suburbZhNote">我们为布里斯班华人社区提供服务 — 药剂师可用中文或英文为您提供咨询。</span>
     </div>
-    <div class="suburb-chips">
-      <span class="suburb-chip">Sunnybank</span>
-      <span class="suburb-chip">Underwood</span>
-      <span class="suburb-chip">Calamvale</span>
-      <span class="suburb-chip">Indooroopilly</span>
+    <div class="sb-check">
+      <div class="sb-check-row">
+        <input id="sbInput" type="text" placeholder="Your suburb or postcode" data-i18n-placeholder="suburb.checkPlaceholder" autocomplete="off">
+        <button id="sbBtn" data-i18n="suburb.checkBtn">Check delivery</button>
+      </div>
+      <div class="sb-result" id="sbResult" role="status" aria-live="polite"></div>
+      <div class="suburb-chips">
+        <span class="suburb-chip" data-suburb="Sunnybank">Sunnybank</span>
+        <span class="suburb-chip" data-suburb="Underwood">Underwood</span>
+        <span class="suburb-chip" data-suburb="Calamvale">Calamvale</span>
+        <span class="suburb-chip" data-suburb="Indooroopilly">Indooroopilly</span>
+      </div>
     </div>
   </div>
 </div>
@@ -605,6 +631,10 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
   <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
   <div class="cart-foot">
+    <div class="ship-meter" id="shipMeter">
+      <div class="ship-label" id="shipLabel"></div>
+      <div class="ship-track"><div class="ship-fill" id="shipFill"></div></div>
+    </div>
     <div class="sub-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="cartSubtotal">$0.00</span></div>
     <div class="sub-row"><span data-i18n="cart.pointsEarned">BrightWell+ points earned</span><span id="cartPoints">+0 pts</span></div>
     <div class="sub-row total"><span data-i18n="cart.total">Total</span><span id="cartTotal">$0.00</span></div>
@@ -777,7 +807,9 @@ const PRODUCTS = [
 
 let activeTab = "all";
 let searchTerm = "";
+const FREE_SHIP = 30;
 let cart = [];
+try { cart = JSON.parse(localStorage.getItem('bw-cart') || '[]') || []; } catch(e) { cart = []; }
 
 /* ---------------- i18n (EN / 中文) ---------------- */
 const I18N = {
@@ -789,6 +821,11 @@ const I18N = {
     'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
     'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
+    'suburb.checkPlaceholder':'Your suburb or postcode','suburb.checkBtn':'Check delivery',
+    'suburb.ok':'✅ Same-day delivery available in {x} — order by 2pm.',
+    'suburb.next':'🚚 {x} gets next-day metro delivery — same-day launching soon.',
+    'suburb.no':"📍 We don't deliver to {x} yet — but you can still order for Australia Post shipping.",
+    'suburb.empty':'Enter a Brisbane suburb or 4-digit postcode to check.',
     'qo.title':'Order in three ways — pick the fastest one','qo.sub':'This is the part most pharmacy sites bury under menus. We put it first.',
     'qo.card1.title':'Upload a script','qo.card1.body':"Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.",
     'qo.dropzone':'Drop image here or click to browse','qo.uploadStatus':'✅ Received — a pharmacist will confirm within 15 minutes.',
@@ -819,6 +856,7 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell — concept design, no real orders processed.','foot.builtAs':'Built as a UX comparison to chemistwarehouse.com.au',
     'cart.title':'Your cart','cart.empty':'Your cart is empty — add something from Best Sellers.','cart.subtotal':'Subtotal',
     'cart.pointsEarned':'BrightWell+ points earned','cart.total':'Total','cart.checkout':'Checkout →','cart.step':'Step 1 of 2 — delivery details next',
+    'cart.shipRemain':'Add <b>${x}</b> more for free same-day delivery','cart.shipUnlocked':'🎉 You’ve unlocked free same-day delivery!',
     'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
     'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
     'chat.placeholder':'Type your question…',
@@ -864,6 +902,11 @@ const I18N = {
     'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
     'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
+    'suburb.checkPlaceholder':'您的城区或邮编','suburb.checkBtn':'查询配送',
+    'suburb.ok':'✅ {x} 可享当日送达 —— 下午2点前下单。',
+    'suburb.next':'🚚 {x} 提供次日市区配送 —— 当日送达即将上线。',
+    'suburb.no':'📍 我们暂未覆盖 {x} —— 但您仍可下单,通过澳洲邮政寄送。',
+    'suburb.empty':'请输入布里斯班城区名或4位邮编进行查询。',
     'qo.title':'三种下单方式 —— 选最快的一种','qo.sub':'大多数药房网站把这部分藏在层层菜单里,我们把它放在最前面。',
     'qo.card1.title':'上传处方','qo.card1.body':'拍下处方照片并拖拽上传,药剂师会为您审核 —— 无需打电话或传真。',
     'qo.dropzone':'将图片拖到此处,或点击浏览','qo.uploadStatus':'✅ 已收到 —— 药剂师将在15分钟内确认。',
@@ -894,6 +937,7 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell —— 概念设计,暂无真实订单处理。','foot.builtAs':'作为与 chemistwarehouse.com.au 的体验对比而构建',
     'cart.title':'购物车','cart.empty':'购物车是空的 —— 从热销商品中添加一些吧。','cart.subtotal':'小计',
     'cart.pointsEarned':'BrightWell+ 可获积分','cart.total':'总计','cart.checkout':'结账 →','cart.step':'第1步(共2步) —— 接下来填写配送信息',
+    'cart.shipRemain':'再购 <b>${x}</b> 即可享免费当日送达','cart.shipUnlocked':'🎉 您已解锁免费当日送达!',
     'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
     'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
     'chat.placeholder':'输入您的问题…',
@@ -951,6 +995,8 @@ function applyLang(lang){
   renderCart();
   document.getElementById('pbsResults').innerHTML = '';
   document.getElementById('suggestBox').classList.remove('open');
+  const sbRes = document.getElementById('sbResult');
+  if(sbRes){ sbRes.className = 'sb-result'; sbRes.textContent = ''; }
 }
 
 function flagFor(p){
@@ -1099,6 +1145,31 @@ function renderCart(){
   document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
   document.getElementById('cartTotal').textContent = `$${subtotal.toFixed(2)}`;
   document.getElementById('cartPoints').textContent = `+${Math.round(subtotal)} pts`;
+
+  // Free-delivery progress meter
+  const meter = document.getElementById('shipMeter');
+  const shipLabel = document.getElementById('shipLabel');
+  const shipFill = document.getElementById('shipFill');
+  if(meter){
+    if(!cart.length){
+      meter.style.display = 'none';
+    } else {
+      meter.style.display = '';
+      const remaining = FREE_SHIP - subtotal;
+      if(remaining > 0){
+        meter.classList.remove('unlocked');
+        shipLabel.innerHTML = t('cart.shipRemain').replace('{x}', remaining.toFixed(2));
+        shipFill.style.width = Math.min(100, (subtotal/FREE_SHIP)*100) + '%';
+      } else {
+        meter.classList.add('unlocked');
+        shipLabel.innerHTML = t('cart.shipUnlocked');
+        shipFill.style.width = '100%';
+      }
+    }
+  }
+
+  // Persist cart across refreshes
+  try { localStorage.setItem('bw-cart', JSON.stringify(cart)); } catch(e) {}
 
   itemsEl.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.inc),1)));
   itemsEl.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.dec),-1)));
@@ -1279,6 +1350,40 @@ const observer = new IntersectionObserver((entries)=>{
   entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('visible'); });
 },{threshold:0.12});
 document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+/* ---------------- Suburb delivery checker ---------------- */
+const SAME_DAY_SUBURBS = ['sunnybank','sunnybank hills','underwood','calamvale','indooroopilly','runcorn','robertson','macgregor','eight mile plains','stretton','kuraby','coopers plains','rochedale','algester','parkinson','acacia ridge','salisbury','nathan'];
+const SAME_DAY_POSTCODES = ['4109','4113','4115','4116','4108','4110','4123','4068','4118','4111'];
+const NEXT_DAY_SUBURBS = ['brisbane','brisbane city','south brisbane','west end','toowong','st lucia','mount gravatt','upper mount gravatt','mansfield','holland park','carindale','springwood','mount ommaney','forest lake','moorooka','annerley','yeronga','fortitude valley','chermside','wishart','garden city','logan','logan central','springfield','cleveland','carindale','woolloongabba','greenslopes','coorparoo','tarragindi','rocklea','darra','inala','richlands'];
+
+const sbInput = document.getElementById('sbInput');
+const sbResult = document.getElementById('sbResult');
+function checkSuburb(){
+  const raw = sbInput.value.trim();
+  if(!raw){ sbResult.className = 'sb-result show next'; sbResult.textContent = t('suburb.empty'); return; }
+  const q = raw.toLowerCase();
+  const isPostcode = /^\d{4}$/.test(raw);
+  let cls, key;
+  if(SAME_DAY_SUBURBS.includes(q) || SAME_DAY_POSTCODES.includes(raw)){
+    cls = 'ok'; key = 'suburb.ok';
+  } else if(isPostcode){
+    const pc = parseInt(raw,10);
+    if(pc>=4000 && pc<=4207){ cls='next'; key='suburb.next'; }
+    else { cls='no'; key='suburb.no'; }
+  } else if(NEXT_DAY_SUBURBS.includes(q)){
+    cls='next'; key='suburb.next';
+  } else {
+    cls='no'; key='suburb.no';
+  }
+  const label = isPostcode ? raw : raw.replace(/\b\w/g, c=>c.toUpperCase());
+  sbResult.className = 'sb-result show ' + cls;
+  sbResult.textContent = t(key).replace('{x}', label);
+}
+document.getElementById('sbBtn').addEventListener('click', checkSuburb);
+sbInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') checkSuburb(); });
+document.querySelectorAll('.suburb-chip[data-suburb]').forEach(chip=>{
+  chip.addEventListener('click', ()=>{ sbInput.value = chip.dataset.suburb; checkSuburb(); });
+});
 
 /* ---------------- Language toggle ---------------- */
 document.getElementById('langToggle').addEventListener('click', ()=>{
