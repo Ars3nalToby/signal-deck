@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrightWell — Health, delivered brilliantly</title>
-<meta name="description" content="Concept redesign: a faster, friendlier pharmacy & retail storefront with 3D hero, instant search, and 2-step checkout.">
+<meta name="description" content="BrightWell — a faster, friendlier bilingual (EN/中文) online pharmacy for Brisbane: quality vitamins, supplements and pharmacy medicines with same-day southside delivery and 2-step checkout.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -398,8 +398,8 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       </div>
       <div class="trust-strip">
         <div class="t-item"><span class="ic">🕒</span><span data-i18n="hero.trust1">Order in under 60 seconds</span></div>
-        <div class="t-item"><span class="ic">🩺</span><span data-i18n="hero.trust2">Live pharmacist chat 24/7</span></div>
-        <div class="t-item"><span class="ic">📍</span><span data-i18n="hero.trust3">Live stock at your nearest store</span></div>
+        <div class="t-item"><span class="ic">🩺</span><span data-i18n="hero.trust2">Bilingual pharmacist chat (EN/中文)</span></div>
+        <div class="t-item"><span class="ic">📍</span><span data-i18n="hero.trust3">Same-day delivery across Brisbane southside</span></div>
       </div>
     </div>
     <div class="hero-visual">
@@ -524,10 +524,10 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
     </div>
     <div class="compare-wrap fade-up">
       <table class="compare">
-        <tr><th data-i18n="cmp.h1">What matters</th><th data-i18n="cmp.h2">BrightWell</th><th data-i18n="cmp.h3">Typical big chain (e.g. Chemist Warehouse)</th></tr>
+        <tr><th scope="col" data-i18n="cmp.h1">What matters</th><th scope="col" data-i18n="cmp.h2">BrightWell</th><th scope="col" data-i18n="cmp.h3">Typical big chain (e.g. Chemist Warehouse)</th></tr>
         <tr><td class="row-label" data-i18n="cmp.r1">Checkout steps</td><td class="us" data-i18n="cmp.r1us">2 steps, cart drawer, no reload</td><td class="them" data-i18n="cmp.r1them">5–7 pages, full reloads</td></tr>
         <tr><td class="row-label" data-i18n="cmp.r2">Prescription upload</td><td class="us" data-i18n="cmp.r2us">Photo upload, ~2 min, in-page</td><td class="them" data-i18n="cmp.r2them">Phone/fax or separate portal</td></tr>
-        <tr><td class="row-label" data-i18n="cmp.r3">Search</td><td class="us" data-i18n="cmp.r3us">Instant, filters meds + retail together</td><td class="them" data-i18n="cmp.r3them">Slow catalogue search, separate sections</td></tr>
+        <tr><td class="row-label" data-i18n="cmp.r3">Search</td><td class="us" data-i18n="cmp.r3us">Instant, filters vitamins + medicines together</td><td class="them" data-i18n="cmp.r3them">Slow catalogue search, separate sections</td></tr>
         <tr><td class="row-label" data-i18n="cmp.r4">Pharmacist help</td><td class="us" data-i18n="cmp.r4us">Live chat bubble, always visible</td><td class="them" data-i18n="cmp.r4them">In-store or phone only</td></tr>
         <tr><td class="row-label" data-i18n="cmp.r5">Loyalty points</td><td class="us" data-i18n="cmp.r5us">Shown live in cart before you pay</td><td class="them" data-i18n="cmp.r5them">Applied after purchase, easy to miss</td></tr>
         <tr><td class="row-label" data-i18n="cmp.r6">Visual design</td><td class="us" data-i18n="cmp.r6us">Clean, 3D hero, uncluttered</td><td class="them" data-i18n="cmp.r6them">Dense flyer-style layout, banner heavy</td></tr>
@@ -753,7 +753,7 @@ const PRODUCTS = [
    descZh:"无腥味Omega-3,支持心脏、大脑与眼睛健康 —— 澳洲最知名的鱼油品牌。",
    dose:"Adults: 1–3 capsules daily with meals.",
    doseZh:"成人:每日1-3粒,随餐服用。"},
-  {id:7, name:"Swisse Ultiboost Multivitamin", brand:"Swisse", size:"120 tablets", cat:"vitamins", price:24.50, icon:"🌿",
+  {id:7, name:"Swisse Ultiboost Multivitamin", brand:"Swisse", size:"120 tablets", cat:"vitamins", price:24.50, icon:"🌿", hot:true,
    desc:"Comprehensive daily multivitamin with 36+ vitamins, minerals and herbs for energy and vitality.",
    descZh:"每日综合维生素,含36种以上维生素、矿物质与草本精华,支持能量与活力。",
    dose:"Adults: 1 tablet daily during or immediately after a meal.",
@@ -819,7 +819,7 @@ const I18N = {
     'hero.eyebrow':'✦ Vitamins & pharmacy meds, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
     'hero.lead':"Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
     'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
-    'hero.trust1':'Order in under 60 seconds','hero.trust2':'Live pharmacist chat 24/7','hero.trust3':'Live stock at your nearest store',
+    'hero.trust1':'Order in under 60 seconds','hero.trust2':'Bilingual pharmacist chat (EN/中文)','hero.trust3':'Same-day delivery across Brisbane southside',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
     'suburb.checkPlaceholder':'Your suburb or postcode','suburb.checkBtn':'Check delivery',
     'suburb.ok':'✅ Same-day delivery available in {x} — order by 2pm.',
@@ -841,7 +841,7 @@ const I18N = {
     'cmp.h1':'What matters','cmp.h2':'BrightWell','cmp.h3':'Typical big chain (e.g. Chemist Warehouse)',
     'cmp.r1':'Checkout steps','cmp.r1us':'2 steps, cart drawer, no reload','cmp.r1them':'5–7 pages, full reloads',
     'cmp.r2':'Prescription upload','cmp.r2us':'Photo upload, ~2 min, in-page','cmp.r2them':'Phone/fax or separate portal',
-    'cmp.r3':'Search','cmp.r3us':'Instant, filters meds + retail together','cmp.r3them':'Slow catalogue search, separate sections',
+    'cmp.r3':'Search','cmp.r3us':'Instant, filters vitamins + medicines together','cmp.r3them':'Slow catalogue search, separate sections',
     'cmp.r4':'Pharmacist help','cmp.r4us':'Live chat bubble, always visible','cmp.r4them':'In-store or phone only',
     'cmp.r5':'Loyalty points','cmp.r5us':'Shown live in cart before you pay','cmp.r5them':'Applied after purchase, easy to miss',
     'cmp.r6':'Visual design','cmp.r6us':'Clean, 3D hero, uncluttered','cmp.r6them':'Dense flyer-style layout, banner heavy',
@@ -865,7 +865,7 @@ const I18N = {
     'dyn.flagRx':'Rx','dyn.flagPharm':'Pharmacist only','dyn.flagSale':'Sale','dyn.flagHot':'🔥 Trending',
     'dyn.compareAt':'Compare at Chemist Warehouse ↗',
     'dyn.toastAdded':'Added to cart','dyn.toastReordered':'Reordered — added to cart','dyn.toastCartEmpty':'Your cart is empty',
-    'dyn.toastCheckout':'Demo checkout — step 2 (delivery details) would appear here','dyn.uploading':'Uploading',
+    'dyn.uploading':'Uploading',
     'dyn.flagPract':'Practitioner',
     'pd.title':'Product details','pd.desc':'About this product','pd.dose':'Directions','pd.warn':'Important',
     'pd.labelLine':'Always read the label and follow the directions for use. If symptoms persist, talk to your pharmacist or doctor.',
@@ -900,7 +900,7 @@ const I18N = {
     'hero.eyebrow':'✦ 维生素与药房药品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
     'hero.lead':'上传处方、一键重复购买,或浏览优质维生素、保健品与药房药品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
     'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
-    'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师实时在线咨询','hero.trust3':'就近门店实时库存',
+    'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师中英文在线咨询','hero.trust3':'布里斯班南区当日送达',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
     'suburb.checkPlaceholder':'您的城区或邮编','suburb.checkBtn':'查询配送',
     'suburb.ok':'✅ {x} 可享当日送达 —— 下午2点前下单。',
@@ -922,7 +922,7 @@ const I18N = {
     'cmp.h1':'对比项','cmp.h2':'BrightWell','cmp.h3':'典型大型连锁(如 Chemist Warehouse)',
     'cmp.r1':'结账步骤','cmp.r1us':'2步完成,购物车侧栏,无需刷新页面','cmp.r1them':'5-7个页面,反复刷新',
     'cmp.r2':'处方上传','cmp.r2us':'拍照上传,约2分钟,页内完成','cmp.r2them':'电话/传真或跳转其他平台',
-    'cmp.r3':'搜索','cmp.r3us':'即时显示,药品与零售商品同时筛选','cmp.r3them':'目录搜索缓慢,分区查找',
+    'cmp.r3':'搜索','cmp.r3us':'即时显示,维生素与药品一同筛选','cmp.r3them':'目录搜索缓慢,分区查找',
     'cmp.r4':'药剂师咨询','cmp.r4us':'实时聊天气泡,随时可见','cmp.r4them':'仅限店内或电话',
     'cmp.r5':'积分奖励','cmp.r5us':'结账前购物车内实时显示','cmp.r5them':'购买后才发放,容易被忽略',
     'cmp.r6':'视觉设计','cmp.r6us':'简洁,3D 主视觉,不杂乱','cmp.r6them':'密集传单式排版,横幅过多',
@@ -946,7 +946,7 @@ const I18N = {
     'dyn.flagRx':'处方药','dyn.flagPharm':'药剂师指导','dyn.flagSale':'特价','dyn.flagHot':'🔥 热门',
     'dyn.compareAt':'前往 Chemist Warehouse 比价 ↗',
     'dyn.toastAdded':'已加入购物车','dyn.toastReordered':'已重新下单并加入购物车','dyn.toastCartEmpty':'购物车是空的',
-    'dyn.toastCheckout':'演示结账 —— 第2步(配送信息)将在此显示','dyn.uploading':'正在上传',
+    'dyn.uploading':'正在上传',
     'dyn.flagPract':'专业渠道',
     'pd.title':'产品详情','pd.desc':'产品说明','pd.dose':'用法用量','pd.warn':'重要提示',
     'pd.labelLine':'请务必阅读标签并按说明使用。如症状持续,请咨询药剂师或医生。',
