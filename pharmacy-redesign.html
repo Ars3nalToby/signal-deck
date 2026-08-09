@@ -763,9 +763,9 @@ const PRODUCTS = [
    descZh:"支持肌肉功能、恢复与健康睡眠。",
    dose:"Adults: 1–2 tablets daily with food.",
    doseZh:"成人:每日1-2片,随餐服用。"},
-  {id:9, name:"Vitamin D3 1000IU (200s)", brand:"Generic (multiple suppliers)", size:"200 capsules", cat:"vitamins", price:12.99, icon:"☀️",
-   desc:"Supports bone strength, immunity and calcium absorption — commonly low in indoor lifestyles.",
-   descZh:"支持骨骼强度、免疫力与钙吸收 —— 室内生活方式人群普遍缺乏。",
+  {id:9, name:"Vitamin D3 1000IU (200s)", brand:"Generic (multiple suppliers)", size:"200 capsules", cat:"vitamins", price:12.99, icon:"☀️", hot:true,
+   desc:"Supports bone strength, immunity and calcium absorption — commonly low in indoor lifestyles and over the low-sun winter months.",
+   descZh:"支持骨骼强度、免疫力与钙吸收 —— 室内生活方式人群及少日照的冬季普遍缺乏。",
    dose:"Adults: 1 capsule daily with food.",
    doseZh:"成人:每日1粒,随餐服用。"},
   {id:10, name:"Probiotic Daily Capsules", brand:"Generic (multiple suppliers)", size:"60 capsules", cat:"vitamins", price:29.95, icon:"🦠",
@@ -1458,12 +1458,16 @@ applyLang(currentLang);
       objs.push(sp);
     }
 
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var mouseX=0, mouseY=0;
-    canvas.parentElement.addEventListener('mousemove', function(e){
-      var rect = canvas.getBoundingClientRect();
-      mouseX = ((e.clientX-rect.left)/rect.width - 0.5) * 2;
-      mouseY = ((e.clientY-rect.top)/rect.height - 0.5) * 2;
-    });
+    if(!reduceMotion){
+      canvas.parentElement.addEventListener('mousemove', function(e){
+        var rect = canvas.getBoundingClientRect();
+        mouseX = ((e.clientX-rect.left)/rect.width - 0.5) * 2;
+        mouseY = ((e.clientY-rect.top)/rect.height - 0.5) * 2;
+      });
+    }
 
     var clock = new THREE.Clock();
     function animate(){
@@ -1479,7 +1483,13 @@ applyLang(currentLang);
       camera.lookAt(0,0,0);
       renderer.render(scene, camera);
     }
-    animate();
+    if(reduceMotion){
+      // Honour prefers-reduced-motion: draw one static frame, no continuous loop.
+      camera.lookAt(0,0,0);
+      renderer.render(scene, camera);
+    } else {
+      animate();
+    }
 
     window.addEventListener('resize', function(){
       var w2 = canvas.clientWidth || w, h2 = canvas.clientHeight || h;
