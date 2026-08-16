@@ -1179,8 +1179,21 @@ function renderCart(){
 /* ---------------- Drawer open/close ---------------- */
 const cartDrawer = document.getElementById('cartDrawer');
 const overlay = document.getElementById('overlay');
-function openCart(){ cartDrawer.classList.add('open'); overlay.classList.add('open'); }
-function closeCart(){ cartDrawer.classList.remove('open'); overlay.classList.remove('open'); }
+/* Track the element to return focus to when a dialog/drawer closes (a11y). */
+let lastFocusedEl = null;
+function focusInto(container){
+  const f = container.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if(f) f.focus();
+}
+function openCart(){
+  lastFocusedEl = document.activeElement;
+  cartDrawer.classList.add('open'); overlay.classList.add('open');
+  document.getElementById('closeCart').focus();
+}
+function closeCart(){
+  cartDrawer.classList.remove('open'); overlay.classList.remove('open');
+  if(lastFocusedEl && lastFocusedEl.focus){ lastFocusedEl.focus(); lastFocusedEl = null; }
+}
 document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('closeCart').addEventListener('click', closeCart);
 overlay.addEventListener('click', closeCart);
@@ -1188,8 +1201,16 @@ overlay.addEventListener('click', closeCart);
 const bwOverlay = document.getElementById('bwOverlay');
 const pdModal = document.getElementById('pdModal');
 const coModal = document.getElementById('coModal');
-function openModal(m){ m.classList.add('open'); bwOverlay.classList.add('open'); }
-function closeModals(){ pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open'); }
+function openModal(m){
+  lastFocusedEl = document.activeElement;
+  m.classList.add('open'); bwOverlay.classList.add('open');
+  focusInto(m);
+}
+function closeModals(){
+  const wasOpen = pdModal.classList.contains('open') || coModal.classList.contains('open');
+  pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open');
+  if(wasOpen && lastFocusedEl && lastFocusedEl.focus){ lastFocusedEl.focus(); lastFocusedEl = null; }
+}
 bwOverlay.addEventListener('click', closeModals);
 document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
 document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModals(); closeCart(); } });
