@@ -661,7 +661,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <div class="co-fields">
         <input id="coName" class="full" placeholder="Full name" data-i18n-placeholder="co.name" autocomplete="name">
         <input id="coPhone" placeholder="Mobile" data-i18n-placeholder="co.phone" inputmode="tel" autocomplete="tel">
-        <select id="coSuburb">
+        <select id="coSuburb" data-i18n-arialabel="co.suburbLabel">
           <option>Sunnybank</option>
           <option>Sunnybank Hills</option>
           <option>Underwood</option>
@@ -874,7 +874,7 @@ const I18N = {
     'pd.practNote':'Practitioner-range product — our pharmacist will confirm suitability before dispatch.',
     'pd.pharmNote':'Pharmacist medicine — our pharmacist may contact you to confirm this is right for you.',
     'co.title':'Checkout','co.demoNote':'Demo checkout — no real payment is processed.',
-    'co.delivery':'Delivery details','co.name':'Full name','co.phone':'Mobile','co.address':'Street address','co.otherSuburb':'Other Brisbane',
+    'co.delivery':'Delivery details','co.name':'Full name','co.phone':'Mobile','co.address':'Street address','co.otherSuburb':'Other Brisbane','co.suburbLabel':'Delivery suburb',
     'co.method':'Delivery method',
     'co.m1':'Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)',
     'co.m2':'Standard post (1–3 days) — $7.95, free over $30',
@@ -955,7 +955,7 @@ const I18N = {
     'pd.practNote':'专业渠道产品 —— 发货前药剂师将确认是否适合您。',
     'pd.pharmNote':'药剂师药品 —— 药剂师可能会与您联系,确认产品适合您。',
     'co.title':'结算','co.demoNote':'演示结算 —— 不会产生真实付款。',
-    'co.delivery':'配送信息','co.name':'姓名','co.phone':'手机号码','co.address':'街道地址','co.otherSuburb':'布里斯班其他区域',
+    'co.delivery':'配送信息','co.name':'姓名','co.phone':'手机号码','co.address':'街道地址','co.otherSuburb':'布里斯班其他区域','co.suburbLabel':'配送城区',
     'co.method':'配送方式',
     'co.m1':'当日快递 —— $9.95(Sunnybank · Underwood · Calamvale · Indooroopilly)',
     'co.m2':'普通邮寄(1-3天)—— $7.95,满$30免费',
@@ -985,7 +985,14 @@ function applyLang(lang){
   localStorage.setItem('bw-lang', lang);
   document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const txt = t(el.dataset.i18nPlaceholder);
+    el.placeholder = txt;
+    // Placeholder is not an accessible name (it disappears on input), so mirror
+    // it to aria-label unless the element already carries an explicit one.
+    if(!el.hasAttribute('data-i18n-arialabel')) el.setAttribute('aria-label', txt);
+  });
+  document.querySelectorAll('[data-i18n-arialabel]').forEach(el=>{ el.setAttribute('aria-label', t(el.dataset.i18nArialabel)); });
   const toggle = document.getElementById('langToggle');
   if(toggle) toggle.textContent = lang === 'en' ? '中文' : 'EN';
   const suburbZhNote = document.getElementById('suburbZhNote');
