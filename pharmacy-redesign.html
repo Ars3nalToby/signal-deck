@@ -680,11 +680,11 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         </select>
       </div>
       <div class="co-section-label" data-i18n="co.payment">Payment</div>
-      <div class="pay-chips" id="payChips">
-        <button class="pay-chip active" data-pay="card">💳 <span data-i18n="co.payCard">Card</span> · Visa / Mastercard</button>
-        <button class="pay-chip" data-pay="apple">Apple Pay</button>
-        <button class="pay-chip" data-pay="google">Google Pay</button>
-        <button class="pay-chip" data-pay="bank">🏦 <span data-i18n="co.payBank">Bank transfer</span></button>
+      <div class="pay-chips" id="payChips" role="group" aria-label="Payment method">
+        <button class="pay-chip active" data-pay="card" aria-pressed="true">💳 <span data-i18n="co.payCard">Card</span> · Visa / Mastercard</button>
+        <button class="pay-chip" data-pay="apple" aria-pressed="false">Apple Pay</button>
+        <button class="pay-chip" data-pay="google" aria-pressed="false">Google Pay</button>
+        <button class="pay-chip" data-pay="bank" aria-pressed="false">🏦 <span data-i18n="co.payBank">Bank transfer</span></button>
       </div>
       <div class="pay-panel active" data-panel="card">
         <div class="co-fields" style="margin-top:10px;">
@@ -1311,8 +1311,9 @@ document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
 document.getElementById('payChips').addEventListener('click', (e)=>{
   const chip = e.target.closest('.pay-chip');
   if(!chip) return;
-  document.querySelectorAll('.pay-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.pay-chip').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-pressed','false'); });
   chip.classList.add('active');
+  chip.setAttribute('aria-pressed','true');
   document.querySelectorAll('.pay-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel === chip.dataset.pay));
 });
 
