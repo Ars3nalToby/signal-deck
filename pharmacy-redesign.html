@@ -373,9 +373,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <a href="#loyalty" data-i18n="nav.rewards">Rewards</a>
     </nav>
     <div class="search-wrap">
-      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" data-i18n-placeholder="search.placeholder" autocomplete="off">
+      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" data-i18n-placeholder="search.placeholder" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestBox">
       <span class="icon">🔍</span>
-      <div class="suggest" id="suggestBox"></div>
+      <div class="suggest" id="suggestBox" role="listbox"></div>
     </div>
     <div class="head-actions">
       <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
@@ -733,9 +733,9 @@ const PRODUCTS = [
    descZh:"布洛芬200mg速释配方,缓解头痛、牙痛及经期疼痛。",
    dose:"Adults: 1–2 tablets every 4–6 hours with water (maximum 6 in 24 hours). Take with food if sensitive.",
    doseZh:"成人:每4-6小时1-2片,温水送服(24小时内不超过6片),胃敏感者请随餐服用。"},
-  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"pharmacy", price:19.95, icon:"🤧",
-   desc:"Non-drowsy fexofenadine for hayfever and allergy relief that lasts 24 hours.",
-   descZh:"非嗜睡型非索非那定,24小时缓解花粉症与过敏症状。",
+  {id:5, name:"Telfast 180mg Antihistamine (30s)", brand:"Sanofi", size:"30 tablets", cat:"pharmacy", price:19.95, icon:"🤧", hot:true,
+   desc:"Non-drowsy fexofenadine for hayfever and allergy relief that lasts 24 hours — handy as spring pollen picks up.",
+   descZh:"非嗜睡型非索非那定,24小时缓解花粉症与过敏症状 —— 春季花粉增多时尤为实用。",
    dose:"Adults and children over 12: 1 tablet daily.",
    doseZh:"成人及12岁以上儿童:每日1片。"},
   {id:27, name:"Finacea 15% Gel 30g (Azelaic Acid)", brand:"LEO Pharma", size:"30g gel", cat:"pharmacy", price:32.95, icon:"🧴", pharm:true, hot:true,
@@ -1002,6 +1002,7 @@ function applyLang(lang){
   renderCart();
   document.getElementById('pbsResults').innerHTML = '';
   document.getElementById('suggestBox').classList.remove('open');
+  document.getElementById('searchInput').setAttribute('aria-expanded', 'false');
   const sbRes = document.getElementById('sbResult');
   if(sbRes){ sbRes.className = 'sb-result'; sbRes.textContent = ''; }
 }
@@ -1066,27 +1067,34 @@ document.getElementById('tabs').addEventListener('click', (e)=>{
 /* ---------------- Search + suggestions ---------------- */
 const searchInput = document.getElementById('searchInput');
 const suggestBox = document.getElementById('suggestBox');
+function setSuggestOpen(open){
+  suggestBox.classList.toggle('open', open);
+  searchInput.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
 searchInput.addEventListener('input', ()=>{
   searchTerm = searchInput.value;
   renderGrid();
   const term = searchTerm.trim().toLowerCase();
-  if(!term){ suggestBox.classList.remove('open'); return; }
+  if(!term){ setSuggestOpen(false); return; }
   const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,6);
-  if(!matches.length){ suggestBox.classList.remove('open'); return; }
-  suggestBox.innerHTML = matches.map(p=>`<div class="s-item" data-goto="${p.id}"><span>${p.icon} ${p.name}</span><span class="tag">${p.cat}</span></div>`).join('');
-  suggestBox.classList.add('open');
+  if(!matches.length){ setSuggestOpen(false); return; }
+  suggestBox.innerHTML = matches.map(p=>`<div class="s-item" role="option" data-goto="${p.id}"><span>${p.icon} ${p.name}</span><span class="tag">${p.cat}</span></div>`).join('');
+  setSuggestOpen(true);
 });
 suggestBox.addEventListener('click', (e)=>{
   const item = e.target.closest('.s-item');
   if(!item) return;
   addToCart(parseInt(item.dataset.goto));
-  suggestBox.classList.remove('open');
+  setSuggestOpen(false);
   searchInput.value = '';
   searchTerm = '';
   renderGrid();
 });
+searchInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && suggestBox.classList.contains('open')){ setSuggestOpen(false); }
+});
 document.addEventListener('click', (e)=>{
-  if(!e.target.closest('.search-wrap')) suggestBox.classList.remove('open');
+  if(!e.target.closest('.search-wrap')) setSuggestOpen(false);
 });
 
 /* ---------------- PBS quick search ---------------- */
