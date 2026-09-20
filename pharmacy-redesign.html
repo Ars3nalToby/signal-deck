@@ -258,7 +258,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 .cart-line .qty-row{display:flex; align-items:center; gap:8px; margin-top:6px;}
 .qty-btn{width:22px; height:22px; border-radius:50%; border:1px solid var(--line-2); background:#fff; font-size:13px; line-height:1;}
 .cart-line .price{font-size:13.5px; font-weight:700; white-space:nowrap;}
-.cart-line .rm{font-size:11px; color:var(--danger); margin-top:6px; cursor:pointer;}
+.cart-line .rm{font-size:11px; color:var(--danger); margin-top:6px; cursor:pointer; background:none; border:none; padding:0; font-family:inherit; display:block; text-align:left;}
 .cart-foot{padding:18px 20px; border-top:1px solid var(--line);}
 .cart-foot .sub-row{display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;}
 .cart-foot .sub-row.total{font-weight:800; font-size:16px; margin-top:8px;}
@@ -860,7 +860,7 @@ const I18N = {
     'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
     'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
     'chat.placeholder':'Type your question…',
-    'dyn.add':'Add','dyn.addScript':'Add script','dyn.added':'Added ✓','dyn.remove':'Remove',
+    'dyn.add':'Add','dyn.addScript':'Add script','dyn.added':'Added ✓','dyn.remove':'Remove','dyn.decreaseQty':'Decrease quantity of','dyn.increaseQty':'Increase quantity of',
     'dyn.noMatches':'No matches — try a different search.','dyn.noMatchPbs':'No match — a pharmacist can help via chat',
     'dyn.flagRx':'Rx','dyn.flagPharm':'Pharmacist only','dyn.flagSale':'Sale','dyn.flagHot':'🔥 Trending',
     'dyn.compareAt':'Compare at Chemist Warehouse ↗',
@@ -941,7 +941,7 @@ const I18N = {
     'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
     'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
     'chat.placeholder':'输入您的问题…',
-    'dyn.add':'加入购物车','dyn.addScript':'上传处方','dyn.added':'已加入 ✓','dyn.remove':'移除',
+    'dyn.add':'加入购物车','dyn.addScript':'上传处方','dyn.added':'已加入 ✓','dyn.remove':'移除','dyn.decreaseQty':'减少数量:','dyn.increaseQty':'增加数量:',
     'dyn.noMatches':'没有找到匹配商品 —— 试试其他搜索词。','dyn.noMatchPbs':'未找到匹配项 —— 可通过聊天咨询药剂师',
     'dyn.flagRx':'处方药','dyn.flagPharm':'药剂师指导','dyn.flagSale':'特价','dyn.flagHot':'🔥 热门',
     'dyn.compareAt':'前往 Chemist Warehouse 比价 ↗',
@@ -1146,11 +1146,11 @@ function renderCart(){
         <div class="info">
           <div class="name">${l.name}</div>
           <div class="qty-row">
-            <button class="qty-btn" data-dec="${l.id}">–</button>
+            <button class="qty-btn" data-dec="${l.id}" aria-label="${t('dyn.decreaseQty')} ${l.name}">–</button>
             <span>${l.qty}</span>
-            <button class="qty-btn" data-inc="${l.id}">+</button>
+            <button class="qty-btn" data-inc="${l.id}" aria-label="${t('dyn.increaseQty')} ${l.name}">+</button>
           </div>
-          <div class="rm" data-rm="${l.id}">${t('dyn.remove')}</div>
+          <button class="rm" data-rm="${l.id}" aria-label="${t('dyn.remove')} ${l.name}">${t('dyn.remove')}</button>
         </div>
         <div class="price">$${(l.price*l.qty).toFixed(2)}</div>
       </div>
@@ -1271,7 +1271,7 @@ function openProduct(id){
         ${showLabelLine ? `<div class="pd-block"><h4>${t('pd.warn')}</h4><p>${t('pd.labelLine')}</p></div>` : ''}
         ${note}
         <div class="pd-buy">
-          <div class="pd-qty"><button class="qty-btn" id="pdMinus">–</button><span id="pdQtyVal">1</span><button class="qty-btn" id="pdPlus">+</button></div>
+          <div class="pd-qty"><button class="qty-btn" id="pdMinus" aria-label="${t('dyn.decreaseQty')} ${p.name}">–</button><span id="pdQtyVal">1</span><button class="qty-btn" id="pdPlus" aria-label="${t('dyn.increaseQty')} ${p.name}">+</button></div>
           <button class="add-btn" id="pdAdd" style="padding:12px 22px; font-size:13.5px;">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
         </div>
         <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
