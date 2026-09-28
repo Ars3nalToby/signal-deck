@@ -707,11 +707,12 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   </div>
 </div>
 
-<button class="chat-fab" id="chatFab"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
-<div class="chat-pop" id="chatPop">
+<button class="chat-fab" id="chatFab" aria-expanded="false" aria-controls="chatPop"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
+<div class="chat-pop" id="chatPop" role="dialog" data-i18n-arialabel="chat.head" aria-label="Pharmacist chat">
   <div class="cp-head" data-i18n="chat.head">Pharmacist chat</div>
   <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
-  <input type="text" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
+  <input type="text" id="chatInput" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
+</div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -1228,7 +1229,7 @@ function closeModals(){
 }
 bwOverlay.addEventListener('click', closeModals);
 document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click', closeModals));
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModals(); closeCart(); } });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModals(); closeCart(); if(chatPop.classList.contains('open')) setChatOpen(false); } });
 
 /* ---------------- Mobile nav (hamburger) ---------------- */
 const hamburgerBtn = document.getElementById('hamburger');
@@ -1380,7 +1381,20 @@ dropzone.addEventListener('drop', (e)=>{
 /* ---------------- Pharmacist chat popover ---------------- */
 const chatFab = document.getElementById('chatFab');
 const chatPop = document.getElementById('chatPop');
-chatFab.addEventListener('click', ()=>chatPop.classList.toggle('open'));
+const chatInput = document.getElementById('chatInput');
+let chatLastFocusedEl = null;
+function setChatOpen(open){
+  chatPop.classList.toggle('open', open);
+  chatFab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if(open){
+    chatLastFocusedEl = document.activeElement;
+    chatInput.focus();
+  } else if(chatLastFocusedEl && chatLastFocusedEl.focus){
+    chatLastFocusedEl.focus();
+    chatLastFocusedEl = null;
+  }
+}
+chatFab.addEventListener('click', ()=>setChatOpen(!chatPop.classList.contains('open')));
 
 /* ---------------- Scroll reveal ---------------- */
 const observer = new IntersectionObserver((entries)=>{
