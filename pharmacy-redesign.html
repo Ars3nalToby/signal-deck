@@ -196,6 +196,10 @@ header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 .prod-flag{background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:12px; text-transform:uppercase; white-space:nowrap;}
 .prod-flag.rx{background:var(--gold);}
 .prod-flag.hot{background:var(--accent-2); margin-left:auto;}
+.prod-flag.hold{background:var(--danger);}
+.add-btn:disabled{background:var(--ink-3); cursor:not-allowed;}
+.pd-note.hold{background:rgba(214,69,69,0.08); border-color:rgba(214,69,69,0.4); color:#8a1f17;}
+.pd-note.hold a{color:#8a1f17; font-weight:700; text-decoration:underline;}
 .p-size{font-size:12px; color:var(--ink-3);}
 @media (max-width:520px){ .prod-thumb{height:150px; align-items:flex-end; padding-bottom:14px;} }
 .prod-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1;}
@@ -266,9 +270,8 @@ table.compare .row-label{font-weight:600;}
 .news-card.featured p{max-width:820px;}
 .news-meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
 .news-tag{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--primary-dark); background:rgba(15,157,143,0.1); padding:3px 10px; border-radius:12px;}
-.news-status{font-size:11px; font-weight:800; color:#fff; background:var(--accent); padding:3px 10px; border-radius:12px; display:none;}
-.news-status.show{display:inline-block;}
-.news-status.ended{background:var(--ink-3);}
+.news-tag.alert{color:#8a1f17; background:rgba(214,69,69,0.12);}
+.news-card.featured.alert{border-color:var(--danger); background:linear-gradient(120deg,#ffffff 0%, #fdf0ee 100%);}
 .news-date{font-size:12px; color:var(--ink-3);}
 .news-card h3{font-size:17px; line-height:1.3;}
 .news-card p{font-size:13.5px; color:var(--ink-2); line-height:1.6;}
@@ -538,7 +541,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
           <div class="reorder-item" id="lastOrderRow" style="display:none;"><span id="lastOrderText"></span><button id="lastOrderBtn" data-i18n="reorder.all">Reorder all</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder1">Blackmores Fish Oil 1000mg</span><button data-reorder="6" data-i18n="qo.reorderBtn">Reorder</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
-          <div class="reorder-item"><span data-i18n="qo.reorder3">BioCeuticals ArmaForce</span><button data-reorder="25" data-i18n="qo.reorderBtn">Reorder</button></div>
+          <div class="reorder-item"><span data-i18n="qo.reorder3">Blackmores Bio C 1000mg</span><button data-reorder="23" data-i18n="qo.reorderBtn">Reorder</button></div>
         </div>
       </div>
     </div>
@@ -608,23 +611,26 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <div class="see-all" data-i18n="news.checked">Checked 29 Sep 2026</div>
     </div>
     <div class="news-grid">
-      <article class="news-card featured fade-up">
-        <div class="news-meta"><span class="news-tag" data-i18n="news.n1.tag">Flu · Queensland</span><span class="news-status" id="fluStatus" data-expires="2026-09-30"></span></div>
-        <h3 data-i18n="news.n1.title">Queensland's free flu vaccine program ends 30 September</h3>
-        <p data-i18n="news.n1.body">Free influenza vaccines are available to all Queenslanders aged 6 months and over from 1 March to 30 September 2026. Fully funded nasal-spray vaccines are also offered to children aged 2 to 5 through community pharmacies. Ask your pharmacist or GP about getting vaccinated before the program closes.</p>
-        <a class="news-src" href="https://retailpharmacymagazine.com.au/qld-expands-free-flu-vax-program-for-2026/" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: Retail Pharmacy Magazine ↗</a>
+      <article class="news-card featured alert fade-up">
+        <div class="news-meta"><span class="news-tag alert" data-i18n="news.n1.tag">Safety alert · TGA</span><span class="news-date">22 Sep 2026</span></div>
+        <h3 data-i18n="news.n1.title">Andrographis removed from permitted ingredients over allergy risk</h3>
+        <p data-i18n="news.n1.body">From 17 September 2026 the TGA no longer allows andrographis in new listed medicines, citing reports of anaphylaxis, including a fatal case in June 2024. Companies have until mid-October to voluntarily recall or delist products containing it; after that the TGA says it will take regulatory action. BioCeuticals, which makes ArmaForce, has said it has stopped producing stock for supply, and BrightWell has taken ArmaForce off sale. If you have an andrographis product at home, talk to your pharmacist before taking it; stop and seek medical advice if you notice allergy symptoms, and call 000 for a severe reaction.</p>
+        <div class="news-links">
+          <a class="news-src" href="https://www.tga.gov.au/news/news-articles/andrographis-removed-listed-medicines-framework-because-allergy-risk" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: TGA ↗</a>
+          <a class="news-src" href="https://www.abc.net.au/news/2026-09-22/recall-floated-for-cold-and-flu-supplements-containing-herb/107177142" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: ABC News ↗</a>
+        </div>
       </article>
       <article class="news-card fade-up">
-        <div class="news-meta"><span class="news-tag" data-i18n="news.n2.tag">Flu · Children</span><span class="news-date">4 Apr 2026</span></div>
-        <h3 data-i18n="news.n2.title">Needle-free FluMist nasal spray arrives for ages 2–17</h3>
-        <p data-i18n="news.n2.body">For the first time in Australia, children and teenagers aged 2 to 17 can have their flu vaccine as a nasal spray. It is available on the private market, and only some children will get it for free under state programs.</p>
-        <a class="news-src" href="https://www.abc.net.au/news/2026-04-04/nasal-spray-vaccine-approved-tga/106518564" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: ABC News ↗</a>
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n2.tag">TGA · Labels</span><span class="news-date" data-i18n="news.n2.date">From 1 Oct 2026</span></div>
+        <h3 data-i18n="news.n2.title">New medicine label rules take effect</h3>
+        <p data-i18n="news.n2.body">The old labelling orders (TGO 91 for prescription and TGO 92 for non-prescription medicines) expired on 1 October. The new requirements include declaring allergens such as marine molluscs and sulphites, and spelling out "microgram" instead of "µg" to reduce misreading. Sponsors have up to five years to comply, so you will see both old and new label formats while stock is replaced.</p>
+        <a class="news-src" href="https://www.australianpharmacist.com.au/whats-changing-on-1-october-2026/" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: Australian Pharmacist ↗</a>
       </article>
       <article class="news-card fade-up">
-        <div class="news-meta"><span class="news-tag" data-i18n="news.n3.tag">PBS · Costs</span><span class="news-date" data-i18n="news.n3.date">From 1 Jan 2026</span></div>
-        <h3 data-i18n="news.n3.title">PBS general co-payment cut to $25</h3>
-        <p data-i18n="news.n3.body">The maximum PBS co-payment for general patients with a Medicare card fell to $25 (from $31.60). Concession card holders continue to pay $7.70, frozen until 2030. This applies to PBS-listed prescription medicines.</p>
-        <a class="news-src" href="https://findapharmacy.com.au/latest-updates/what-does-the-2026-pbs-price-drop-mean-for-your-wallet" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: FindAPharmacy ↗</a>
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n3.tag">PBS · Scripts</span><span class="news-date" data-i18n="news.n3.date">From 1 Oct 2026</span></div>
+        <h3 data-i18n="news.n3.title">Eligible nurse prescribers can now issue PBS scripts</h3>
+        <p data-i18n="news.n3.body">From 1 October, eligible designated registered nurse prescribers can issue Pharmaceutical Benefits Scheme (PBS) prescriptions, widening who can write the script you take to your pharmacy.</p>
+        <a class="news-src" href="https://www.australianpharmacist.com.au/whats-changing-on-1-october-2026/" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: Australian Pharmacist ↗</a>
       </article>
       <article class="news-card fade-up">
         <div class="news-meta"><span class="news-tag" data-i18n="news.n4.tag">Allergy · Brisbane</span><span class="news-date" data-i18n="news.n4.date">Spring</span></div>
@@ -909,9 +915,9 @@ const PRODUCTS = [
    descZh:"高浓度辅酶Q10,支持心脏健康与细胞能量生成。",
    dose:"Adults: 1 capsule daily with a meal.",
    doseZh:"成人:每日1粒,随餐服用。"},
-  {id:25, name:"BioCeuticals ArmaForce (60 tabs)", brand:"BioCeuticals", size:"60 tablets", cat:"vitamins", price:34.95, icon:"🛡️", hot:true, pract:true,
-   desc:"Practitioner-strength immune formula with andrographis, echinacea, zinc and vitamin C — the cult-favourite of the BioCeuticals range.",
-   descZh:"专业级免疫配方,含穿心莲、紫锥菊、锌与维生素C —— BioCeuticals系列中的口碑明星产品。",
+  {id:25, name:"BioCeuticals ArmaForce (60 tabs)", brand:"BioCeuticals", size:"60 tablets", cat:"vitamins", price:34.95, icon:"🛡️", hold:true,
+   desc:"Practitioner-strength immune formula containing andrographis, echinacea, zinc and vitamin C. Not available: see the TGA safety notice below.",
+   descZh:"专业级免疫配方,含穿心莲、紫锥菊、锌与维生素C。暂不供应:请参阅下方TGA安全通知。",
    dose:"Adults: 1 tablet 1–2 times daily, or as directed by your healthcare practitioner.",
    doseZh:"成人:每日1-2次,每次1片,或遵医嘱/药剂师建议。"},
   {id:26, name:"BioCeuticals UltraMuscleze Night", brand:"BioCeuticals", size:"240g oral powder", cat:"vitamins", price:42.50, icon:"🌙", hot:true, pract:true,
@@ -973,7 +979,7 @@ function looseMatches(q){
   (low.match(/[\u4e00-\u9fff]+/g) || []).forEach(run => { for(let i=0;i<run.length-1;i++) toks.add(run.slice(i,i+2)); });
   const stop = new Set(['what','with','have','need','does','this','that','your','about','which','should','would','could','take','best','help','good','there','from','when','where']);
   return PRODUCTS.map(p => { const hay = productHay(p); let n = 0; toks.forEach(w => { if(!stop.has(w) && hay.includes(w)) n++; }); return {p, n}; })
-    .filter(x => x.n > 0).sort((a,b) => b.n - a.n).slice(0,3).map(x => x.p);
+    .filter(x => x.n > 0 && !x.p.hold).sort((a,b) => b.n - a.n).slice(0,3).map(x => x.p);
 }
 
 /* Only {id, qty} is stored; lines are rebuilt from the live catalogue so prices never go stale. */
@@ -983,7 +989,7 @@ try {
   cart = saved.map(s => {
     const p = PRODUCTS.find(x => x.id === s.id);
     const qty = Math.min(99, Math.floor(Number(s.qty)));
-    return p && qty > 0 ? {...p, qty} : null;
+    return p && !p.hold && qty > 0 ? {...p, qty} : null;
   }).filter(Boolean);
 } catch(e) { cart = []; }
 
@@ -999,29 +1005,8 @@ const I18N = {
     "nav.news":"Health News",
     "news.title":"Health news",
     "news.sub":"Timely updates for Queensland families, summarised from official and trade sources.",
-    "news.checked":"Checked 29 Sep 2026",
     "news.src":"Source",
-    "news.n1.tag":"Flu · Queensland",
-    "news.n1.title":"Queensland's free flu vaccine program ends 30 September",
-    "news.n1.body":"Free influenza vaccines are available to all Queenslanders aged 6 months and over from 1 March to 30 September 2026. Fully funded nasal-spray vaccines are also offered to children aged 2 to 5 through community pharmacies. Ask your pharmacist or GP about getting vaccinated before the program closes.",
-    "news.n2.tag":"Flu · Children",
-    "news.n2.title":"Needle-free FluMist nasal spray arrives for ages 2–17",
-    "news.n2.body":"For the first time in Australia, children and teenagers aged 2 to 17 can have their flu vaccine as a nasal spray. It is available on the private market, and only some children will get it for free under state programs.",
-    "news.n3.tag":"PBS · Costs",
-    "news.n3.date":"From 1 Jan 2026",
-    "news.n3.title":"PBS general co-payment cut to $25",
-    "news.n3.body":"The maximum PBS co-payment for general patients with a Medicare card fell to $25 (from $31.60). Concession card holders continue to pay $7.70, frozen until 2030. This applies to PBS-listed prescription medicines.",
-    "news.n4.tag":"Allergy · Brisbane",
-    "news.n4.date":"Spring",
-    "news.n4.title":"Hayfever season: start treatment early",
-    "news.n4.body":"Brisbane's warm, humid climate keeps pollen and mould active for much of the year, with subtropical grasses common. Pharmacists suggest starting 1–2 weeks before your usual peak: a non-drowsy antihistamine such as fexofenadine is a common first step, sometimes combined with a corticosteroid nasal spray.",
-    "news.n4.pollen":"Brisbane pollen count ↗",
-    "news.n4.shop":"See Telfast 180mg →",
     "news.disclaimer":"Summaries are prepared by BrightWell from the linked sources for general information only and are not medical advice. Please speak to your pharmacist or doctor about your own situation.",
-    "news.status.days":"{x} days left",
-    "news.status.today":"Ends today",
-    "news.status.tomorrow":"Ends tomorrow",
-    "news.status.ended":"Ended 30 Sep",
     "hdr.account":"Account",
     "hdr.cart":"Cart",
     "dyn.close":"Close",
@@ -1087,6 +1072,28 @@ const I18N = {
     "info.terms.body":"Terms of use will be published before launch. This preview does not process payments or supply medicines.",
     "info.accessibility.title":"Accessibility",
     "info.accessibility.body":"BrightWell is built to work with a keyboard and screen readers: controls are labelled, dialogs manage focus and close with Esc, animation respects your reduced-motion setting, and the whole site is available in English and 中文. Found a barrier? Tell us in the pharmacist chat.",
+    "dyn.flagHold":"TGA safety review",
+    "dyn.unavailable":"Unavailable",
+    "pd.holdNote":"This product contains andrographis. The TGA has removed andrographis from the ingredients allowed in listed medicines because of the risk of serious allergic reactions (anaphylaxis), and asked sponsors to recall or delist affected products. BrightWell has taken it off sale while this is resolved. If you have it at home, talk to your pharmacist before taking it, and call 000 for a severe allergic reaction.",
+    "pd.holdLink":"TGA announcement",
+    "news.checked":"Checked 4 Oct 2026",
+    "news.n1.tag":"Safety alert · TGA",
+    "news.n1.title":"Andrographis removed from permitted ingredients over allergy risk",
+    "news.n1.body":"From 17 September 2026 the TGA no longer allows andrographis in new listed medicines, citing reports of anaphylaxis, including a fatal case in June 2024. Companies have until mid-October to voluntarily recall or delist products containing it; after that the TGA says it will take regulatory action. BioCeuticals, which makes ArmaForce, has said it has stopped producing stock for supply, and BrightWell has taken ArmaForce off sale. If you have an andrographis product at home, talk to your pharmacist before taking it; stop and seek medical advice if you notice allergy symptoms, and call 000 for a severe reaction.",
+    "news.n2.tag":"TGA · Labels",
+    "news.n2.date":"From 1 Oct 2026",
+    "news.n2.title":"New medicine label rules take effect",
+    "news.n2.body":"The old labelling orders (TGO 91 for prescription and TGO 92 for non-prescription medicines) expired on 1 October. The new requirements include declaring allergens such as marine molluscs and sulphites, and spelling out \"microgram\" instead of \"µg\" to reduce misreading. Sponsors have up to five years to comply, so you will see both old and new label formats while stock is replaced.",
+    "news.n3.tag":"PBS · Scripts",
+    "news.n3.date":"From 1 Oct 2026",
+    "news.n3.title":"Eligible nurse prescribers can now issue PBS scripts",
+    "news.n3.body":"From 1 October, eligible designated registered nurse prescribers can issue Pharmaceutical Benefits Scheme (PBS) prescriptions, widening who can write the script you take to your pharmacy.",
+    "news.n4.tag":"Allergy · Brisbane",
+    "news.n4.date":"Spring",
+    "news.n4.title":"Hayfever season: start treatment early",
+    "news.n4.body":"Brisbane's warm, humid climate keeps pollen and mould active for much of the year, with subtropical grasses common. Pharmacists suggest starting 1–2 weeks before your usual peak: a non-drowsy antihistamine such as fexofenadine is a common first step, sometimes combined with a corticosteroid nasal spray.",
+    "news.n4.pollen":"Brisbane pollen count ↗",
+    "news.n4.shop":"See Telfast 180mg →",
     'util.ship':'🚚 Free standard delivery over $30 · Same-day courier available','util.pharm':'💬 Pharmacist Q&A in English or 中文','util.demo':'Preview site — demo checkout, no real orders',
     'hero.trust1':'Order in under 60 seconds','hero.trust2':'Bilingual pharmacist chat (EN/中文)','hero.trust3':'Same-day delivery across Brisbane southside',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
@@ -1101,7 +1108,7 @@ const I18N = {
     'qo.card2.title':'Search by medicine or ingredient','qo.card2.body':'Type a brand, an ingredient, or what you need it for — hayfever, headache, sleep — and add it straight to your cart.',
     'qo.pbsPlaceholder':'e.g. Panadol, paracetamol, hayfever…','qo.pbsBtn':'Find',
     'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
-    'qo.reorder1':'Blackmores Fish Oil 1000mg','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'Reorder',
+    'qo.reorder1':'Blackmores Fish Oil 1000mg','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'Blackmores Bio C 1000mg','qo.reorderBtn':'Reorder',
     'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
     'cat.c1':'Immune Support','cat.c2':'Omega-3 & Heart','cat.c3':'Probiotics & Gut','cat.c4':'Sleep & Magnesium','cat.c5':'Vitamins C & D','cat.c6':'Pharmacy Medicines',
     'best.title':'Best sellers','best.sub':'Tap a tab to filter — search bar above filters this grid too.','best.seeAll':'17 quality lines →',
@@ -1172,29 +1179,8 @@ const I18N = {
     "nav.news":"健康资讯",
     "news.title":"健康资讯",
     "news.sub":"为昆士兰家庭整理的最新动态,摘自官方及行业来源。",
-    "news.checked":"核查日期:2026年9月29日",
     "news.src":"来源",
-    "news.n1.tag":"流感 · 昆士兰",
-    "news.n1.title":"昆士兰免费流感疫苗计划9月30日结束",
-    "news.n1.body":"2026年3月1日至9月30日,昆士兰为所有6个月及以上居民提供免费流感疫苗。2至5岁儿童还可通过社区药房接种全额资助的鼻喷疫苗。请在计划结束前咨询您的药剂师或全科医生。",
-    "news.n2.tag":"流感 · 儿童",
-    "news.n2.title":"免针FluMist鼻喷流感疫苗面向2–17岁",
-    "news.n2.body":"澳大利亚首次允许2至17岁儿童和青少年以鼻喷方式接种流感疫苗。该疫苗在私人市场供应,只有部分儿童可在州计划下免费接种。",
-    "news.n3.tag":"PBS · 费用",
-    "news.n3.date":"自2026年1月1日起",
-    "news.n3.title":"PBS普通患者自付上限降至$25",
-    "news.n3.body":"持有医保卡的普通患者PBS最高自付额由$31.60降至$25;优惠卡持有者继续支付$7.70,并冻结至2030年。适用于PBS列名处方药。",
-    "news.n4.tag":"过敏 · 布里斯班",
-    "news.n4.date":"春季",
-    "news.n4.title":"花粉症季节:尽早开始用药",
-    "news.n4.body":"布里斯班温暖潮湿的气候使花粉和霉菌全年大部分时间保持活跃,亚热带草类十分常见。药剂师建议在通常高峰期前1–2周开始用药:非嗜睡型抗组胺药(如非索非那定)是常见的第一步,有时会配合皮质类固醇鼻喷剂。",
-    "news.n4.pollen":"布里斯班花粉指数 ↗",
-    "news.n4.shop":"查看 Telfast 180mg →",
     "news.disclaimer":"摘要由BrightWell根据所附来源整理,仅供一般参考,不构成医疗建议。请就您的具体情况咨询药剂师或医生。",
-    "news.status.days":"还剩 {x} 天",
-    "news.status.today":"今天截止",
-    "news.status.tomorrow":"明天截止",
-    "news.status.ended":"已于9月30日结束",
     "hdr.account":"账户",
     "hdr.cart":"购物车",
     "dyn.close":"关闭",
@@ -1260,6 +1246,28 @@ const I18N = {
     "info.terms.body":"使用条款将在上线前发布。此预览版不处理付款,也不供应药品。",
     "info.accessibility.title":"无障碍",
     "info.accessibility.body":"BrightWell 支持键盘操作和读屏软件:控件均有标签,弹窗会管理焦点并可按 Esc 关闭,动画遵循您的“减少动态效果”设置,全站提供中英双语。发现障碍?请在药剂师聊天中告诉我们。",
+    "dyn.flagHold":"TGA安全审查",
+    "dyn.unavailable":"暂不供应",
+    "pd.holdNote":"本产品含穿心莲。由于存在严重过敏反应(过敏性休克)风险,TGA已将穿心莲移出列名药品的允许成分,并要求相关厂商召回或撤销登记。BrightWell已暂停销售该产品,待事件处理完毕。如您家中有此产品,服用前请咨询药剂师;出现严重过敏反应请拨打 000。",
+    "pd.holdLink":"TGA公告",
+    "news.checked":"核查日期:2026年10月4日",
+    "news.n1.tag":"安全警示 · TGA",
+    "news.n1.title":"因过敏风险,穿心莲被移出允许成分",
+    "news.n1.body":"自2026年9月17日起,TGA不再允许新的列名药品使用穿心莲,理由是接到过敏性休克报告,其中包括2024年6月的一例死亡病例。相关公司须在10月中旬前自愿召回或撤销含穿心莲产品的登记,否则TGA表示将采取监管行动。ArmaForce 的生产商 BioCeuticals 表示已停止生产供应库存,BrightWell 也已暂停销售 ArmaForce。如您家中有含穿心莲的产品,服用前请咨询药剂师;出现过敏症状请停用并就医,严重反应请拨打 000。",
+    "news.n2.tag":"TGA · 标签",
+    "news.n2.date":"自2026年10月1日起",
+    "news.n2.title":"新的药品标签规定生效",
+    "news.n2.body":"旧的标签规定(处方药 TGO 91、非处方药 TGO 92)已于10月1日失效。新要求包括标明海洋软体动物、亚硫酸盐等过敏原,并以“microgram”全拼代替“µg”以减少误读。厂商最多有五年时间达标,因此在库存更替期间,您会同时看到新旧两种标签。",
+    "news.n3.tag":"PBS · 处方",
+    "news.n3.date":"自2026年10月1日起",
+    "news.n3.title":"符合资格的注册护士处方医师现可开具PBS处方",
+    "news.n3.body":"自10月1日起,符合资格的指定注册护士处方医师可以开具药品福利计划(PBS)处方,让您拿去药房配药的处方开具人范围更广。",
+    "news.n4.tag":"过敏 · 布里斯班",
+    "news.n4.date":"春季",
+    "news.n4.title":"花粉症季节:尽早开始用药",
+    "news.n4.body":"布里斯班温暖潮湿的气候使花粉和霉菌全年大部分时间保持活跃,亚热带草类十分常见。药剂师建议在通常高峰期前1–2周开始用药:非嗜睡型抗组胺药(如非索非那定)是常见的第一步,有时会配合皮质类固醇鼻喷剂。",
+    "news.n4.pollen":"布里斯班花粉指数 ↗",
+    "news.n4.shop":"查看 Telfast 180mg →",
     'util.ship':'🚚 满$30免费普通配送 · 可选当日快递','util.pharm':'💬 药剂师问答:中文或英文','util.demo':'预览站点 —— 演示结账,不处理真实订单',
     'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师中英文在线咨询','hero.trust3':'布里斯班南区当日送达',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
@@ -1274,7 +1282,7 @@ const I18N = {
     'qo.card2.title':'按药品名称或成分搜索','qo.card2.body':'输入品牌、成分或用途(如花粉症、头痛、睡眠),即可直接加入购物车。',
     'qo.pbsPlaceholder':'例如:Panadol、对乙酰氨基酚、花粉症…','qo.pbsBtn':'查找',
     'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
-    'qo.reorder1':'Blackmores 鱼油 1000mg','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'重新购买',
+    'qo.reorder1':'Blackmores 鱼油 1000mg','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'Blackmores 维生素C 1000mg','qo.reorderBtn':'重新购买',
     'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
     'cat.c1':'免疫支持','cat.c2':'Omega-3 & 心脏健康','cat.c3':'益生菌 & 肠道健康','cat.c4':'睡眠 & 镁','cat.c5':'维生素C & D','cat.c6':'药房药品',
     'best.title':'热销商品','best.sub':'点击标签筛选 —— 上方搜索框同样适用于此列表。','best.seeAll':'17款精选产品 →',
@@ -1360,7 +1368,6 @@ function applyLang(lang){
   if(typeof closeModals === 'function') closeModals();
   renderGrid();
   renderHeroShowcase();
-  renderNewsStatus();
   const cl = document.getElementById('chatLog'); if(cl) cl.innerHTML = '';
   renderCart();
   renderMember();
@@ -1373,6 +1380,7 @@ function applyLang(lang){
 }
 
 function flagFor(p){
+  if(p.hold) return `<div class="prod-flags"><span class="prod-flag hold">${t('dyn.flagHold')}</span></div>`;
   let left = '';
   if(p.rx) left = `<span class="prod-flag rx">${t('dyn.flagRx')}</span>`;
   else if(p.pract) left = `<span class="prod-flag rx">${t('dyn.flagPract')}</span>`;
@@ -1402,7 +1410,7 @@ function renderGrid(){
         <div class="p-size">${p.size || ''}</div>
         <div class="p-price-row">
           <div class="p-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
-          <button class="add-btn" data-add="${p.id}">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
+          ${p.hold ? `<button class="add-btn" disabled>${t('dyn.unavailable')}</button>` : `<button class="add-btn" data-add="${p.id}">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>`}
         </div>
         <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
       </div>
@@ -1437,14 +1445,6 @@ document.getElementById('showcase').addEventListener('click', (e)=>{
 });
 
 /* ---------------- News: flu-program countdown (Brisbane time) + shop button ---------------- */
-function renderNewsStatus(){
-  const el = document.getElementById('fluStatus');
-  if(!el) return;
-  const today = new Date().toLocaleDateString('en-CA', {timeZone:'Australia/Brisbane'});
-  const days = Math.round((Date.parse(el.dataset.expires + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 864e5);
-  el.className = 'news-status show' + (days < 0 ? ' ended' : '');
-  el.textContent = days < 0 ? t('news.status.ended') : days === 0 ? t('news.status.today') : days === 1 ? t('news.status.tomorrow') : t('news.status.days').replace('{x}', days);
-}
 document.querySelector('.news-shop').addEventListener('click', (e)=>openProduct(parseInt(e.currentTarget.dataset.pid)));
 
 /* ---------------- Tabs ---------------- */
@@ -1495,7 +1495,7 @@ function runPbsSearch(){
   const term = document.getElementById('pbsInput').value.trim().toLowerCase();
   const results = document.getElementById('pbsResults');
   if(!term){ results.innerHTML = ''; return; }
-  const matches = searchProducts(term).slice(0,3);
+  const matches = searchProducts(term).filter(p=>!p.hold).slice(0,3);
   results.innerHTML = matches.length ? matches.map(p=>`
     <div class="reorder-item"><span>${p.icon} ${p.name} — $${p.price.toFixed(2)}</span><button data-add="${p.id}">${t('dyn.add')}</button></div>
   `).join('') : `<div class="reorder-item"><span>${t('dyn.noMatchPbs')}</span></div>`;
@@ -1514,7 +1514,7 @@ document.querySelectorAll('[data-reorder]').forEach(btn=>{
 /* ---------------- Cart logic ---------------- */
 function addToCart(id){
   const prod = PRODUCTS.find(p=>p.id===id);
-  if(!prod) return false;
+  if(!prod || prod.hold) return false;
   const line = cart.find(l=>l.id===id);
   if(line) line.qty++;
   else cart.push({...prod, qty:1});
@@ -1644,10 +1644,11 @@ function openProduct(id){
   if(!p) return;
   pdQty = 1;
   const desc = currentLang==='zh' ? (p.descZh || p.desc || '') : (p.desc || '');
-  const dose = currentLang==='zh' ? (p.doseZh || p.dose || '') : (p.dose || '');
+  const dose = p.hold ? '' : (currentLang==='zh' ? (p.doseZh || p.dose || '') : (p.dose || ''));
   const showLabelLine = ['vitamins','pharmacy'].includes(p.cat);
   let note = '';
-  if(p.rx) note = `<div class="pd-note">⚕️ ${t('pd.rxNote')}</div>`;
+  if(p.hold) note = `<div class="pd-note hold">⚠️ ${t('pd.holdNote')} <a href="https://www.tga.gov.au/news/news-articles/andrographis-removed-listed-medicines-framework-because-allergy-risk" target="_blank" rel="noopener noreferrer">${t('pd.holdLink')} ↗</a></div>`;
+  else if(p.rx) note = `<div class="pd-note">⚕️ ${t('pd.rxNote')}</div>`;
   else if(p.pract) note = `<div class="pd-note">🧑‍⚕️ ${t('pd.practNote')}</div>`;
   else if(p.pharm) note = `<div class="pd-note">💬 ${t('pd.pharmNote')}</div>`;
   document.getElementById('pdBody').innerHTML = `
@@ -1665,13 +1666,14 @@ function openProduct(id){
         ${dose ? `<div class="pd-block"><h4>${t('pd.dose')}</h4><p>${dose}</p></div>` : ''}
         ${showLabelLine ? `<div class="pd-block"><h4>${t('pd.warn')}</h4><p>${t('pd.labelLine')}</p></div>` : ''}
         ${note}
-        <div class="pd-buy">
+        ${p.hold ? '' : `<div class="pd-buy">
           <div class="pd-qty"><button class="qty-btn" id="pdMinus" aria-label="${t('dyn.decreaseQty')} ${p.name}">–</button><span id="pdQtyVal">1</span><button class="qty-btn" id="pdPlus" aria-label="${t('dyn.increaseQty')} ${p.name}">+</button></div>
           <button class="add-btn" id="pdAdd" style="padding:12px 22px; font-size:13.5px;">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
-        </div>
+        </div>`}
         <a class="compare-link" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('site:chemistwarehouse.com.au ' + p.name)}">${t('dyn.compareAt')}</a>
       </div>
     </div>`;
+  if(!p.hold){
   document.getElementById('pdMinus').addEventListener('click', ()=>{ pdQty = Math.max(1, pdQty-1); document.getElementById('pdQtyVal').textContent = pdQty; });
   document.getElementById('pdPlus').addEventListener('click', ()=>{ pdQty++; document.getElementById('pdQtyVal').textContent = pdQty; });
   document.getElementById('pdAdd').addEventListener('click', ()=>{
@@ -1680,6 +1682,7 @@ function openProduct(id){
     closeModals();
     openCart();
   });
+  }
   openModal(pdModal);
 }
 
