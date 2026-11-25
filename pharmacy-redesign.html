@@ -31,6 +31,7 @@
 }
 *{box-sizing:border-box; margin:0; padding:0;}
 html{scroll-behavior:smooth;}
+[id]{scroll-margin-top:84px;}
 body{font-family:var(--sans); color:var(--ink); background:var(--bg); line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
 img,canvas{max-width:100%;display:block;}
 a{color:inherit; text-decoration:none;}
@@ -116,18 +117,24 @@ header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 .no-3d #hero3d{display:none;}
 .no-3d .css-fallback{display:flex !important;}
 .css-fallback{display:none; position:absolute; inset:0; align-items:center; justify-content:center;}
-.pill-orbit{position:relative; width:280px; height:280px; transform-style:preserve-3d; animation:spin3d 14s linear infinite;}
-@keyframes spin3d{from{transform:rotateY(0deg) rotateX(8deg);} to{transform:rotateY(360deg) rotateX(8deg);}}
-.pill{position:absolute; width:70px; height:34px; border-radius:20px; box-shadow:0 8px 18px rgba(0,0,0,0.12); left:50%; top:50%;}
-.pill:nth-child(1){background:linear-gradient(90deg,#0f9d8f 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(90px) rotate(10deg);}
-.pill:nth-child(2){background:linear-gradient(90deg,#ff6f59 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(-40px) translateX(60px) rotate(-15deg) scale(0.85);}
-.pill:nth-child(3){background:linear-gradient(90deg,#7c5cff 50%, #fff 50%); transform:translate(-50%,-50%) translateZ(20px) translateX(-70px) translateY(60px) rotate(30deg) scale(0.9);}
-.pill:nth-child(4){background:linear-gradient(90deg,#0a7268 50%, #eafff9 50%); transform:translate(-50%,-50%) translateZ(-70px) translateY(-70px) rotate(-25deg) scale(0.8);}
+.showcase{position:relative; width:100%; max-width:440px; height:360px; margin:0 auto;}
+.showcase::before{content:''; position:absolute; inset:4% 6%; border-radius:50%; background:radial-gradient(circle at 30% 30%, rgba(15,157,143,.34), rgba(124,92,255,.22) 58%, transparent 72%); filter:blur(6px);}
+.sc-card{position:absolute; width:224px; background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 40px rgba(13,39,38,.14); padding:13px 15px; display:flex; gap:12px; align-items:center; text-align:left; font-family:var(--sans); color:var(--ink); cursor:pointer; transition:box-shadow .2s;}
+.sc-card:hover{box-shadow:0 22px 48px rgba(15,157,143,.28);}
+.sc-card .ic{width:52px; height:52px; border-radius:14px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;}
+.sc-card .tg{display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3);}
+.sc-card .nm{display:block; font-size:12.5px; font-weight:700; line-height:1.25; margin-top:2px;}
+.sc-card .pr{display:block; font-size:15px; font-weight:800; color:var(--primary-dark); margin-top:3px;}
+.sc-a{top:33%; left:50%; margin-left:-112px; z-index:3; --r:-2deg; transform:rotate(var(--r)); animation:scFloat 6s ease-in-out infinite;}
+.sc-b{top:4%; left:0; z-index:2; --r:-8deg; transform:rotate(var(--r)); animation:scFloat 7s ease-in-out infinite .8s;}
+.sc-c{bottom:3%; right:0; z-index:2; --r:6deg; transform:rotate(var(--r)); animation:scFloat 7.5s ease-in-out infinite 1.6s;}
+@keyframes scFloat{0%,100%{transform:translateY(0) rotate(var(--r));} 50%{transform:translateY(-9px) rotate(var(--r));}}
+@media (max-width:520px){ .float-badge.b2, .float-badge.b3{display:none;} .showcase{height:300px;} .sc-card{width:196px; padding:11px 12px;} .sc-card .ic{width:44px; height:44px; font-size:24px;} .sc-a{margin-left:-98px;} }
 
 .float-badge{position:absolute; background:#fff; border:1px solid var(--line); box-shadow:var(--shadow); border-radius:14px; padding:10px 14px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:8px; animation:floaty 5s ease-in-out infinite;}
-.float-badge.b1{top:8%; right:4%; animation-delay:0s;}
-.float-badge.b2{bottom:14%; left:2%; animation-delay:1.2s;}
-.float-badge.b3{bottom:6%; right:14%; animation-delay:2.4s;}
+.float-badge.b1{top:2%; right:2%; animation-delay:0s; z-index:4;}
+.float-badge.b2{bottom:22%; left:0; animation-delay:1.2s; z-index:4;}
+.float-badge.b3{top:44%; right:0; animation-delay:2.4s; z-index:4;}
 @keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}}
 
 @media (max-width:960px){
@@ -185,15 +192,18 @@ header.site.nav-open nav.main-links a:last-child{border-bottom:none;}
 .prod-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; transition:transform .18s, box-shadow .18s; position:relative;}
 .prod-card:hover{transform:translateY(-5px); box-shadow:var(--shadow);}
 .prod-thumb{height:130px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:52px; position:relative;}
-.prod-flag{position:absolute; top:10px; left:10px; background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:12px; text-transform:uppercase;}
+.prod-flags{position:absolute; top:10px; left:10px; right:10px; display:flex; flex-wrap:wrap; gap:5px; align-items:flex-start;}
+.prod-flag{background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:12px; text-transform:uppercase; white-space:nowrap;}
 .prod-flag.rx{background:var(--gold);}
-.prod-flag.hot{background:var(--accent-2); left:auto; right:10px;}
+.prod-flag.hot{background:var(--accent-2); margin-left:auto;}
+.p-size{font-size:12px; color:var(--ink-3);}
+@media (max-width:520px){ .prod-thumb{height:150px; align-items:flex-end; padding-bottom:14px;} }
 .prod-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1;}
 .prod-body .p-cat{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:600;}
 .prod-body .p-name{font-size:14.5px; font-weight:700; line-height:1.3; min-height:38px;}
-.prod-body .p-price-row{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
+.prod-body .p-price-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px 8px; margin-top:auto;}
 .prod-body .p-price{font-size:16px; font-weight:800; color:var(--ink);}
-.prod-body .p-price .was{font-size:12px; color:var(--ink-3); text-decoration:line-through; font-weight:500; margin-left:6px;}
+.prod-body .p-price .was{font-size:12px; color:var(--ink-3); text-decoration:line-through; font-weight:500; margin-left:6px; white-space:nowrap;}
 .add-btn{border:none; background:var(--ink); color:#fff; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:8px; transition:background .15s, transform .12s;}
 .add-btn:hover{background:var(--primary-dark);}
 .add-btn.added{background:var(--primary);}
@@ -211,14 +221,65 @@ table.compare td.us{color:var(--primary-dark); font-weight:700;}
 table.compare td.them{color:var(--ink-3);}
 table.compare .row-label{font-weight:600;}
 
-/* Testimonials */
-.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
-@media (max-width:900px){.testi-grid{grid-template-columns:1fr;}}
-.testi-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px;}
-.testi-card .stars{margin-bottom:10px;}
-.testi-card p{font-size:14px; color:var(--ink-2); margin-bottom:14px;}
-.testi-card .who{font-size:13px; font-weight:700;}
-.testi-card .where{font-size:12px; color:var(--ink-3);}
+
+
+/* ---------- Chat log, track, account, info, redeem ---------- */
+.bw-modal.narrow{width:520px;}
+.chat-pop{width:300px;}
+.chat-log{max-height:230px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:10px;}
+.chat-log:empty{display:none;}
+.chat-msg{font-size:12.5px; line-height:1.5; padding:8px 11px; border-radius:12px; max-width:94%;}
+.chat-msg.me{align-self:flex-end; background:var(--primary); color:#fff; border-bottom-right-radius:4px;}
+.chat-msg.bot{align-self:flex-start; background:var(--surface-2); color:var(--ink); border-bottom-left-radius:4px;}
+.chat-msg.urgent{background:#fdecea; color:#8a1f17; border:1px solid #f3b9b3;}
+.chat-msg .reorder-list{margin-top:6px;}
+.chat-msg .reorder-item{background:#fff;}
+.chat-row{display:flex; gap:6px;}
+.chat-row input{flex:1; min-width:0; padding:9px 10px; border:1.5px solid var(--line-2); border-radius:8px; font-size:13px; font-family:var(--sans);}
+.chat-row button{border:none; background:var(--primary); color:#fff; border-radius:8px; padding:0 12px; font-weight:700; font-size:12.5px;}
+.track-steps{list-style:none; margin:16px 0 8px;}
+.track-steps li{position:relative; padding:0 0 18px 32px; font-size:13.5px; color:var(--ink-3);}
+.track-steps li::before{content:''; position:absolute; left:4px; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid var(--line-2);}
+.track-steps li::after{content:''; position:absolute; left:10px; top:18px; bottom:-2px; width:2px; background:var(--line-2);}
+.track-steps li:last-child::after{display:none;}
+.track-steps li.done{color:var(--ink);}
+.track-steps li.done::before{background:var(--primary); border-color:var(--primary);}
+.track-steps li.current{font-weight:700; color:var(--primary-dark);}
+.track-recent{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+.track-recent button{border:1.5px solid var(--line-2); background:#fff; border-radius:16px; padding:5px 12px; font-size:12px; font-weight:700; color:var(--ink);}
+.track-recent button:hover{border-color:var(--primary); color:var(--primary-dark);}
+.track-meta{font-size:12.5px; color:var(--ink-2); margin-top:12px;}
+.track-meta b{color:var(--ink);}
+.co-redeem{display:flex; gap:8px; align-items:center; font-size:13px; margin:10px 0 0; background:rgba(15,157,143,.08); border-radius:10px; padding:9px 12px;}
+.info-body{padding:20px 22px; font-size:14px; color:var(--ink-2); line-height:1.65;}
+.acct-pts{font-size:36px; font-weight:800; color:var(--primary-dark); line-height:1.1;}
+.acct-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+.acct-row button{padding:10px 16px; border-radius:10px; border:1.5px solid var(--line-2); background:#fff; font-weight:700; font-size:13px; color:var(--ink);}
+.acct-row button.primary{background:var(--primary); border-color:var(--primary); color:#fff;}
+.co-success .track-btn{margin-top:14px; padding:10px 18px; border-radius:10px; border:1.5px solid var(--primary); background:#fff; color:var(--primary-dark); font-weight:700; font-size:13px;}
+
+/* News */
+.news-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+.news-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px; display:flex; flex-direction:column; gap:10px;}
+.news-card.featured{grid-column:1/-1; border-color:var(--primary); background:linear-gradient(120deg,#ffffff 0%, #eafaf6 100%);}
+.news-card.featured h3{font-size:22px;}
+.news-card.featured p{max-width:820px;}
+.news-meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.news-tag{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--primary-dark); background:rgba(15,157,143,0.1); padding:3px 10px; border-radius:12px;}
+.news-status{font-size:11px; font-weight:800; color:#fff; background:var(--accent); padding:3px 10px; border-radius:12px; display:none;}
+.news-status.show{display:inline-block;}
+.news-status.ended{background:var(--ink-3);}
+.news-date{font-size:12px; color:var(--ink-3);}
+.news-card h3{font-size:17px; line-height:1.3;}
+.news-card p{font-size:13.5px; color:var(--ink-2); line-height:1.6;}
+.news-links{display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; margin-top:auto;}
+.news-src{font-size:12.5px; font-weight:600; color:var(--primary-dark); margin-top:auto;}
+.news-links .news-src{margin-top:0;}
+.news-src:hover{text-decoration:underline;}
+.news-shop{border:none; background:var(--ink); color:#fff; font-size:12px; font-weight:600; padding:7px 12px; border-radius:8px;}
+.news-shop:hover{background:var(--primary-dark);}
+@media (max-width:960px){.news-grid{grid-template-columns:1fr;}}
+
 
 /* App / loyalty banner */
 .banner{background:linear-gradient(120deg,var(--primary-dark), var(--accent-2)); border-radius:24px; color:#fff; padding:44px; display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; position:relative; overflow:hidden;}
@@ -244,8 +305,8 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 /* Cart drawer */
 .overlay{position:fixed; inset:0; background:rgba(13,39,38,0.35); opacity:0; pointer-events:none; transition:opacity .2s; z-index:200;}
 .overlay.open{opacity:1; pointer-events:auto;}
-.cart-drawer{position:fixed; top:0; right:0; height:100%; width:380px; max-width:92vw; background:#fff; box-shadow:-10px 0 40px rgba(0,0,0,0.18); transform:translateX(100%); transition:transform .25s ease; z-index:201; display:flex; flex-direction:column;}
-.cart-drawer.open{transform:translateX(0);}
+.cart-drawer{position:fixed; top:0; right:0; height:100%; width:380px; max-width:92vw; background:#fff; box-shadow:none; transform:translateX(100%); visibility:hidden; transition:transform .25s ease, box-shadow .25s ease, visibility 0s linear .25s; z-index:201; display:flex; flex-direction:column;}
+.cart-drawer.open{transform:translateX(0); visibility:visible; box-shadow:-10px 0 40px rgba(0,0,0,0.18); transition:transform .25s ease, box-shadow .25s ease, visibility 0s;}
 .cart-head{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line);}
 .cart-head h3{font-size:17px;}
 .cart-head button{background:none; border:none; font-size:20px; color:var(--ink-2);}
@@ -285,8 +346,8 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 /* ---------- Product detail & checkout modals ---------- */
 .bw-overlay{position:fixed; inset:0; background:rgba(13,39,38,0.45); opacity:0; pointer-events:none; transition:opacity .2s; z-index:220;}
 .bw-overlay.open{opacity:1; pointer-events:auto;}
-.bw-modal{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.97); width:720px; max-width:94vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:18px; box-shadow:0 30px 80px rgba(0,0,0,0.3); z-index:221; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;}
-.bw-modal.open{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}
+.bw-modal{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.97); width:720px; max-width:94vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:18px; box-shadow:0 30px 80px rgba(0,0,0,0.3); z-index:221; opacity:0; pointer-events:none; visibility:hidden; transition:opacity .2s, transform .2s, visibility 0s linear .2s;}
+.bw-modal.open{opacity:1; pointer-events:auto; visibility:visible; transform:translate(-50%,-50%) scale(1); transition:opacity .2s, transform .2s, visibility 0s;}
 .bw-modal .bwm-head{display:flex; justify-content:space-between; align-items:center; padding:16px 22px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; z-index:2;}
 .bw-modal .bwm-head h3{font-size:17px;}
 .bw-modal .bwm-close{background:none; border:none; font-size:20px; color:var(--ink-2); cursor:pointer;}
@@ -355,10 +416,10 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <div class="util-bar">
   <div class="wrap">
     <div class="left">
-      <span>🚚 Free delivery over $30 · Same-day metro</span>
-      <span>💊 Pharmacist online now</span>
+      <span data-i18n="util.ship">🚚 Free standard delivery over $30 · Same-day courier available</span>
+      <span data-i18n="util.pharm">💬 Pharmacist Q&amp;A in English or 中文</span>
     </div>
-    <span class="badge-demo">Concept redesign — vs. chemistwarehouse.com.au</span>
+    <span class="badge-demo" data-i18n="util.demo">Preview site — demo checkout, no real orders</span>
   </div>
 </div>
 
@@ -369,18 +430,19 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <a href="#quick-order" data-i18n="nav.order">Order a Script</a>
       <a href="#categories" data-i18n="nav.shop">Shop</a>
       <a href="#bestsellers" data-i18n="nav.bestsellers">Best Sellers</a>
+      <a href="#news" data-i18n="nav.news">Health News</a>
       <a href="#compare" data-i18n="nav.why">Why BrightWell</a>
       <a href="#loyalty" data-i18n="nav.rewards">Rewards</a>
     </nav>
     <div class="search-wrap">
-      <input id="searchInput" type="text" placeholder="Search medicines, vitamins, brands…" data-i18n-placeholder="search.placeholder" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestBox">
+      <input id="searchInput" type="text" placeholder="Search products, brands, needs…" data-i18n-placeholder="search.placeholder" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestBox">
       <span class="icon">🔍</span>
       <div class="suggest" id="suggestBox" role="listbox"></div>
     </div>
     <div class="head-actions">
       <button class="lang-toggle" id="langToggle" title="Switch language / 切换语言">中文</button>
-      <button class="icon-btn" title="Account">👤</button>
-      <button class="icon-btn" id="cartBtn" title="Cart">🛒<span class="count" id="cartCount">0</span></button>
+      <button class="icon-btn" id="accountBtn" data-i18n-arialabel="hdr.account" aria-label="Account">👤</button>
+      <button class="icon-btn" id="cartBtn" data-i18n-arialabel="hdr.cart" aria-label="Cart">🛒<span class="count" id="cartCount">0</span></button>
       <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">☰</button>
     </div>
   </div>
@@ -404,16 +466,16 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
     </div>
     <div class="hero-visual">
       <canvas id="hero3d"></canvas>
-      <div class="css-fallback"><div class="pill-orbit"><div class="pill"></div><div class="pill"></div><div class="pill"></div><div class="pill"></div></div></div>
-      <div class="float-badge b1">⚡ 2-step checkout</div>
-      <div class="float-badge b2">🏆 BrightWell+ points</div>
-      <div class="float-badge b3">🚚 Same-day delivery</div>
+      <div class="css-fallback"><div class="showcase" id="showcase"></div></div>
+      <div class="float-badge b1" data-i18n="badge.b1">⚡ 2-step checkout</div>
+      <div class="float-badge b2" data-i18n="badge.b2">🏆 BrightWell+ points</div>
+      <div class="float-badge b3" data-i18n="badge.b3">🚚 Same-day delivery</div>
     </div>
   </div>
 </section>
 
 <!-- SUBURB FOCUS -->
-<div class="suburb-band">
+<div class="suburb-band" id="suburbBand">
   <div class="wrap">
     <div class="sb-copy">
       <span data-i18n="suburb.copy">Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.</span>
@@ -459,10 +521,10 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 
       <div class="qo-card fade-up">
         <div class="qo-icon">🔎</div>
-        <h3 data-i18n="qo.card2.title">Search by medicine or PBS code</h3>
-        <p data-i18n="qo.card2.body">Instant results as you type, with generic-brand price comparisons shown up front.</p>
+        <h3 data-i18n="qo.card2.title">Search by medicine or ingredient</h3>
+        <p data-i18n="qo.card2.body">Type a brand, an ingredient, or what you need it for — hayfever, headache, sleep — and add it straight to your cart.</p>
         <div class="pbs-search">
-          <input type="text" id="pbsInput" placeholder="e.g. Panadol, Ventolin, PBS 2432K…" data-i18n-placeholder="qo.pbsPlaceholder">
+          <input type="text" id="pbsInput" placeholder="e.g. Panadol, paracetamol, hayfever…" data-i18n-placeholder="qo.pbsPlaceholder">
           <button id="pbsBtn" data-i18n="qo.pbsBtn">Find</button>
         </div>
         <div class="reorder-list" id="pbsResults"></div>
@@ -473,6 +535,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         <h3 data-i18n="qo.card3.title">Reorder your regulars</h3>
         <p data-i18n="qo.card3.body">One tap re-adds your last order — no re-searching, no re-typing your details.</p>
         <div class="reorder-list">
+          <div class="reorder-item" id="lastOrderRow" style="display:none;"><span id="lastOrderText"></span><button id="lastOrderBtn" data-i18n="reorder.all">Reorder all</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder1">Blackmores Fish Oil 1000mg</span><button data-reorder="6" data-i18n="qo.reorderBtn">Reorder</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder2">Vitamin D3 1000IU</span><button data-reorder="9" data-i18n="qo.reorderBtn">Reorder</button></div>
           <div class="reorder-item"><span data-i18n="qo.reorder3">BioCeuticals ArmaForce</span><button data-reorder="25" data-i18n="qo.reorderBtn">Reorder</button></div>
@@ -537,15 +600,44 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="section" style="background:var(--surface-2);">
+<!-- HEALTH NEWS -->
+<section class="section" id="news" style="background:var(--surface-2);">
   <div class="wrap">
-    <div class="section-head fade-up"><div><h2 data-i18n="testi.title">What shoppers say</h2></div></div>
-    <div class="testi-grid">
-      <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"Uploaded my script on the way to work, picked it up ready by lunch. Didn't have to call anyone."</p><div class="who">Priya N.</div><div class="where">Brisbane, QLD</div></div>
-      <div class="testi-card fade-up"><div class="stars">★★★★★</div><p>"The reorder button alone is worth it — my monthly vitamins just appear in the cart."</p><div class="who">Marcus T.</div><div class="where">Sydney, NSW</div></div>
-      <div class="testi-card fade-up"><div class="stars">★★★★☆</div><p>"Checkout is actually two steps like it says. First pharmacy site that didn't make me want to give up."</p><div class="who">Aisha K.</div><div class="where">Melbourne, VIC</div></div>
+    <div class="section-head fade-up">
+      <div><h2 data-i18n="news.title">Health news</h2><p data-i18n="news.sub">Timely updates for Queensland families, summarised from official and trade sources.</p></div>
+      <div class="see-all" data-i18n="news.checked">Checked 29 Sep 2026</div>
     </div>
+    <div class="news-grid">
+      <article class="news-card featured fade-up">
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n1.tag">Flu · Queensland</span><span class="news-status" id="fluStatus" data-expires="2026-09-30"></span></div>
+        <h3 data-i18n="news.n1.title">Queensland's free flu vaccine program ends 30 September</h3>
+        <p data-i18n="news.n1.body">Free influenza vaccines are available to all Queenslanders aged 6 months and over from 1 March to 30 September 2026. Fully funded nasal-spray vaccines are also offered to children aged 2 to 5 through community pharmacies. Ask your pharmacist or GP about getting vaccinated before the program closes.</p>
+        <a class="news-src" href="https://retailpharmacymagazine.com.au/qld-expands-free-flu-vax-program-for-2026/" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: Retail Pharmacy Magazine ↗</a>
+      </article>
+      <article class="news-card fade-up">
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n2.tag">Flu · Children</span><span class="news-date">4 Apr 2026</span></div>
+        <h3 data-i18n="news.n2.title">Needle-free FluMist nasal spray arrives for ages 2–17</h3>
+        <p data-i18n="news.n2.body">For the first time in Australia, children and teenagers aged 2 to 17 can have their flu vaccine as a nasal spray. It is available on the private market, and only some children will get it for free under state programs.</p>
+        <a class="news-src" href="https://www.abc.net.au/news/2026-04-04/nasal-spray-vaccine-approved-tga/106518564" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: ABC News ↗</a>
+      </article>
+      <article class="news-card fade-up">
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n3.tag">PBS · Costs</span><span class="news-date" data-i18n="news.n3.date">From 1 Jan 2026</span></div>
+        <h3 data-i18n="news.n3.title">PBS general co-payment cut to $25</h3>
+        <p data-i18n="news.n3.body">The maximum PBS co-payment for general patients with a Medicare card fell to $25 (from $31.60). Concession card holders continue to pay $7.70, frozen until 2030. This applies to PBS-listed prescription medicines.</p>
+        <a class="news-src" href="https://findapharmacy.com.au/latest-updates/what-does-the-2026-pbs-price-drop-mean-for-your-wallet" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: FindAPharmacy ↗</a>
+      </article>
+      <article class="news-card fade-up">
+        <div class="news-meta"><span class="news-tag" data-i18n="news.n4.tag">Allergy · Brisbane</span><span class="news-date" data-i18n="news.n4.date">Spring</span></div>
+        <h3 data-i18n="news.n4.title">Hayfever season: start treatment early</h3>
+        <p data-i18n="news.n4.body">Brisbane's warm, humid climate keeps pollen and mould active for much of the year, with subtropical grasses common. Pharmacists suggest starting 1–2 weeks before your usual peak: a non-drowsy antihistamine such as fexofenadine is a common first step, sometimes combined with a corticosteroid nasal spray.</p>
+        <div class="news-links">
+          <a class="news-src" href="https://www.whichmedicine.com.au/allergy-hayfever/antihistamine-tablets/hay-fever-treatment-guide" target="_blank" rel="noopener noreferrer"><span data-i18n="news.src">Source</span>: WhichMedicine ↗</a>
+          <a class="news-src" href="https://auspollen.edu.au/brisbane/" target="_blank" rel="noopener noreferrer" data-i18n="news.n4.pollen">Brisbane pollen count ↗</a>
+          <button class="news-shop" data-pid="5" data-i18n="news.n4.shop">See Telfast 180mg →</button>
+        </div>
+      </article>
+    </div>
+    <p class="trust-note" data-i18n="news.disclaimer">Summaries are prepared by BrightWell from the linked sources for general information only and are not medical advice. Please speak to your pharmacist or doctor about your own situation.</p>
   </div>
 </section>
 
@@ -556,13 +648,13 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <div>
         <h2 data-i18n="loy.title">BrightWell+ Rewards</h2>
         <p data-i18n="loy.body">Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.</p>
-        <a href="#" class="cta-btn" data-i18n="loy.cta">Join free — takes 30 seconds</a>
+        <button class="cta-btn" id="joinBtn" data-i18n="loy.cta">Join free — takes 30 seconds</button>
       </div>
       <div class="phone-mock">
         <div class="screen">
-          <div class="pts">2,480</div>
+          <div class="pts" id="loyPts">2,480</div>
           <div class="pts-lbl" data-i18n="loy.ptsLabel">Points balance</div>
-          <div style="font-size:11px;color:var(--ink-2);margin-top:6px;" data-i18n="loy.ptsValue">≈ $12.40 off your next order</div>
+          <div id="loyValue" style="font-size:11px;color:var(--ink-2);margin-top:6px;" data-i18n="loy.ptsValue">≈ $12.40 off your next order</div>
         </div>
       </div>
     </div>
@@ -613,9 +705,9 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
         <p style="font-size:13px;color:#a9c9c2;margin-top:10px;max-width:260px;" data-i18n="foot.tagline">A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.</p>
       </div>
       <div><h4 data-i18n="foot.shop">Shop</h4><a href="#tabs" data-i18n="tab.vitamins">Vitamins &amp; Supplements</a><a href="#tabs" data-i18n="tab.pharmacy">Pharmacy Medicines</a><a href="#trust" data-i18n="trust.title">Trust &amp; Registration</a></div>
-      <div><h4 data-i18n="foot.help">Help</h4><a href="#" data-i18n="foot.help1">Ask a pharmacist</a><a href="#" data-i18n="foot.help2">Track my order</a><a href="#" data-i18n="foot.help3">Returns</a><a href="#" data-i18n="foot.help4">Delivery info</a></div>
-      <div><h4 data-i18n="foot.company">Company</h4><a href="#" data-i18n="foot.company1">About</a><a href="#" data-i18n="foot.company2">Delivery areas</a><a href="#" data-i18n="foot.company3">Careers</a></div>
-      <div><h4 data-i18n="foot.legal">Legal</h4><a href="#" data-i18n="foot.legal1">Privacy</a><a href="#" data-i18n="foot.legal2">Terms</a><a href="#" data-i18n="foot.legal3">Accessibility</a></div>
+      <div><h4 data-i18n="foot.help">Help</h4><a href="#" data-action="chat" data-i18n="foot.help1">Ask a pharmacist</a><a href="#" data-action="track" data-i18n="foot.help2">Track my order</a><a href="#" data-action="info:returns" data-i18n="foot.help3">Returns</a><a href="#" data-action="delivery" data-i18n="foot.help4">Delivery info</a></div>
+      <div><h4 data-i18n="foot.company">Company</h4><a href="#" data-action="info:about" data-i18n="foot.company1">About</a><a href="#" data-action="delivery" data-i18n="foot.company2">Delivery areas</a><a href="#" data-action="info:careers" data-i18n="foot.company3">Careers</a></div>
+      <div><h4 data-i18n="foot.legal">Legal</h4><a href="#" data-action="info:privacy" data-i18n="foot.legal1">Privacy</a><a href="#" data-action="info:terms" data-i18n="foot.legal2">Terms</a><a href="#" data-action="info:accessibility" data-i18n="foot.legal3">Accessibility</a></div>
     </div>
 
     <div class="foot-bottom">
@@ -628,7 +720,7 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <!-- CART DRAWER -->
 <div class="overlay" id="overlay"></div>
 <div class="cart-drawer" id="cartDrawer" role="dialog" aria-label="Shopping cart">
-  <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart">✕</button></div>
+  <div class="cart-head"><h3 data-i18n="cart.title">Your cart</h3><button id="closeCart" data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
   <div class="cart-items" id="cartItems"><div class="cart-empty" data-i18n="cart.empty">Your cart is empty — add something from Best Sellers.</div></div>
   <div class="cart-foot">
     <div class="ship-meter" id="shipMeter">
@@ -646,37 +738,38 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
 <!-- PRODUCT DETAIL MODAL -->
 <div class="bw-overlay" id="bwOverlay"></div>
 <div class="bw-modal" id="pdModal" role="dialog" aria-modal="true">
-  <div class="bwm-head"><h3 data-i18n="pd.title">Product details</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div class="bwm-head"><h3 data-i18n="pd.title">Product details</h3><button class="bwm-close" data-close-modal data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
   <div id="pdBody"></div>
 </div>
 
 <!-- CHECKOUT MODAL -->
 <div class="bw-modal" id="coModal" role="dialog" aria-modal="true">
-  <div class="bwm-head"><h3 data-i18n="co.title">Checkout</h3><button class="bwm-close" data-close-modal aria-label="Close">✕</button></div>
+  <div class="bwm-head"><h3 data-i18n="co.title">Checkout</h3><button class="bwm-close" data-close-modal data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
   <div class="co-body">
     <div id="coForm">
       <div class="co-demo" data-i18n="co.demoNote">Demo checkout — no real payment is processed.</div>
       <div class="co-summary" id="coSummary"></div>
+      <label class="co-redeem" id="coRedeemRow" style="display:none;"><input type="checkbox" id="coRedeem"><span id="coRedeemText"></span></label>
       <div class="co-section-label" data-i18n="co.delivery">Delivery details</div>
       <div class="co-fields">
         <input id="coName" class="full" placeholder="Full name" data-i18n-placeholder="co.name" autocomplete="name">
         <input id="coPhone" placeholder="Mobile" data-i18n-placeholder="co.phone" inputmode="tel" autocomplete="tel">
         <select id="coSuburb" data-i18n-arialabel="co.suburbLabel">
-          <option>Sunnybank</option>
-          <option>Sunnybank Hills</option>
-          <option>Underwood</option>
-          <option>Calamvale</option>
-          <option>Indooroopilly</option>
-          <option data-i18n="co.otherSuburb">Other Brisbane</option>
+          <option value="Sunnybank">Sunnybank</option>
+          <option value="Sunnybank Hills">Sunnybank Hills</option>
+          <option value="Underwood">Underwood</option>
+          <option value="Calamvale">Calamvale</option>
+          <option value="Indooroopilly">Indooroopilly</option>
+          <option value="other" data-i18n="co.otherSuburb">Other Brisbane</option>
         </select>
         <input id="coAddress" class="full" placeholder="Street address" data-i18n-placeholder="co.address" autocomplete="street-address">
       </div>
       <div class="co-section-label" data-i18n="co.method">Delivery method</div>
       <div class="co-fields">
-        <select id="coMethod" class="full">
-          <option data-i18n="co.m1">Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)</option>
-          <option data-i18n="co.m2">Standard post (1–3 days) — $7.95, free over $30</option>
-          <option data-i18n="co.m3">Click &amp; collect — free</option>
+        <select id="coMethod" class="full" data-i18n-arialabel="co.method" aria-label="Delivery method">
+          <option value="sameday" data-i18n="co.m1">Same-day courier — $9.95 (Sunnybank · Underwood · Calamvale · Indooroopilly)</option>
+          <option value="standard" data-i18n="co.m2">Standard post (1–3 days) — $7.95, free over $30</option>
+          <option value="collect" data-i18n="co.m3">Click &amp; collect — free</option>
         </select>
       </div>
       <div class="co-section-label" data-i18n="co.payment">Payment</div>
@@ -702,16 +795,48 @@ footer{background:#0d2726; color:#cfe8e2; padding:48px 0 20px; margin-top:60px;}
       <div class="big">✅</div>
       <h3 data-i18n="co.successTitle">Order received!</h3>
       <p id="coOrderNo" style="font-weight:700;"></p>
+      <p id="coSuccessDetail"></p>
       <p data-i18n="co.successBody">This is a demo — no payment was taken and nothing will ship. At launch you'd receive an SMS confirmation with tracking within minutes.</p>
+      <button class="track-btn" id="coTrackBtn" data-i18n="track.thisOrder">Track this order</button>
     </div>
   </div>
+</div>
+
+<!-- TRACK ORDER MODAL -->
+<div class="bw-modal narrow" id="trackModal" role="dialog" aria-modal="true" aria-labelledby="trackTitle">
+  <div class="bwm-head"><h3 id="trackTitle" data-i18n="track.title">Track my order</h3><button class="bwm-close" data-close-modal data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
+  <div class="co-body">
+    <div class="pay-note" data-i18n="track.help">Enter the order number from your confirmation. Preview orders are stored on this device only, and tracking statuses are simulated.</div>
+    <div class="pbs-search" style="margin-top:12px;">
+      <input type="text" id="trackInput" placeholder="Order number, e.g. BW-123456" data-i18n-placeholder="track.placeholder" autocomplete="off">
+      <button id="trackBtn" data-i18n="track.btn">Track</button>
+    </div>
+    <div class="track-recent" id="trackRecent"></div>
+    <div id="trackResult" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- ACCOUNT / JOIN MODAL -->
+<div class="bw-modal narrow" id="joinModal" role="dialog" aria-modal="true" aria-labelledby="joinTitle">
+  <div class="bwm-head"><h3 id="joinTitle" data-i18n="join.title">Join BrightWell+</h3><button class="bwm-close" data-close-modal data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
+  <div class="co-body" id="joinBody"></div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="bw-modal narrow" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="bwm-head"><h3 id="infoTitle"></h3><button class="bwm-close" data-close-modal data-i18n-arialabel="dyn.close" aria-label="Close">✕</button></div>
+  <div class="info-body" id="infoBody"></div>
 </div>
 
 <button class="chat-fab" id="chatFab" aria-expanded="false" aria-controls="chatPop"><span data-i18n="chat.fab">💬 Ask a pharmacist</span></button>
 <div class="chat-pop" id="chatPop" role="dialog" data-i18n-arialabel="chat.head" aria-label="Pharmacist chat">
   <div class="cp-head" data-i18n="chat.head">Pharmacist chat</div>
   <p data-i18n="chat.body">Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.</p>
-  <input type="text" id="chatInput" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" style="width:100%;padding:9px 10px;border:1.5px solid var(--line-2);border-radius:8px;font-size:13px;">
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <div class="chat-row">
+    <input type="text" id="chatInput" placeholder="Type your question…" data-i18n-placeholder="chat.placeholder" autocomplete="off">
+    <button id="chatSend" data-i18n="chat.send">Send</button>
+  </div>
 </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -809,17 +934,160 @@ const PRODUCTS = [
 let activeTab = "all";
 let searchTerm = "";
 const FREE_SHIP = 30;
+
+/* Extra search keywords (ingredients, uses, Chinese terms) so shoppers find products by what they need. */
+const SEARCH_EXTRA = {
+  2:'salbutamol asthma reliever puffer breathing wheeze 沙丁胺醇 哮喘 气喘',
+  3:'paracetamol acetaminophen pain fever headache 对乙酰氨基酚 止痛 退烧 头痛',
+  4:'ibuprofen anti-inflammatory pain period muscle 布洛芬 止痛 消炎',
+  5:'fexofenadine hayfever hay fever allergy allergies antihistamine sneezing pollen 非索非那定 花粉症 过敏 抗组胺',
+  27:'azelaic acid rosacea acne skin 壬二酸 玫瑰痤疮 痤疮 皮肤',
+  30:'cinchocaine hydrocortisone haemorrhoids hemorrhoids piles 痔疮 辛可卡因',
+  6:'omega-3 omega 3 heart cholesterol 鱼油 心脏 欧米伽',
+  7:'multivitamin energy daily 复合维生素 能量',
+  8:'magnesium zinc sleep muscle cramp 镁 锌 睡眠 抽筋',
+  9:'vitamin d sunshine bones immune calcium 维生素D 骨骼 免疫 钙',
+  10:'probiotic gut digestion bowel 益生菌 肠道 消化',
+  23:'vitamin c immune cold flu 维生素C 免疫 感冒',
+  24:'coq10 coenzyme q10 heart energy 辅酶Q10 心脏',
+  25:'immune herbal echinacea cold flu 免疫 草本 感冒',
+  26:'muscle magnesium night cramp sleep recovery 肌肉 镁 夜间 睡眠',
+  28:'probiotic gut digestion 益生菌 肠道 消化',
+  29:'vitamin c liposomal immune 脂质体 维生素C 免疫'
+};
+function productHay(p){
+  return [p.name, p.brand, p.cat, p.desc || '', p.descZh || '', SEARCH_EXTRA[p.id] || ''].join(' ').toLowerCase();
+}
+/* Whole-phrase matches win ("vitamin d"); otherwise every word must appear somewhere. */
+function searchProducts(term){
+  if(!term) return PRODUCTS.slice();
+  const phrase = PRODUCTS.filter(p => productHay(p).includes(term));
+  if(phrase.length) return phrase;
+  const words = term.split(/\s+/).filter(Boolean);
+  return PRODUCTS.filter(p => { const h = productHay(p); return words.every(w => h.includes(w)); });
+}
+/* Loose match for free-text questions: latin words of 4+ letters, plus 2-character CJK chunks. */
+function looseMatches(q){
+  const low = q.toLowerCase();
+  const toks = new Set((low.match(/[a-z0-9-]{4,}/g) || []));
+  (low.match(/[\u4e00-\u9fff]+/g) || []).forEach(run => { for(let i=0;i<run.length-1;i++) toks.add(run.slice(i,i+2)); });
+  const stop = new Set(['what','with','have','need','does','this','that','your','about','which','should','would','could','take','best','help','good','there','from','when','where']);
+  return PRODUCTS.map(p => { const hay = productHay(p); let n = 0; toks.forEach(w => { if(!stop.has(w) && hay.includes(w)) n++; }); return {p, n}; })
+    .filter(x => x.n > 0).sort((a,b) => b.n - a.n).slice(0,3).map(x => x.p);
+}
+
+/* Only {id, qty} is stored; lines are rebuilt from the live catalogue so prices never go stale. */
 let cart = [];
-try { cart = JSON.parse(localStorage.getItem('bw-cart') || '[]') || []; } catch(e) { cart = []; }
+try {
+  const saved = JSON.parse(localStorage.getItem('bw-cart') || '[]') || [];
+  cart = saved.map(s => {
+    const p = PRODUCTS.find(x => x.id === s.id);
+    const qty = Math.min(99, Math.floor(Number(s.qty)));
+    return p && qty > 0 ? {...p, qty} : null;
+  }).filter(Boolean);
+} catch(e) { cart = []; }
 
 /* ---------------- i18n (EN / 中文) ---------------- */
 const I18N = {
   en: {
     'nav.order':'Order a Script','nav.shop':'Shop','nav.bestsellers':'Best Sellers','nav.why':'Why BrightWell','nav.rewards':'Rewards',
-    'search.placeholder':'Search medicines, vitamins, brands…',
+    'search.placeholder':'Search products, brands, needs…',
     'hero.eyebrow':'✦ Vitamins & pharmacy meds, in one 2-step checkout','hero.h1a':'Your health, ','hero.h1b':'delivered brilliantly.',
     'hero.lead':"Upload a script, reorder in one tap, or browse quality vitamins, supplements and pharmacy medicines — all from a single fast search bar. No cluttered catalogues, no 6-page checkout.",
     'hero.cta1':'Order your prescription →','hero.cta2':'Shop best sellers',
+    'badge.b1':'⚡ 2-step checkout','badge.b2':'🏆 BrightWell+ points','badge.b3':'🚚 Same-day delivery',
+    "nav.news":"Health News",
+    "news.title":"Health news",
+    "news.sub":"Timely updates for Queensland families, summarised from official and trade sources.",
+    "news.checked":"Checked 29 Sep 2026",
+    "news.src":"Source",
+    "news.n1.tag":"Flu · Queensland",
+    "news.n1.title":"Queensland's free flu vaccine program ends 30 September",
+    "news.n1.body":"Free influenza vaccines are available to all Queenslanders aged 6 months and over from 1 March to 30 September 2026. Fully funded nasal-spray vaccines are also offered to children aged 2 to 5 through community pharmacies. Ask your pharmacist or GP about getting vaccinated before the program closes.",
+    "news.n2.tag":"Flu · Children",
+    "news.n2.title":"Needle-free FluMist nasal spray arrives for ages 2–17",
+    "news.n2.body":"For the first time in Australia, children and teenagers aged 2 to 17 can have their flu vaccine as a nasal spray. It is available on the private market, and only some children will get it for free under state programs.",
+    "news.n3.tag":"PBS · Costs",
+    "news.n3.date":"From 1 Jan 2026",
+    "news.n3.title":"PBS general co-payment cut to $25",
+    "news.n3.body":"The maximum PBS co-payment for general patients with a Medicare card fell to $25 (from $31.60). Concession card holders continue to pay $7.70, frozen until 2030. This applies to PBS-listed prescription medicines.",
+    "news.n4.tag":"Allergy · Brisbane",
+    "news.n4.date":"Spring",
+    "news.n4.title":"Hayfever season: start treatment early",
+    "news.n4.body":"Brisbane's warm, humid climate keeps pollen and mould active for much of the year, with subtropical grasses common. Pharmacists suggest starting 1–2 weeks before your usual peak: a non-drowsy antihistamine such as fexofenadine is a common first step, sometimes combined with a corticosteroid nasal spray.",
+    "news.n4.pollen":"Brisbane pollen count ↗",
+    "news.n4.shop":"See Telfast 180mg →",
+    "news.disclaimer":"Summaries are prepared by BrightWell from the linked sources for general information only and are not medical advice. Please speak to your pharmacist or doctor about your own situation.",
+    "news.status.days":"{x} days left",
+    "news.status.today":"Ends today",
+    "news.status.tomorrow":"Ends tomorrow",
+    "news.status.ended":"Ended 30 Sep",
+    "hdr.account":"Account",
+    "hdr.cart":"Cart",
+    "dyn.close":"Close",
+    "reorder.all":"Reorder all",
+    "reorder.last":"Last order {no} · {n} items",
+    "track.title":"Track my order",
+    "track.help":"Enter the order number from your confirmation. Preview orders are stored on this device only, and tracking statuses are simulated.",
+    "track.placeholder":"Order number, e.g. BW-123456",
+    "track.btn":"Track",
+    "track.recent":"Recent orders on this device",
+    "track.thisOrder":"Track this order",
+    "track.notfound":"We couldn't find that order on this device. Check the number, or pick one of your recent orders above.",
+    "track.s1":"Order received",
+    "track.s2":"Pharmacist review",
+    "track.s3":"Out for delivery",
+    "track.s3c":"Being packed",
+    "track.s4":"Delivered",
+    "track.s4c":"Ready for collection",
+    "track.eta.sameday":"Estimated delivery: today",
+    "track.eta.standard":"Estimated delivery: 1–3 business days",
+    "track.eta.collect":"Ready for collection today",
+    "track.placed":"Placed {x}",
+    "track.demoNote":"Demo tracking — statuses are simulated for this preview.",
+    "join.title":"Join BrightWell+",
+    "join.body":"Earn points on every order and use them at checkout. This is a preview: your details stay on this device only.",
+    "join.email":"Email",
+    "join.submit":"Join free",
+    "join.errName":"Please enter your name.",
+    "join.errEmail":"Please enter a valid email address.",
+    "join.welcome":"Welcome to BrightWell+, {n}! We added 100 welcome points.",
+    "acct.title":"Your BrightWell+ account",
+    "acct.hi":"Hi {n}",
+    "acct.value":"≈ ${x} off your next order",
+    "acct.track":"Track an order",
+    "acct.signout":"Sign out",
+    "acct.signedout":"Signed out.",
+    "loy.ctaMember":"Your account",
+    "chat.body":"Hi! Ask about dosage, interactions, or which product suits you better. In this preview I suggest matching products — at launch a pharmacist will reply here.",
+    "chat.send":"Send",
+    "chat.reply.match":"These products match what you asked about:",
+    "chat.reply.none":"I couldn't match that to a product. Try a brand, an ingredient or a symptom.",
+    "chat.reply.urgent":"If this is an emergency, call 000 now. For poisoning or overdose, call the Poisons Information Centre on 13 11 26. Lifeline (13 11 14) is available 24/7.",
+    "chat.reply.disclaimer":"This preview can't give medical advice. For advice about you, ask your pharmacist or doctor.",
+    "co.deliveryLine":"Delivery",
+    "co.free":"Free",
+    "co.discount":"Points discount",
+    "co.redeem":"Use {n} points to save ${d}",
+    "co.errPhone":"Please enter a valid Australian mobile number (e.g. 0412 345 678).",
+    "co.mShort.sameday":"Same-day courier",
+    "co.mShort.standard":"Standard post",
+    "co.mShort.collect":"Click & collect",
+    "co.successTotal":"Total {x} · {m}",
+    "co.successEarned":"You earned {n} BrightWell+ points.",
+    "info.returns.title":"Returns",
+    "info.returns.body":"Our returns policy will be published here before launch. In the meantime, your rights under the Australian Consumer Law apply to everything you buy.",
+    "info.about.title":"About BrightWell",
+    "info.about.body":"BrightWell is a bilingual (English / 中文) online pharmacy concept for Brisbane’s southside, built around a two-step checkout, same-day delivery and pharmacist help in your language. This is a preview site: no real orders are processed.",
+    "info.careers.title":"Careers",
+    "info.careers.body":"Roles will be listed here once BrightWell launches.",
+    "info.privacy.title":"Privacy",
+    "info.privacy.body":"Our privacy policy will be published before launch. This preview keeps your cart, language choice and any demo orders only in your own browser; nothing is sent to a server.",
+    "info.terms.title":"Terms of use",
+    "info.terms.body":"Terms of use will be published before launch. This preview does not process payments or supply medicines.",
+    "info.accessibility.title":"Accessibility",
+    "info.accessibility.body":"BrightWell is built to work with a keyboard and screen readers: controls are labelled, dialogs manage focus and close with Esc, animation respects your reduced-motion setting, and the whole site is available in English and 中文. Found a barrier? Tell us in the pharmacist chat.",
+    'util.ship':'🚚 Free standard delivery over $30 · Same-day courier available','util.pharm':'💬 Pharmacist Q&A in English or 中文','util.demo':'Preview site — demo checkout, no real orders',
     'hero.trust1':'Order in under 60 seconds','hero.trust2':'Bilingual pharmacist chat (EN/中文)','hero.trust3':'Same-day delivery across Brisbane southside',
     'suburb.copy':"Proudly serving Brisbane's Chinese-Australian community — bilingual pharmacist consultations, in Mandarin or English.",
     'suburb.checkPlaceholder':'Your suburb or postcode','suburb.checkBtn':'Check delivery',
@@ -830,8 +1098,8 @@ const I18N = {
     'qo.title':'Order in three ways — pick the fastest one','qo.sub':'This is the part most pharmacy sites bury under menus. We put it first.',
     'qo.card1.title':'Upload a script','qo.card1.body':"Drag a photo of your prescription. A pharmacist reviews it — you don't need to call or fax anyone.",
     'qo.dropzone':'Drop image here or click to browse','qo.uploadStatus':'✅ Received — a pharmacist will confirm within 15 minutes.',
-    'qo.card2.title':'Search by medicine or PBS code','qo.card2.body':'Instant results as you type, with generic-brand price comparisons shown up front.',
-    'qo.pbsPlaceholder':'e.g. Panadol, Ventolin, PBS 2432K…','qo.pbsBtn':'Find',
+    'qo.card2.title':'Search by medicine or ingredient','qo.card2.body':'Type a brand, an ingredient, or what you need it for — hayfever, headache, sleep — and add it straight to your cart.',
+    'qo.pbsPlaceholder':'e.g. Panadol, paracetamol, hayfever…','qo.pbsBtn':'Find',
     'qo.card3.title':'Reorder your regulars','qo.card3.body':'One tap re-adds your last order — no re-searching, no re-typing your details.',
     'qo.reorder1':'Blackmores Fish Oil 1000mg','qo.reorder2':'Vitamin D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'Reorder',
     'cat.title':'Shop by category','cat.sub':'A focused starter range — vitamins, supplements, and pharmacy medicines. Quality over sprawl.',
@@ -847,7 +1115,6 @@ const I18N = {
     'cmp.r5':'Loyalty points','cmp.r5us':'Shown live in cart before you pay','cmp.r5them':'Applied after purchase, easy to miss',
     'cmp.r6':'Visual design','cmp.r6us':'Clean, 3D hero, uncluttered','cmp.r6them':'Dense flyer-style layout, banner heavy',
     'cmp.r7':'Mobile experience','cmp.r7us':'Same speed & layout as desktop','cmp.r7them':'Slower, more taps to reach checkout',
-    'testi.title':'What shoppers say',
     'loy.title':'BrightWell+ Rewards','loy.body':'Earn points on every order — medicines included — and see your balance update live in the cart, not buried in an app three menus deep.',
     'loy.cta':'Join free — takes 30 seconds','loy.ptsLabel':'Points balance','loy.ptsValue':'≈ $12.40 off your next order',
     'foot.tagline':'A concept redesign built to show what a faster, friendlier pharmacy checkout could look like.',
@@ -857,9 +1124,9 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell — concept design, no real orders processed.','foot.builtAs':'Built as a UX comparison to chemistwarehouse.com.au',
     'cart.title':'Your cart','cart.empty':'Your cart is empty — add something from Best Sellers.','cart.subtotal':'Subtotal',
     'cart.pointsEarned':'BrightWell+ points earned','cart.total':'Total','cart.checkout':'Checkout →','cart.step':'Step 1 of 2 — delivery details next',
-    'cart.shipRemain':'Add <b>${x}</b> more for free same-day delivery','cart.shipUnlocked':'🎉 You’ve unlocked free same-day delivery!',
+    'cart.shipRemain':'Add <b>${x}</b> more for free standard delivery','cart.shipUnlocked':'🎉 You’ve unlocked free standard delivery!',
     'chat.fab':'💬 Ask a pharmacist','chat.head':'Pharmacist chat',
-    'chat.body':"Hi! I'm online now. Ask me about dosage, interactions, or which of two products suits you better — no appointment needed.",
+    
     'chat.placeholder':'Type your question…',
     'dyn.add':'Add','dyn.addScript':'Add script','dyn.added':'Added ✓','dyn.remove':'Remove','dyn.decreaseQty':'Decrease quantity of','dyn.increaseQty':'Increase quantity of',
     'dyn.noMatches':'No matches — try a different search.','dyn.noMatchPbs':'No match — a pharmacist can help via chat',
@@ -897,10 +1164,103 @@ const I18N = {
   },
   zh: {
     'nav.order':'上传处方','nav.shop':'商店','nav.bestsellers':'热销商品','nav.why':'为何选择 BrightWell','nav.rewards':'积分奖励',
-    'search.placeholder':'搜索药品、维生素、品牌…',
+    'search.placeholder':'搜索药品、品牌、需求…',
     'hero.eyebrow':'✦ 维生素与药房药品,两步下单','hero.h1a':'您的健康, ','hero.h1b':'轻松送达。',
     'hero.lead':'上传处方、一键重复购买,或浏览优质维生素、保健品与药房药品 —— 只需一个搜索框。没有繁琐目录,没有六页结账流程。',
     'hero.cta1':'上传处方下单 →','hero.cta2':'浏览热销商品',
+    'badge.b1':'⚡ 两步结账','badge.b2':'🏆 BrightWell+ 积分','badge.b3':'🚚 当日送达',
+    "nav.news":"健康资讯",
+    "news.title":"健康资讯",
+    "news.sub":"为昆士兰家庭整理的最新动态,摘自官方及行业来源。",
+    "news.checked":"核查日期:2026年9月29日",
+    "news.src":"来源",
+    "news.n1.tag":"流感 · 昆士兰",
+    "news.n1.title":"昆士兰免费流感疫苗计划9月30日结束",
+    "news.n1.body":"2026年3月1日至9月30日,昆士兰为所有6个月及以上居民提供免费流感疫苗。2至5岁儿童还可通过社区药房接种全额资助的鼻喷疫苗。请在计划结束前咨询您的药剂师或全科医生。",
+    "news.n2.tag":"流感 · 儿童",
+    "news.n2.title":"免针FluMist鼻喷流感疫苗面向2–17岁",
+    "news.n2.body":"澳大利亚首次允许2至17岁儿童和青少年以鼻喷方式接种流感疫苗。该疫苗在私人市场供应,只有部分儿童可在州计划下免费接种。",
+    "news.n3.tag":"PBS · 费用",
+    "news.n3.date":"自2026年1月1日起",
+    "news.n3.title":"PBS普通患者自付上限降至$25",
+    "news.n3.body":"持有医保卡的普通患者PBS最高自付额由$31.60降至$25;优惠卡持有者继续支付$7.70,并冻结至2030年。适用于PBS列名处方药。",
+    "news.n4.tag":"过敏 · 布里斯班",
+    "news.n4.date":"春季",
+    "news.n4.title":"花粉症季节:尽早开始用药",
+    "news.n4.body":"布里斯班温暖潮湿的气候使花粉和霉菌全年大部分时间保持活跃,亚热带草类十分常见。药剂师建议在通常高峰期前1–2周开始用药:非嗜睡型抗组胺药(如非索非那定)是常见的第一步,有时会配合皮质类固醇鼻喷剂。",
+    "news.n4.pollen":"布里斯班花粉指数 ↗",
+    "news.n4.shop":"查看 Telfast 180mg →",
+    "news.disclaimer":"摘要由BrightWell根据所附来源整理,仅供一般参考,不构成医疗建议。请就您的具体情况咨询药剂师或医生。",
+    "news.status.days":"还剩 {x} 天",
+    "news.status.today":"今天截止",
+    "news.status.tomorrow":"明天截止",
+    "news.status.ended":"已于9月30日结束",
+    "hdr.account":"账户",
+    "hdr.cart":"购物车",
+    "dyn.close":"关闭",
+    "reorder.all":"全部再购",
+    "reorder.last":"上次订单 {no} · {n} 件",
+    "track.title":"查询订单",
+    "track.help":"请输入订单确认中的订单号。预览版订单仅保存在本设备,物流状态为模拟。",
+    "track.placeholder":"订单号,例如 BW-123456",
+    "track.btn":"查询",
+    "track.recent":"本设备上的近期订单",
+    "track.thisOrder":"查询此订单",
+    "track.notfound":"在本设备上找不到该订单。请核对订单号,或从上方选择近期订单。",
+    "track.s1":"订单已收到",
+    "track.s2":"药剂师审核",
+    "track.s3":"配送中",
+    "track.s3c":"备货中",
+    "track.s4":"已送达",
+    "track.s4c":"可自取",
+    "track.eta.sameday":"预计送达:今天",
+    "track.eta.standard":"预计送达:1–3个工作日",
+    "track.eta.collect":"今天可自取",
+    "track.placed":"下单时间 {x}",
+    "track.demoNote":"演示物流 —— 状态为预览模拟。",
+    "join.title":"加入 BrightWell+",
+    "join.body":"每笔订单赚取积分,并可在结账时抵扣。这是预览版:您的信息仅保存在本设备。",
+    "join.email":"电子邮箱",
+    "join.submit":"免费加入",
+    "join.errName":"请输入您的姓名。",
+    "join.errEmail":"请输入有效的电子邮箱地址。",
+    "join.welcome":"欢迎加入 BrightWell+,{n}!已赠送100迎新积分。",
+    "acct.title":"我的 BrightWell+ 账户",
+    "acct.hi":"{n},您好",
+    "acct.value":"≈ 下次订单可抵 ${x}",
+    "acct.track":"查询订单",
+    "acct.signout":"退出登录",
+    "acct.signedout":"已退出登录。",
+    "loy.ctaMember":"我的账户",
+    "chat.body":"您好!可咨询用法用量、药物相互作用,或哪款产品更适合您。预览版中我会推荐匹配的产品 —— 正式上线后由药剂师在此回复。",
+    "chat.send":"发送",
+    "chat.reply.match":"以下产品与您的提问相符:",
+    "chat.reply.none":"暂时没有匹配的产品。请试试品牌、成分或症状。",
+    "chat.reply.urgent":"如遇紧急情况,请立即拨打 000。中毒或用药过量请致电毒物信息中心 13 11 26。Lifeline(13 11 14)全天候提供支持。",
+    "chat.reply.disclaimer":"预览版无法提供医疗建议。针对您个人的情况,请咨询药剂师或医生。",
+    "co.deliveryLine":"配送",
+    "co.free":"免费",
+    "co.discount":"积分抵扣",
+    "co.redeem":"使用 {n} 积分抵扣 ${d}",
+    "co.errPhone":"请输入有效的澳洲手机号码(例如 0412 345 678)。",
+    "co.mShort.sameday":"当日快递",
+    "co.mShort.standard":"普通邮寄",
+    "co.mShort.collect":"到店自取",
+    "co.successTotal":"合计 {x} · {m}",
+    "co.successEarned":"您获得 {n} BrightWell+ 积分。",
+    "info.returns.title":"退换货",
+    "info.returns.body":"我们的退换货政策将在上线前在此发布。在此期间,您购买的所有商品均受《澳大利亚消费者法》保护。",
+    "info.about.title":"关于 BrightWell",
+    "info.about.body":"BrightWell 是面向布里斯班南区的中英双语在线药房概念:两步结账、当日送达,并由药剂师用您的语言提供帮助。这是预览站点,不处理任何真实订单。",
+    "info.careers.title":"招聘信息",
+    "info.careers.body":"BrightWell 上线后,职位将在此发布。",
+    "info.privacy.title":"隐私",
+    "info.privacy.body":"我们的隐私政策将在上线前发布。此预览版仅在您自己的浏览器中保存购物车、语言选择和演示订单,不会向服务器发送任何内容。",
+    "info.terms.title":"使用条款",
+    "info.terms.body":"使用条款将在上线前发布。此预览版不处理付款,也不供应药品。",
+    "info.accessibility.title":"无障碍",
+    "info.accessibility.body":"BrightWell 支持键盘操作和读屏软件:控件均有标签,弹窗会管理焦点并可按 Esc 关闭,动画遵循您的“减少动态效果”设置,全站提供中英双语。发现障碍?请在药剂师聊天中告诉我们。",
+    'util.ship':'🚚 满$30免费普通配送 · 可选当日快递','util.pharm':'💬 药剂师问答:中文或英文','util.demo':'预览站点 —— 演示结账,不处理真实订单',
     'hero.trust1':'60秒内完成下单','hero.trust2':'药剂师中英文在线咨询','hero.trust3':'布里斯班南区当日送达',
     'suburb.copy':'我们自豪地为布里斯班华人社区提供服务 —— 药剂师可用中文或英文为您提供咨询。',
     'suburb.checkPlaceholder':'您的城区或邮编','suburb.checkBtn':'查询配送',
@@ -911,8 +1271,8 @@ const I18N = {
     'qo.title':'三种下单方式 —— 选最快的一种','qo.sub':'大多数药房网站把这部分藏在层层菜单里,我们把它放在最前面。',
     'qo.card1.title':'上传处方','qo.card1.body':'拍下处方照片并拖拽上传,药剂师会为您审核 —— 无需打电话或传真。',
     'qo.dropzone':'将图片拖到此处,或点击浏览','qo.uploadStatus':'✅ 已收到 —— 药剂师将在15分钟内确认。',
-    'qo.card2.title':'按药品名称或PBS编码搜索','qo.card2.body':'边输入边显示结果,并提前展示同类仿制药的价格对比。',
-    'qo.pbsPlaceholder':'例如:Panadol、Ventolin、PBS 2432K…','qo.pbsBtn':'查找',
+    'qo.card2.title':'按药品名称或成分搜索','qo.card2.body':'输入品牌、成分或用途(如花粉症、头痛、睡眠),即可直接加入购物车。',
+    'qo.pbsPlaceholder':'例如:Panadol、对乙酰氨基酚、花粉症…','qo.pbsBtn':'查找',
     'qo.card3.title':'一键重复购买常用药','qo.card3.body':'一键重新加入上次订单 —— 无需重新搜索或重新填写信息。',
     'qo.reorder1':'Blackmores 鱼油 1000mg','qo.reorder2':'维生素D3 1000IU','qo.reorder3':'BioCeuticals ArmaForce','qo.reorderBtn':'重新购买',
     'cat.title':'按类别选购','cat.sub':'精选系列 —— 维生素、保健品与药房药品，品质优于数量。',
@@ -928,7 +1288,6 @@ const I18N = {
     'cmp.r5':'积分奖励','cmp.r5us':'结账前购物车内实时显示','cmp.r5them':'购买后才发放,容易被忽略',
     'cmp.r6':'视觉设计','cmp.r6us':'简洁,3D 主视觉,不杂乱','cmp.r6them':'密集传单式排版,横幅过多',
     'cmp.r7':'移动端体验','cmp.r7us':'与桌面端同样流畅','cmp.r7them':'较慢,需要更多点击才能结账',
-    'testi.title':'顾客怎么说',
     'loy.title':'BrightWell+ 会员积分','loy.body':'每笔订单(含药品)均可累积积分,余额实时显示在购物车中,而不是藏在APP的层层菜单里。',
     'loy.cta':'免费加入 —— 只需30秒','loy.ptsLabel':'积分余额','loy.ptsValue':'≈ 可抵扣下次订单 $12.40',
     'foot.tagline':'这是一个概念设计,展示更快、更友好的药房结账流程可能的样子。',
@@ -938,9 +1297,9 @@ const I18N = {
     'foot.copyright':'© 2026 BrightWell —— 概念设计,暂无真实订单处理。','foot.builtAs':'作为与 chemistwarehouse.com.au 的体验对比而构建',
     'cart.title':'购物车','cart.empty':'购物车是空的 —— 从热销商品中添加一些吧。','cart.subtotal':'小计',
     'cart.pointsEarned':'BrightWell+ 可获积分','cart.total':'总计','cart.checkout':'结账 →','cart.step':'第1步(共2步) —— 接下来填写配送信息',
-    'cart.shipRemain':'再购 <b>${x}</b> 即可享免费当日送达','cart.shipUnlocked':'🎉 您已解锁免费当日送达!',
+    'cart.shipRemain':'再购 <b>${x}</b> 即可享免费普通配送','cart.shipUnlocked':'🎉 您已解锁免费普通配送!',
     'chat.fab':'💬 咨询药剂师','chat.head':'药剂师在线咨询',
-    'chat.body':'您好!我现在在线。可以咨询用法用量、药物相互作用,或帮您比较两款产品 —— 无需预约。',
+    
     'chat.placeholder':'输入您的问题…',
     'dyn.add':'加入购物车','dyn.addScript':'上传处方','dyn.added':'已加入 ✓','dyn.remove':'移除','dyn.decreaseQty':'减少数量:','dyn.increaseQty':'增加数量:',
     'dyn.noMatches':'没有找到匹配商品 —— 试试其他搜索词。','dyn.noMatchPbs':'未找到匹配项 —— 可通过聊天咨询药剂师',
@@ -1000,7 +1359,12 @@ function applyLang(lang){
   if(suburbZhNote) suburbZhNote.style.display = lang === 'zh' ? 'none' : '';
   if(typeof closeModals === 'function') closeModals();
   renderGrid();
+  renderHeroShowcase();
+  renderNewsStatus();
+  const cl = document.getElementById('chatLog'); if(cl) cl.innerHTML = '';
   renderCart();
+  renderMember();
+  renderLastOrder();
   document.getElementById('pbsResults').innerHTML = '';
   document.getElementById('suggestBox').classList.remove('open');
   document.getElementById('searchInput').setAttribute('aria-expanded', 'false');
@@ -1015,17 +1379,17 @@ function flagFor(p){
   else if(p.pharm) left = `<span class="prod-flag rx">${t('dyn.flagPharm')}</span>`;
   else if(p.was) left = `<span class="prod-flag">${t('dyn.flagSale')}</span>`;
   const right = p.hot ? `<span class="prod-flag hot">${t('dyn.flagHot')}</span>` : '';
-  return left + right;
+  return (left || right) ? `<div class="prod-flags">${left}${right}</div>` : '';
 }
 
 /* ---------------- Render product grid ---------------- */
 function renderGrid(){
   const grid = document.getElementById('prodGrid');
   const term = searchTerm.trim().toLowerCase();
+  const found = new Set(searchProducts(term).map(p=>p.id));
   const items = PRODUCTS.filter(p=>{
     const matchTab = activeTab==="all" || (activeTab==="trending" ? p.hot : p.cat===activeTab);
-    const matchTerm = !term || p.name.toLowerCase().includes(term) || p.cat.includes(term);
-    return matchTab && matchTerm;
+    return matchTab && found.has(p.id);
   });
   grid.innerHTML = items.length ? items.map(p=>`
     <div class="prod-card fade-up visible" data-pid="${p.id}">
@@ -1035,7 +1399,7 @@ function renderGrid(){
       <div class="prod-body">
         <div class="p-cat">${t(CAT_LABEL_KEY[p.cat] || 'tab.vitamins')}</div>
         <div class="p-name">${p.name}</div>
-        <div class="stars">★★★★☆</div>
+        <div class="p-size">${p.size || ''}</div>
         <div class="p-price-row">
           <div class="p-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
           <button class="add-btn" data-add="${p.id}">${p.rx ? t('dyn.addScript') : t('dyn.add')}</button>
@@ -1054,6 +1418,34 @@ function renderGrid(){
     });
   });
 }
+
+/* ---------------- Hero showcase (no-WebGL visual; prices come from PRODUCTS) ---------------- */
+function renderHeroShowcase(){
+  const el = document.getElementById('showcase');
+  if(!el) return;
+  const picks = [[6,'sc-a'],[9,'sc-b'],[5,'sc-c']];
+  el.innerHTML = picks.map(([id,cls])=>{
+    const p = PRODUCTS.find(x=>x.id===id);
+    if(!p) return '';
+    const tag = p.hot ? t('dyn.flagHot') : t(CAT_LABEL_KEY[p.cat] || 'tab.vitamins');
+    return `<button class="sc-card ${cls}" data-pid="${p.id}" aria-label="${p.name} — $${p.price.toFixed(2)}"><span class="ic">${p.icon}</span><span><span class="tg">${tag}</span><span class="nm">${p.name}</span><span class="pr">$${p.price.toFixed(2)}</span></span></button>`;
+  }).join('');
+}
+document.getElementById('showcase').addEventListener('click', (e)=>{
+  const c = e.target.closest('.sc-card');
+  if(c) openProduct(parseInt(c.dataset.pid));
+});
+
+/* ---------------- News: flu-program countdown (Brisbane time) + shop button ---------------- */
+function renderNewsStatus(){
+  const el = document.getElementById('fluStatus');
+  if(!el) return;
+  const today = new Date().toLocaleDateString('en-CA', {timeZone:'Australia/Brisbane'});
+  const days = Math.round((Date.parse(el.dataset.expires + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 864e5);
+  el.className = 'news-status show' + (days < 0 ? ' ended' : '');
+  el.textContent = days < 0 ? t('news.status.ended') : days === 0 ? t('news.status.today') : days === 1 ? t('news.status.tomorrow') : t('news.status.days').replace('{x}', days);
+}
+document.querySelector('.news-shop').addEventListener('click', (e)=>openProduct(parseInt(e.currentTarget.dataset.pid)));
 
 /* ---------------- Tabs ---------------- */
 document.getElementById('tabs').addEventListener('click', (e)=>{
@@ -1077,19 +1469,19 @@ searchInput.addEventListener('input', ()=>{
   renderGrid();
   const term = searchTerm.trim().toLowerCase();
   if(!term){ setSuggestOpen(false); return; }
-  const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,6);
+  const matches = searchProducts(term)
+    .sort((a,b)=>(b.name.toLowerCase().includes(term)?1:0)-(a.name.toLowerCase().includes(term)?1:0))
+    .slice(0,6);
   if(!matches.length){ setSuggestOpen(false); return; }
-  suggestBox.innerHTML = matches.map(p=>`<div class="s-item" role="option" data-goto="${p.id}"><span>${p.icon} ${p.name}</span><span class="tag">${p.cat}</span></div>`).join('');
+  const catLabel = c => c==='pharmacy' ? t('tab.pharmacy') : t('tab.vitamins');
+  suggestBox.innerHTML = matches.map(p=>`<div class="s-item" role="option" tabindex="-1" data-goto="${p.id}"><span>${p.icon} ${p.name}</span><span class="tag">${catLabel(p.cat)}</span></div>`).join('');
   setSuggestOpen(true);
 });
 suggestBox.addEventListener('click', (e)=>{
   const item = e.target.closest('.s-item');
   if(!item) return;
-  addToCart(parseInt(item.dataset.goto));
   setSuggestOpen(false);
-  searchInput.value = '';
-  searchTerm = '';
-  renderGrid();
+  openProduct(parseInt(item.dataset.goto));
 });
 searchInput.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape' && suggestBox.classList.contains('open')){ setSuggestOpen(false); }
@@ -1099,16 +1491,18 @@ document.addEventListener('click', (e)=>{
 });
 
 /* ---------------- PBS quick search ---------------- */
-document.getElementById('pbsBtn').addEventListener('click', ()=>{
+function runPbsSearch(){
   const term = document.getElementById('pbsInput').value.trim().toLowerCase();
   const results = document.getElementById('pbsResults');
   if(!term){ results.innerHTML = ''; return; }
-  const matches = PRODUCTS.filter(p=>p.name.toLowerCase().includes(term)).slice(0,3);
+  const matches = searchProducts(term).slice(0,3);
   results.innerHTML = matches.length ? matches.map(p=>`
     <div class="reorder-item"><span>${p.icon} ${p.name} — $${p.price.toFixed(2)}</span><button data-add="${p.id}">${t('dyn.add')}</button></div>
   `).join('') : `<div class="reorder-item"><span>${t('dyn.noMatchPbs')}</span></div>`;
   results.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click', ()=>{ addToCart(parseInt(btn.dataset.add)); showToast(t('dyn.toastAdded')); }));
-});
+}
+document.getElementById('pbsBtn').addEventListener('click', runPbsSearch);
+document.getElementById('pbsInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); runPbsSearch(); } });
 
 /* ---------------- Reorder shortcuts ---------------- */
 document.querySelectorAll('[data-reorder]').forEach(btn=>{
@@ -1185,7 +1579,7 @@ function renderCart(){
   }
 
   // Persist cart across refreshes
-  try { localStorage.setItem('bw-cart', JSON.stringify(cart)); } catch(e) {}
+  try { localStorage.setItem('bw-cart', JSON.stringify(cart.map(l=>({id:l.id, qty:l.qty})))); } catch(e) {}
 
   itemsEl.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.inc),1)));
   itemsEl.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>changeQty(parseInt(b.dataset.dec),-1)));
@@ -1223,8 +1617,9 @@ function openModal(m){
   focusInto(m);
 }
 function closeModals(){
-  const wasOpen = pdModal.classList.contains('open') || coModal.classList.contains('open');
-  pdModal.classList.remove('open'); coModal.classList.remove('open'); bwOverlay.classList.remove('open');
+  const wasOpen = !!document.querySelector('.bw-modal.open');
+  document.querySelectorAll('.bw-modal.open').forEach(m=>m.classList.remove('open'));
+  bwOverlay.classList.remove('open');
   if(wasOpen && lastFocusedEl && lastFocusedEl.focus){ lastFocusedEl.focus(); lastFocusedEl = null; }
 }
 bwOverlay.addEventListener('click', closeModals);
@@ -1265,7 +1660,6 @@ function openProduct(id){
         <div class="pd-brand">${p.brand || ''}</div>
         <h2>${p.name}</h2>
         <div class="pd-size">${p.size || ''}</div>
-        <div class="stars">★★★★☆</div>
         <div class="pd-price">$${p.price.toFixed(2)}${p.was ? `<span class="was">$${p.was.toFixed(2)}</span>` : ''}</div>
         ${desc ? `<div class="pd-block"><h4>${t('pd.desc')}</h4><p>${desc}</p></div>` : ''}
         ${dose ? `<div class="pd-block"><h4>${t('pd.dose')}</h4><p>${dose}</p></div>` : ''}
@@ -1296,18 +1690,61 @@ document.getElementById('prodGrid').addEventListener('click', (e)=>{
   openProduct(parseInt(card.dataset.pid));
 });
 
+/* ---------------- Storage helpers (this device only) ---------------- */
+function readJSON(key, fallback){ try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch(e){ return fallback; } }
+function writeJSON(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+const getOrders = () => readJSON('bw-orders', []);
+const getMember = () => readJSON('bw-member', null);
+function saveOrder(o){ writeJSON('bw-orders', [o, ...getOrders()].slice(0, 10)); }
+const money = n => '$' + n.toFixed(2);
+
+/* ---------------- Checkout: delivery fee, points, total ---------------- */
+const FEES = {sameday: 9.95, standard: 7.95, collect: 0};
+const POINTS_PER_DOLLAR = 200;
+function deliveryFee(method, subtotal){
+  if(method === 'standard' && subtotal >= FREE_SHIP) return 0;
+  return FEES[method] ?? 0;
+}
+function methodLabel(m){ return t('co.mShort.' + m); }
+function checkoutState(){
+  const subtotal = cart.reduce((sum,l)=>sum+l.price*l.qty,0);
+  const method = document.getElementById('coMethod').value;
+  const fee = deliveryFee(method, subtotal);
+  const member = getMember();
+  const canRedeem = member ? Math.min(Math.floor(member.points / POINTS_PER_DOLLAR), Math.floor(subtotal)) : 0;
+  const discount = canRedeem > 0 && document.getElementById('coRedeem').checked ? canRedeem : 0;
+  return {subtotal, method, fee, discount, canRedeem, total: subtotal - discount + fee};
+}
+function syncSameDayOption(){
+  const other = document.getElementById('coSuburb').value === 'other';
+  const opt = document.querySelector('#coMethod option[value="sameday"]');
+  opt.disabled = other;
+  if(other && document.getElementById('coMethod').value === 'sameday') document.getElementById('coMethod').value = 'standard';
+}
+function renderCheckoutSummary(){
+  syncSameDayOption();
+  const st = checkoutState();
+  const row = document.getElementById('coRedeemRow');
+  row.style.display = st.canRedeem > 0 ? 'flex' : 'none';
+  document.getElementById('coRedeemText').textContent = t('co.redeem').replace('{n}', st.canRedeem * POINTS_PER_DOLLAR).replace('{d}', st.canRedeem);
+  document.getElementById('coSummary').innerHTML =
+    cart.map(l=>`<div class="line"><span>${l.icon} ${l.name} × ${l.qty}</span><span>${money(l.price*l.qty)}</span></div>`).join('') +
+    `<div class="line"><span>${t('cart.subtotal')}</span><span>${money(st.subtotal)}</span></div>` +
+    `<div class="line"><span>${t('co.deliveryLine')} · ${methodLabel(st.method)}</span><span>${st.fee ? money(st.fee) : t('co.free')}</span></div>` +
+    (st.discount ? `<div class="line"><span>${t('co.discount')}</span><span>−${money(st.discount)}</span></div>` : '') +
+    `<div class="line total"><span>${t('cart.total')}</span><span>${money(st.total)}</span></div>`;
+}
 function openCheckout(){
   if(!cart.length){ showToast(t('dyn.toastCartEmpty')); return; }
   closeCart();
   document.getElementById('coForm').style.display = '';
   document.getElementById('coSuccess').classList.remove('show');
-  const subtotal = cart.reduce((s,l)=>s+l.price*l.qty,0);
-  document.getElementById('coSummary').innerHTML =
-    cart.map(l=>`<div class="line"><span>${l.icon} ${l.name} × ${l.qty}</span><span>$${(l.price*l.qty).toFixed(2)}</span></div>`).join('') +
-    `<div class="line total"><span>${t('cart.total')}</span><span>$${subtotal.toFixed(2)}</span></div>`;
+  document.getElementById('coRedeem').checked = false;
+  renderCheckoutSummary();
   openModal(coModal);
 }
 document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
+['coMethod','coSuburb','coRedeem'].forEach(id=>document.getElementById(id).addEventListener('change', renderCheckoutSummary));
 
 document.getElementById('payChips').addEventListener('click', (e)=>{
   const chip = e.target.closest('.pay-chip');
@@ -1318,16 +1755,160 @@ document.getElementById('payChips').addEventListener('click', (e)=>{
   document.querySelectorAll('.pay-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel === chip.dataset.pay));
 });
 
+let lastOrderNo = '';
 document.getElementById('coPlace').addEventListener('click', ()=>{
   const name = document.getElementById('coName').value.trim();
   const phone = document.getElementById('coPhone').value.trim();
   const addr = document.getElementById('coAddress').value.trim();
   if(!name || !phone || !addr){ showToast(t('co.errFill')); return; }
+  if(!/^(\+?61|0)4\d{8}$/.test(phone.replace(/[\s()-]/g,''))){ showToast(t('co.errPhone')); return; }
+  const st = checkoutState();
+  const earned = Math.max(0, Math.round(st.subtotal - st.discount));
+  const order = {
+    no: '#BW-' + Date.now().toString().slice(-6), ts: Date.now(),
+    method: st.method, suburb: document.getElementById('coSuburb').value,
+    subtotal: st.subtotal, fee: st.fee, discount: st.discount, total: st.total, earned,
+    items: cart.map(l=>({id:l.id, qty:l.qty, name:l.name, price:l.price}))
+  };
+  saveOrder(order);
+  lastOrderNo = order.no;
+  const member = getMember();
+  if(member){ member.points = Math.max(0, member.points - st.discount * POINTS_PER_DOLLAR) + earned; writeJSON('bw-member', member); }
   document.getElementById('coForm').style.display = 'none';
   document.getElementById('coSuccess').classList.add('show');
-  document.getElementById('coOrderNo').textContent = '#BW-' + Date.now().toString().slice(-6);
+  document.getElementById('coOrderNo').textContent = order.no;
+  document.getElementById('coSuccessDetail').textContent =
+    t('co.successTotal').replace('{x}', money(order.total)).replace('{m}', methodLabel(order.method)) +
+    (member ? ' · ' + t('co.successEarned').replace('{n}', earned) : '');
   cart = [];
-  renderCart();
+  renderCart(); renderMember(); renderLastOrder();
+});
+document.getElementById('coTrackBtn').addEventListener('click', ()=>openTrack(lastOrderNo));
+
+/* ---------------- Reorder last order ---------------- */
+function renderLastOrder(){
+  const row = document.getElementById('lastOrderRow');
+  const o = getOrders().find(x => x.items.some(i => PRODUCTS.some(p => p.id === i.id)));
+  if(!o){ row.style.display = 'none'; return; }
+  const n = o.items.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('lastOrderText').textContent = t('reorder.last').replace('{no}', o.no).replace('{n}', n);
+  row.style.display = '';
+  row.dataset.no = o.no;
+}
+document.getElementById('lastOrderBtn').addEventListener('click', ()=>{
+  const o = getOrders().find(x => x.no === document.getElementById('lastOrderRow').dataset.no);
+  if(!o) return;
+  o.items.forEach(i => { for(let k=0;k<i.qty;k++) addToCart(i.id); });
+  showToast(t('dyn.toastReordered'));
+  openCart();
+});
+
+/* ---------------- Track my order (simulated statuses) ---------------- */
+const TRACK_THRESHOLDS = { sameday:[0,5,30,120], collect:[0,5,30,120], standard:[0,5,180,2880] };
+function openTrack(prefill){
+  closeModals();
+  const orders = getOrders();
+  document.getElementById('trackRecent').innerHTML = orders.length
+    ? `<span style="font-size:12px;color:var(--ink-3);width:100%;">${t('track.recent')}</span>` + orders.map(o=>`<button data-no="${o.no}">${o.no}</button>`).join('')
+    : '';
+  document.getElementById('trackResult').innerHTML = '';
+  document.getElementById('trackInput').value = prefill || '';
+  openModal(document.getElementById('trackModal'));
+  if(prefill) runTrack();
+}
+function runTrack(){
+  const raw = document.getElementById('trackInput').value.trim().toUpperCase().replace(/^#/, '').replace(/\s+/g,'');
+  const out = document.getElementById('trackResult');
+  if(!raw){ out.innerHTML = ''; return; }
+  const want = raw.startsWith('BW-') ? raw : 'BW-' + raw;
+  const o = getOrders().find(x => x.no.replace('#','') === want);
+  if(!o){ out.innerHTML = `<div class="pay-note" style="margin-top:14px;">${t('track.notfound')}</div>`; return; }
+  const mins = (Date.now() - o.ts) / 60000;
+  const th = TRACK_THRESHOLDS[o.method] || TRACK_THRESHOLDS.standard;
+  let cur = 0; th.forEach((m,i)=>{ if(mins >= m) cur = i; });
+  const collect = o.method === 'collect';
+  const labels = [t('track.s1'), t('track.s2'), collect ? t('track.s3c') : t('track.s3'), collect ? t('track.s4c') : t('track.s4')];
+  const eta = t('track.eta.' + o.method);
+  out.innerHTML = `<div class="track-meta"><b>${o.no}</b> · ${t('track.placed').replace('{x}', new Date(o.ts).toLocaleString(currentLang==='zh'?'zh-CN':'en-AU',{dateStyle:'medium',timeStyle:'short'}))}<br>${methodLabel(o.method)} · ${money(o.total)} · ${eta}</div>` +
+    `<ol class="track-steps">${labels.map((l,i)=>`<li class="${i<cur?'done':i===cur?'done current':''}">${l}</li>`).join('')}</ol>` +
+    `<div class="pay-note">${t('track.demoNote')}</div>`;
+}
+document.getElementById('trackBtn').addEventListener('click', runTrack);
+document.getElementById('trackInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); runTrack(); } });
+document.getElementById('trackRecent').addEventListener('click', (e)=>{
+  const b = e.target.closest('button[data-no]');
+  if(b){ document.getElementById('trackInput').value = b.dataset.no; runTrack(); }
+});
+
+/* ---------------- BrightWell+ join / account ---------------- */
+function renderMember(){
+  const m = getMember();
+  const joinBtn = document.getElementById('joinBtn');
+  joinBtn.textContent = m ? t('loy.ctaMember') : t('loy.cta');
+  if(m){
+    document.getElementById('loyPts').textContent = m.points.toLocaleString('en-AU');
+    document.getElementById('loyValue').textContent = t('acct.value').replace('{x}', (m.points / POINTS_PER_DOLLAR).toFixed(2));
+  } else {
+    document.getElementById('loyPts').textContent = '2,480';
+    document.getElementById('loyValue').textContent = t('loy.ptsValue');
+  }
+}
+function openAccount(){
+  closeModals();
+  const m = getMember();
+  const body = document.getElementById('joinBody');
+  const title = document.getElementById('joinTitle');
+  if(!m){
+    title.textContent = t('join.title');
+    body.innerHTML = `<p class="pay-note">${t('join.body')}</p>
+      <div class="co-fields" style="margin-top:12px;">
+        <input class="full" id="joinName" placeholder="${t('co.name')}" aria-label="${t('co.name')}" autocomplete="name">
+        <input class="full" id="joinEmail" type="email" placeholder="${t('join.email')}" aria-label="${t('join.email')}" autocomplete="email">
+      </div>
+      <button class="co-place" id="joinSubmit">${t('join.submit')}</button>`;
+    document.getElementById('joinSubmit').addEventListener('click', ()=>{
+      const name = document.getElementById('joinName').value.trim();
+      const email = document.getElementById('joinEmail').value.trim();
+      if(!name){ showToast(t('join.errName')); return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showToast(t('join.errEmail')); return; }
+      writeJSON('bw-member', {name, email, points: 100, joined: Date.now()});
+      renderMember(); closeModals();
+      showToast(t('join.welcome').replace('{n}', name));
+    });
+  } else {
+    title.textContent = t('acct.title');
+    body.innerHTML = `<p style="font-size:15px;font-weight:700;">${t('acct.hi').replace('{n}', m.name.replace(/[<>&]/g,''))}</p>
+      <div class="acct-pts">${m.points.toLocaleString('en-AU')}</div>
+      <p style="font-size:13px;color:var(--ink-2);">${t('loy.ptsLabel')} · ${t('acct.value').replace('{x}', (m.points / POINTS_PER_DOLLAR).toFixed(2))}</p>
+      <div class="acct-row"><button class="primary" id="acctTrack">${t('acct.track')}</button><button id="acctOut">${t('acct.signout')}</button></div>`;
+    document.getElementById('acctTrack').addEventListener('click', ()=>openTrack());
+    document.getElementById('acctOut').addEventListener('click', ()=>{ try{ localStorage.removeItem('bw-member'); }catch(e){} renderMember(); closeModals(); showToast(t('acct.signedout')); });
+  }
+  openModal(document.getElementById('joinModal'));
+  const first = body.querySelector('input'); if(first) first.focus();
+}
+document.getElementById('joinBtn').addEventListener('click', openAccount);
+document.getElementById('accountBtn').addEventListener('click', openAccount);
+
+/* ---------------- Info dialogs + footer actions ---------------- */
+function openInfo(key){
+  closeModals();
+  document.getElementById('infoTitle').textContent = t('info.' + key + '.title');
+  document.getElementById('infoBody').textContent = t('info.' + key + '.body');
+  openModal(document.getElementById('infoModal'));
+}
+document.addEventListener('click', (e)=>{
+  const a = e.target.closest('[data-action]');
+  if(!a) return;
+  e.preventDefault();
+  const [act, arg] = a.dataset.action.split(':');
+  if(act === 'chat'){ closeModals(); if(!chatPop.classList.contains('open')) setChatOpen(true); }
+  else if(act === 'track') openTrack();
+  else if(act === 'info') openInfo(arg);
+  else if(act === 'delivery'){
+    document.getElementById('suburbBand').scrollIntoView({behavior:'smooth', block:'center'});
+    document.getElementById('sbInput').focus({preventScroll:true});
+  }
 });
 
 /* ---------------- Toast ---------------- */
@@ -1395,6 +1976,28 @@ function setChatOpen(open){
   }
 }
 chatFab.addEventListener('click', ()=>setChatOpen(!chatPop.classList.contains('open')));
+const chatLog = document.getElementById('chatLog');
+function chatAdd(cls, html){
+  const d = document.createElement('div');
+  d.className = 'chat-msg ' + cls;
+  d.innerHTML = html;
+  chatLog.appendChild(d);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return d;
+}
+const URGENT_RE = /emergency|chest pain|can'?t breathe|cannot breathe|overdose|suicid|self.?harm|stroke|unconscious|anaphyla|胸痛|呼吸困难|过量|自杀|急救|中风/i;
+function sendChat(){
+  const q = chatInput.value.trim();
+  if(!q) return;
+  chatInput.value = '';
+  chatAdd('me', q.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])));
+  if(URGENT_RE.test(q)){ chatAdd('bot urgent', t('chat.reply.urgent')); return; }
+  const found = looseMatches(q);
+  const el = chatAdd('bot', t(found.length ? 'chat.reply.match' : 'chat.reply.none') + (found.length ? `<div class="reorder-list">${found.map(p=>`<div class="reorder-item"><span>${p.icon} ${p.name}</span><button data-add="${p.id}">${t('dyn.add')}</button></div>`).join('')}</div>` : '') + `<div style="margin-top:6px;font-size:11.5px;opacity:.75;">${t('chat.reply.disclaimer')}</div>`);
+  el.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click', ()=>{ addToCart(parseInt(b.dataset.add)); showToast(t('dyn.toastAdded')); }));
+}
+document.getElementById('chatSend').addEventListener('click', sendChat);
+chatInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
 
 /* ---------------- Scroll reveal ---------------- */
 const observer = new IntersectionObserver((entries)=>{
